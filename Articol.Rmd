@@ -1,0 +1,789 @@
+---
+title             : "Factorial structure of the indicators in Big Five Plus Inventory"
+shorttitle        : "Factorial structure of the indicators in Big Five Plus Inventory"
+author: 
+  - name          : "Cristian Opariuc-Dan"
+    affiliation   : "1,2"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Ovidius University Campus, Aleea Universității, No. 2, Constanța, Romania"
+    email         : "copariuc@gmail.com"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - Conceptualization
+      - Writing - Original Draft Preparation
+      - Writing - Data analysis
+  - name          : "Gabriela Nicuță"
+    affiliation   : "3"
+    role:
+      - Writing - Systematic review
+      - Writing - Data analysis
+      - Proofreading
+  - name          : "Ticu Constantin"
+    affiliation   : "3"
+    role:
+      - Data provider
+      - Writing - Review & Editing
+affiliation:
+  - id            : "1"
+    institution   : "Ovidius University, Constanta, Romania"
+  - id            : "2"
+    institution   : "Bucharest University, Bucharest, Romania"
+  - id            : "3"
+    institution   : "Al. I. Cuza University, Iassy, Romania"
+authornote: |
+  Cristian Opariuc-Dan, PhD Lecturer, Department of Administrative Sciences, Ovidius University, Constanta
+  
+  Cristian Opariuc-Dan, PhD Lecturer, Department of Psychology, University of Bucharest, Romania
+  
+  Gabriela Nicuță, Department of Psychology, Al. I. Cuza University, Iassy
+  
+  Ticu Constantin, PhD Professor, Department of Psychology, Al. I. Cuza University, Iassy
+  
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  
+  <!-- https://tinyurl.com/ybremelq -->
+keywords          : "BigFive, Confirmatory Factor Analysis, Homogenity analysis"
+wordcount         : "X"
+bibliography      : ["r-references.bib"]
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : yes
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+header-includes:
+  - \usepackage[document]{ragged2e}
+---
+
+```{r setup, include = FALSE}
+  library(papaja); library(stargazer); library(epiDisplay); library(psych); library(nortest)
+  library(dplyr); library(purrr); library(lavaan)
+  
+  r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+  set.seed(42)
+  knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+  date <- read.spss("Baza de date.sav", use.value.labels = T, to.data.frame = T)
+  date$online <- factor(date$online, labels = c("Paper-Pencil", "Online"))
+  date$gen <- factor(date$online, labels = c("Male", "Female"))
+  date$studii <- ordered(date$studii, labels = c("Illiterate", 
+                                                 "Primary (4 years)",
+                                                 "Gymnasium (8 years)",
+                                                 "Arts and crafts school",
+                                                 "Highschool (12 years)", 
+                                               "Post graduated school", 
+                                               "University (Bachelor level)", 
+                                               "University (Master level)", 
+                                               "Doctoral school"))
+  # *** Functia de returnare a valorilor Skewness si Kurtosis ***
+  Skewness.Kurtosis = function(x){
+    # Extragerea numarului de cazuri si a momentelor
+    w = length(x) 
+    m1 = mean(x, na.rm = T) 
+    m2 = sum((x-m1)^2, na.rm = T)
+    m3 = sum((x-m1)^3, na.rm = T)
+    m4 = sum((x-m1)^4, na.rm = T)
+    s1 = sd(x, na.rm = T)
+    
+    # Calculul Skewness si a erorii standard
+    Skewness = w*m3/(w-1)/(w -2)/s1^3
+    SE.Skewness = sqrt(6*w*(w-1)/((w-2)*(w+1)*(w+3)))
+    # Calculul Kurtosis si a erorii standard
+    Kurtosis = (w*(w+1)*m4-3*m2^2*(w-1))/((w-1)*(w-2)*(w-3)*s1^4)
+    SE.Kurtosis= sqrt(4*(w^2-1)*SE.Skewness^2/((w-3)*(w+5)))
+    
+    # Generarea rezultatului si returnarea sa
+    rez = matrix(c(Skewness, Kurtosis, SE.Skewness, SE.Kurtosis), 2, 
+                 dimnames = list(c("Skewness", "Kurtosis"), c("Value", "SE")))
+    return(rez)}
+```
+
+# Methods
+\justify
+Studiul este unul exploratoriu și urmărește **analiza modului în care modelul teoretic Big Five este susținut de date**. Volumul de date, chiar dacă este unul foarte mare și oferă putere studiului, nu constituie un eșantion deoarece nu s-a utilizat nicio tehnică de eșantionare, ci reprezintă rezultatele unor testări efectuate cu Inventarul de Personalitate Big Five Plus [@BigFive-plus] în perioada 2015 - 2020 pe populația din România. Răspunsurile la itemi au rezultat fie în urma unei administrări online folosindu-se platforma [link](http://www.psihoprofile.ro/), fie în urma administrării clasice, creion-hârtie, apoi a introducerii răspunsurilor în platformă în vederea cotării automate și generării protocoalelor.
+
+La nivel de bază, variabilele manifeste reprezintă cei 244 de itemi dihotomici ai Inventarului de Personalitate Big Five Plus, analiza intrând în domeniul analizelor factoriale confirmatorii folosindu-se indicatori categoriali, mai precis dihotomici, iar acest lucru implică o abordare specifică.
+
+Modelul nu prevede existența unor indicatori încărcați de mai mult de un singur factor latent, fiecare factor latent încărcând 8 indicatori, prin urmare și aceștia vor reprezenta variabile latente categoriale, deoarece o amplitudine de 8 puncte nu-i poate califica drept variabile continui.
+
+Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărcați de una dintre cele 5 dimensiuni Big Five, rezultând un model de analiză factorială de ordin secund [@Byrne-2010] cu factori de ordin secund necorelați, aceștia fiind reprezentați după cum urmează:
+
++ **Extraversion**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Friendliness*, *Gregariousness*, *Assertiveness*, *Activity level*, *Excitement seeking* și *Cheerfulness*.
+
++ **Agreeableness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Trust*, *Morality*, *Altruism*, *Cooperation*, *Modesty* și *Sympathy*.
+
++ **Neuroticism**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Anxiety*, *Anger*, *Depression*, *Timidity*, *Immoderation* și *Vulnerability*.
+
++ **Conscientiousness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Self-efficacy*, *Orderliness*, *Dutifulness*, *Achievement-striving*, *Self-discipline* și *Cautiousness*.
+
++ **Openness to experience**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Imagination*, *Artistic interests*, *Emotionality*, *Adventurousness*, *Intellect* și *Liberalism*.
+
+## Participants
+```{r participants, echo = F, include = F}
+  gender <- tab1(date$gen, graph = F)
+  studies <- tab1(date$studii, graph = T)
+  age <- describe(date$varsta)[c(-1, -6, -7, -13)]
+  SK <- Skewness.Kurtosis(date$varsta)
+  normal <- lillie.test(date$varsta)
+```
+Cercetarea a fost realizată în urma colectării unui număr de `r gender$output.table[3]` de protocoale **(n=`r gender$output.table[3]`)**, administrate unui număr de `r gender$output.table[1]` *bărbați* (`r gender$output.table[4]`%) și `r gender$output.table[2]` *femei* (`r gender$output.table[5]`%).
+
+```{r gender, results='asis'}
+  stargazer::stargazer(gender$output.table, type = "latex", 
+                       header = F, float = T,
+                       title = "Participants's gender")
+```
+
+Sub aspectul **nivelului de studii**, cele mai multe persoane sunt absolvente de *universitate, cu diplomă de licență* (`r studies$output.table[7]`, reprezentând `r studies$output.table[18]`%), fiind urmate de *absolvenții de liceu* (`r studies$output.table[5]`, reprezentând `r studies$output.table[16]`%) și de persoanele absolvente de *universitate, cu diplomă de master* (`r studies$output.table[8]`, reprezentând `r studies$output.table[19]`%). Întâlnim, de asemenea, și persoane absolvente de *școli postliceale*, (`r studies$output.table[6]`, reprezentând `r studies$output.table[17]`%) și persoane absolvente de școli de arte și meserii (`r studies$output.table[4]`, reprezentând `r studies$output.table[15]`%), celelalte categorii fiind mult mai slab reprezentate.
+
+```{r education, results='asis'}
+    stargazer::stargazer(studies$output.table, type = "latex", 
+                       header = F, float = T,
+                       title = "Participants's educational level")
+```
+
+Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r studies$output.table[10]`, reprezentând `r studies$output.table[21]`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile.
+
+În privința **vârstei participanților**, doar `r age$n` persoane au date valide, restul de `r gender$output.table[3] - age$n` nedeclarând vârsta reală. Media de vârstă este de `r age$mean` ani cu o abatere standard de `r age$sd` ani *(m=`r age$mean`, sd=`r age$sd`)*, mediana fiind situată la nivelul vârstei de `r age$median` ani. Participanții au o vârstă cuprinsă între `r age$min` și `r age$max` ani, amplitudinea fiind de `r age$range` ani.
+
+Din punct de vedere al simetriei, distribuția probabilităților de apariție a vârstelor este una *simetrică (Skewness=`r SK[1,1]`, SE=`r SK[1,2]`)* și *mezocurtică (Kurtosis=`r SK[2,1]`, SE=`r SK[2,2]`)*, putând fi asimilată unei distribuții continui normale în ciuda faptului că ipoteza nulă **H~0~:** *Nu există nicio diferență statistic semnificativă între distribuția normală teoretică și distribuția empirică a vârstei (Kolmogorov-Smirnov d=`r normal$statistic`, p=`r normal$p`)* nu poate fi respinsă.
+
+```{r age, results='asis'}
+    apa_table(age, row.names = F, caption = "Participants's age")
+``` 
+
+
+## Material
+
+Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).  Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
+
+
+## Procedure
+Analiza va presupune studiul inițial al consistenței interne pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951], apoi testarea modelului în care factorul latent încarcă cei 8 indicatori, pentru fiecare dintre cele 6 fațete ale unei dimensiuni, și existența dimensiunii comune pentru toți cei 6 factori latenți.
+
+În urma interpretării parametrilor și a diagnosticului modelelor acestea vor fi respecificate, identificându-se, dacă este cazul, modele explicative mai bune.
+
+## Data analysis
+Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` și următoarele pachete: `r cite_r("r-references.bib")`. 
+
+# Results
+
+## Internal consistency analysis
+
+În prima fază vom prezenta comparativ analizele autorilor privind consistența internă utilizându-se **metoda alpha Cronbach a fidelității tau-echivalente** [@Cronbach-1951], incluzând atât indicatorii globali, cât și cei defalcați în funcție de genul biologic și de modalitatea de administrare. Analiza s-a realizat utilizându-se pachetul **„psych”** [@R-psych], plecându-se de la condiția itemilor cumulativi, scorul total rezultând în urma adunării celor 8 itemi (amplitudinea teoretică de 8 puncte) cu identificarea varianțelor negative ale itemilor și recodare automată și utilizând o reeșantionare neparametrică folosind 100 de eșantioane în vederea verificării stabilității parametrilor
+
+### Extraversion
+```{r cons-extraversion, echo = F, include = F}
+  # Valori totale
+  EXAffect <- date %>%  select(I1, I5, I10, I16, I18, I25, I34, I40) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExSociab <- date %>% select(I2, I6, I11, I17, I19, I26, I35, I41) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExAssert <- date %>%  select(I3, I7, I12, I20, I21, I27, I36, I42) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExActivi <- date %>% select(I4, I13, I22, I28, I31, I37, I43, I44) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExExcita <- date %>% select(I8, I14, I23, I29, I32, I38, I45, I47) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExVeseli <- date %>% select(I9, I15, I24, I30, I33, I39, I46, I48) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+```
+```{r EXT-Total, results='asis'}
+con.df <- as.data.frame(EXAffect$total)
+con.df <- rbind(con.df, ExSociab$total, ExAssert$total, ExActivi$total, 
+                ExExcita$total, ExVeseli$total); con.df <- select(con.df, -5)
+Var.names <- c( "Friendliness", "Gregariousness", "Assertiveness",
+                "Activity level", "Excitement seeking", "Cheerfulness")
+con.df <- cbind(Var.names, con.df)
+names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                   "Mean", "SD", "Median")
+
+apa_table(con.df, row.names = F, caption = "Extraversion - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Afectivitate** este m~r~=`r EXAffect$total$average_r`, cu media scalei m~scale~=`r EXAffect$total$mean` și abaterea standard sd~scale~=`r EXAffect$total$sd`, rezultând un coeficient de consistență internă *alfa=`r EXAffect$total$raw_alpha`* (CI~95%~= `r alpha.ci(EXAffect$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(EXAffect$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r EXAffect$total$std.alpha`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.744, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(EXAffect$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(EXAffect$Unidim$Unidim, 3)`). Se constată că itemul *I34*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r EXAffect$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r EXAffect$item.stats[7,2]`, respectiv r=`r EXAffect$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Sociabilitate** este m~r~=`r ExSociab$total$average_r`, cu media scalei m~scale~=`r ExSociab$total$mean` și abaterea standard sd~scale~=`r ExSociab$total$sd`, rezultând un coeficient de consistență internă *alfa=`r ExSociab$total$raw_alpha`* (CI~95%~= `r alpha.ci(ExSociab$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(ExSociab$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r ExSociab$total$std.alpha`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.775, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(ExSociab$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(ExSociab$Unidim$Unidim, 3)`). Se constată că itemul *I11*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r ExSociab$alpha.drop[3,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExSociab$item.stats[3,2]`, respectiv r=`r ExSociab$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În cazul factorului **Asertivitate**, media corelațiilor inter-itemi este m~r~=`r ExAssert$total$average_r`, cu media scalei m~scale~=`r ExAssert$total$mean` și abaterea standard sd~scale~=`r ExAssert$total$sd`, rezultând un coeficient de consistență internă *alfa=`r ExAssert$total$raw_alpha`* (CI~95%~= `r alpha.ci(ExAssert$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(ExAssert$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r ExAssert$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.702, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(ExAssert$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(ExAssert$Unidim$Unidim, 3)`). Se constată că itemul *I7*, dacă ar fi eliminat, ar conduce o ușoară creștere a consistenței scalei (alpha=`r ExAssert$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExAssert$item.stats[2,2]`, respectiv r=`r ExAssert$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Pentru factorul **Activism**, media corelațiilor inter-itemi este m~r~=`r ExActivi$total$average_r`, cu media scalei m~scale~=`r ExActivi$total$mean` și abaterea standard sd~scale~=`r ExActivi$total$sd`, rezultând un coeficient de consistență internă *alfa=`r ExActivi$total$raw_alpha`* (CI~95%~= `r alpha.ci(ExActivi$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(ExActivi$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r ExActivi$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.696, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(ExActivi$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității ușor redus (U=`r round(ExActivi$Unidim$Unidim, 3)`). Se constată că itemul *I28*, dacă ar fi eliminat, ar conduce o ușoară creștere a consistenței scalei (alpha=`r ExActivi$alpha.drop[4,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExActivi$item.stats[4,2]`, respectiv r=`r ExActivi$item.stats[4,4]` după corecția de suprapunere și fidelitate a scalei). De asemenea, eliminarea itemilor *I31* și *I37* nu ar modifica fidelitatea (alpha=`r ExActivi$alpha.drop[5,1]`, respectiv alpha=`r ExActivi$alpha.drop[6,1]`) corelațiile cu scorul total fiind reduse (r=`r ExActivi$item.stats[5,2]`, respectiv r=`r ExActivi$item.stats[6,2]`, iar după corecția de suprapunere și fidelitate, r=`r ExActivi$item.stats[5,4]` respectiv r=`r ExActivi$item.stats[6,4]`).
+
++ Factorul **Excitabilitate**, are o medie a corelațiilor inter-itemi m~r~=`r ExExcita$total$average_r`, cu media scalei m~scale~=`r ExExcita$total$mean` și abaterea standard sd~scale~=`r ExExcita$total$sd`, rezultând un coeficient de consistență internă *alfa=`r ExExcita$total$raw_alpha`* (CI~95%~= `r alpha.ci(ExExcita$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(ExExcita$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r ExExcita$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.786, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(ExExcita$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(ExExcita$Unidim$Unidim, 3)`). Se constată că itemul *I32*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r ExExcita$alpha.drop[5,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExExcita$item.stats[5,2]`, respectiv r=`r ExExcita$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Veselie**, are o medie a corelațiilor inter-itemi m~r~=`r ExVeseli$total$average_r`, cu media scalei m~scale~=`r ExVeseli$total$mean` și abaterea standard sd~scale~=`r ExVeseli$total$sd`, rezultând un coeficient de consistență internă *alfa=`r ExVeseli$total$raw_alpha`* (CI~95%~= `r alpha.ci(ExVeseli$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(ExVeseli$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r ExVeseli$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.735, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(ExVeseli$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(ExVeseli$Unidim$Unidim, 3)`).
+
+```{r cons-extraversion-gender, echo = F, include = F}
+  # Valori functie de gen
+  EXAffect <- date %>%  select(gen, I1, I5, I10, I16, I18, I25, I34, I40) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+  ExSociab <- date %>% select(gen, I2, I6, I11, I17, I19, I26, I35, I41) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+  ExAssert <- date %>%  select(gen, I3, I7, I12, I20, I21, I27, I36, I42) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+  ExActivi <- date %>% select(gen, I4, I13, I22, I28, I31, I37, I43, I44) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+  ExExcita <- date %>% select(gen, I8, I14, I23, I29, I32, I38, I45, I47) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+  ExVeseli <- date %>% select(gen, I9, I15, I24, I30, I33, I39, I46, I48) %>% group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+```
+
+Analiza consistenței în funcție de **genul biologic** nu pune în evidență comportamente diferite ale bărbaților în comparație cu femeile, rezultând următoarele valori:
+
++ Factorul **Afectivitate**: Bărbați: alpha=`r EXAffect[[1]]$total$raw_alpha`, Femei: alpha=`r EXAffect[[2]]$total$raw_alpha`.
+
++ Factorul **Sociabilitate**: Bărbați: alpha=`r ExSociab[[1]]$total$raw_alpha`, Femei: alpha=`r ExSociab[[2]]$total$raw_alpha`.
+
++ Factorul **Asertivitate**: Bărbați: alpha=`r ExAssert[[1]]$total$raw_alpha`, Femei: alpha=`r ExAssert[[2]]$total$raw_alpha`.
+
++ Factorul **Activism**: Bărbați: alpha=`r ExActivi[[1]]$total$raw_alpha`, Femei: alpha=`r ExActivi[[2]]$total$raw_alpha`.
+
++ Factorul **Excitabilitate**: Bărbați: alpha=`r ExExcita[[1]]$total$raw_alpha`, Femei: alpha=`r ExExcita[[2]]$total$raw_alpha`.
+
++ Factorul **Veselie**: Bărbați: alpha=`r ExVeseli[[1]]$total$raw_alpha`, Femei: alpha=`r ExVeseli[[2]]$total$raw_alpha`.
+
+#### Agreeableness
+```{r cons-agreeableness, echo = F, include = F}
+  # Valori totale
+  AGIncred <- date %>% select(I49, I53, I58, I64, I66, I73, I82, I88) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGMorali <- date %>% select(I50, I54, I59, I65, I67, I74, I83, I89) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGAltrui <- date %>% select(I51, I55, I60, I68, I69, I75, I84, I90) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGCooper <- date %>% select(I52, I61, I70, I76, I79, I85, I91, I92) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGModest <- date %>% select(I56, I62, I71, I77, I80, I86, I93, I95) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGCompas <- date %>% select(I57, I63, I72, I78, I81, I87, I94, I96) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+```
+```{r AGR-Total, results='asis'}
+con.df <- as.data.frame(AGIncred$total)
+con.df <- rbind(con.df, AGMorali$total, AGAltrui$total, AGCooper$total, 
+                AGModest$total, AGCompas$total); con.df <- select(con.df, -5)
+Var.names <- c( "Trust", "Morality", "Altruism",
+                "Cooperation", "Modesty", "Sympathy")
+con.df <- cbind(Var.names, con.df)
+names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                   "Mean", "SD", "Median")
+
+apa_table(con.df, row.names = F, caption = "Agreeableness - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Încredere** este m~r~=`r AGIncred$total$average_r`, cu media scalei m~scale~=`r AGIncred$total$mean` și abaterea standard sd~scale~=`r AGIncred$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGIncred$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGIncred$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGIncred$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGIncred$total$std.alpha`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.660, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGIncred$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(AGIncred$Unidim$Unidim, 3)`). Se constată că itemul *I82*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r AGIncred$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r AGIncred$item.stats[7,2]`, respectiv r=`r AGIncred$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Simț moral** este m~r~=`r AGMorali$total$average_r`, cu media scalei m~scale~=`r AGMorali$total$mean` și abaterea standard sd~scale~=`r AGMorali$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGMorali$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGMorali$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGMorali$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGMorali$total$std.alpha`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.708, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGMorali$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității ușor redus (U=`r round(AGMorali$Unidim$Unidim, 3)`).
+
++ În cazul factorului **Altruism**, media corelațiilor inter-itemi este m~r~=`r AGAltrui$total$average_r`, cu media scalei m~scale~=`r AGAltrui$total$mean` și abaterea standard sd~scale~=`r AGAltrui$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGAltrui$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGAltrui$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGAltrui$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGAltrui$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.653, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGAltrui$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității destul de mic (U=`r round(AGAltrui$Unidim$Unidim, 3)`).
+
++ Pentru factorul **Cooperare**, media corelațiilor inter-itemi este m~r~=`r AGCooper$total$average_r`, cu media scalei m~scale~=`r AGCooper$total$mean` și abaterea standard sd~scale~=`r AGCooper$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGCooper$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGCooper$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGCooper$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGCooper$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.641, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGCooper$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității ușor redus (U=`r round(AGCooper$Unidim$Unidim, 3)`). Se constată că itemul *I79*, dacă ar fi eliminat, ar conduce la creșterea ușoară a consistenței scalei (alpha=`r AGCooper$alpha.drop[5,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r AGCooper$item.stats[5,2]`, respectiv r=`r AGCooper$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei), iar dacă am elimina itemul *I61* consistența scalei nu s-ar modifica (alpha=`r AGCooper$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind ceamică (r=`r AGCooper$item.stats[2,2]`, respectiv r=`r AGCooper$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Factorul **Modestie**, are o medie a corelațiilor inter-itemi m~r~=`r AGModest$total$average_r`, cu media scalei m~scale~=`r AGModest$total$mean` și abaterea standard sd~scale~=`r AGModest$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGModest$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGModest$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGModest$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGModest$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.660, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGModest$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității ușor redus (U=`r round(AGModest$Unidim$Unidim, 3)`). Se constată că itemii *I86* și *I93*, dacă ar fi eliminați, nu ar conduce la modificarea consistenței scalei (alpha=`r AGModest$alpha.drop[6,1]`, respectiv alpha=`r AGModest$alpha.drop[7,1]`), corelația acestora cu scorul total fiind cea mai mică (r=`r AGModest$item.stats[6,2]`, și r=`r AGModest$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r AGModest$item.stats[7,2]` și r=`r AGModest$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Compasiune**, are o medie a corelațiilor inter-itemi m~r~=`r AGCompas$total$average_r`, cu media scalei m~scale~=`r AGCompas$total$mean` și abaterea standard sd~scale~=`r AGCompas$total$sd`, rezultând un coeficient de consistență internă *alfa=`r AGCompas$total$raw_alpha`* (CI~95%~= `r alpha.ci(AGCompas$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(AGCompas$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r AGCompas$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.705, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(AGCompas$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(AGCompas$Unidim$Unidim, 3)`).
+
+```{r cons-agreeableness-gender, echo = F, include = F}
+  # Valori functie de gen
+AGIncred <- date %>%  select(gen, I49, I53, I58, I64, I66, I73, I82, I88) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+AGMorali <- date %>%  select(gen, I50, I54, I59, I65, I67, I74, I83, I89) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+AGAltrui <- date %>%  select(gen, I51, I55, I60, I68, I69, I75, I84, I90) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+AGCooper <- date %>%  select(gen, I52, I61, I70, I76, I79, I85, I91, I92) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+AGModest <- date %>%  select(gen, I56, I62, I71, I77, I80, I86, I93, I95) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+AGCompas <- date %>%  select(gen, I57, I63, I72, I78, I81, I87, I94, I96) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+```
+
+Analiza consistenței în funcție de **genul biologic** nu pune în evidență comportamente diferite ale bărbaților în comparație cu femeile, cu excepția factorilor **Altruism** și **Cooperare** unde consistențele sunt ușor mai reduse la bărbați în comparație cu femeile:
+
++ Factorul **Încredere**: Bărbați: alpha=`r AGIncred[[1]]$total$raw_alpha`, Femei: alpha=`r AGIncred[[2]]$total$raw_alpha`.
+
++ Factorul **Simț moral**: Bărbați: alpha=`r AGMorali[[1]]$total$raw_alpha`, Femei: alpha=`r AGMorali[[2]]$total$raw_alpha`.
+
++ Factorul **Altruism**: Bărbați: alpha=`r AGAltrui[[1]]$total$raw_alpha`, Femei: alpha=`r AGAltrui[[2]]$total$raw_alpha`.
+
++ Factorul **Cooperare**: Bărbați: alpha=`r AGCooper[[1]]$total$raw_alpha`, Femei: alpha=`r AGCooper[[2]]$total$raw_alpha`.
+
++ Factorul **Modestie**: Bărbați: alpha=`r AGModest[[1]]$total$raw_alpha`, Femei: alpha=`r AGModest[[2]]$total$raw_alpha`.
+
++ Factorul **Compasiune**: Bărbați: alpha=`r AGCompas[[1]]$total$raw_alpha`, Femei: alpha=`r AGCompas[[2]]$total$raw_alpha`.
+
+#### Neuroticism
+```{r cons-neuroticism, echo = F, include = F}
+  # Valori totale
+  NEAnxiet <- date %>% select(I97, I101, I106, I112, I114, I121, I130, I136) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEFuriee <- date %>% select(I98, I102, I107, I113, I115, I122, I131, I137) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEDepres <- date %>% select(I99, I103, I108, I116, I117, I123, I132, I138) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NETimidi <- date %>% select(I100, I109, I118, I124, I127, I133, I139, I140) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEExager <- date %>% select(I104, I110, I119, I125, I128, I134, I141, I143) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEVulner <- date %>% select(I105, I111, I120, I126, I129, I135, I142, I144) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+```
+```{r NEV-Total, results='asis'}
+con.df <- as.data.frame(NEAnxiet$total)
+con.df <- rbind(con.df, NEFuriee$total, NEDepres$total, NETimidi$total, 
+                NEExager$total, NEVulner$total); con.df <- select(con.df, -5)
+Var.names <- c( "Anxiety", "Anger", "Depression",
+                "Timidity", "Immoderation", "Vulnerability")
+con.df <- cbind(Var.names, con.df)
+names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                   "Mean", "SD", "Median")
+
+apa_table(con.df, row.names = F, caption = "Neuroticism - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Anxietate** este m~r~=`r NEAnxiet$total$average_r`, cu media scalei m~scale~=`r NEAnxiet$total$mean` și abaterea standard sd~scale~=`r NEAnxiet$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NEAnxiet$total$raw_alpha`* (CI~95%~= `r alpha.ci(NEAnxiet$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NEAnxiet$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NEAnxiet$total$std.alpha`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.708, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NEAnxiet$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității foarte bun (U=`r round(NEAnxiet$Unidim$Unidim, 3)`).
+
++ Media corelațiilor inter-itemi la factorul **Furie** este m~r~=`r NEFuriee$total$average_r`, cu media scalei m~scale~=`r NEFuriee$total$mean` și abaterea standard sd~scale~=`r NEFuriee$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NEFuriee$total$raw_alpha`* (CI~95%~= `r alpha.ci(NEFuriee$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NEFuriee$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NEFuriee$total$std.alpha`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.839, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NEFuriee$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității foarte bun (U=`r round(NEFuriee$Unidim$Unidim, 3)`).
+
++ În cazul factorului **Depresie**, media corelațiilor inter-itemi este m~r~=`r NEDepres$total$average_r`, cu media scalei m~scale~=`r NEDepres$total$mean` și abaterea standard sd~scale~=`r NEDepres$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NEDepres$total$raw_alpha`* (CI~95%~= `r alpha.ci(NEDepres$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NEDepres$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NEDepres$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.730, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NEDepres$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității foarte bun (U=`r round(NEDepres$Unidim$Unidim, 3)`).
+
++ Pentru factorul **Timiditate**, media corelațiilor inter-itemi este m~r~=`r NETimidi$total$average_r`, cu media scalei m~scale~=`r NETimidi$total$mean` și abaterea standard sd~scale~=`r NETimidi$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NETimidi$total$raw_alpha`* (CI~95%~= `r alpha.ci(NETimidi$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NETimidi$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NETimidi$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.649, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NETimidi$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(NETimidi$Unidim$Unidim, 3)`). Se constată că itemul *I109*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r NETimidi$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r NETimidi$item.stats[2,2]`, respectiv r=`r NETimidi$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Factorul **Exagerare**, are o medie a corelațiilor inter-itemi m~r~=`r NEExager$total$average_r`, cu media scalei m~scale~=`r NEExager$total$mean` și abaterea standard sd~scale~=`r NEExager$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NEExager$total$raw_alpha`* (CI~95%~= `r alpha.ci(NEExager$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NEExager$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NEExager$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.761, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NEExager$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(NEExager$Unidim$Unidim, 3)`).
+
++ În fine, factorul **Vulnerabilitate**, are o medie a corelațiilor inter-itemi m~r~=`r NEVulner$total$average_r`, cu media scalei m~scale~=`r NEVulner$total$mean` și abaterea standard sd~scale~=`r NEVulner$total$sd`, rezultând un coeficient de consistență internă *alfa=`r NEVulner$total$raw_alpha`* (CI~95%~= `r alpha.ci(NEVulner$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(NEVulner$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r NEVulner$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.749, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(NEVulner$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității bun (U=`r round(NEVulner$Unidim$Unidim, 3)`). Se constată că itemul *I111*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r NEVulner$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r NEVulner$item.stats[2,2]`, respectiv r=`r NEVulner$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
+```{r cons-neuroticism-gender, echo = F, include = F}
+  # Valori functie de gen
+NEAnxiet <- date %>%  select(gen, I97, I101, I106, I112, I114, I121, I130, I136) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+NEFuriee <- date %>%  select(gen, I98, I102, I107, I113, I115, I122, I131, I137) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+NEDepres <- date %>%  select(gen, I99, I103, I108, I116, I117, I123, I132, I138) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+NETimidi <- date %>%  select(gen, I100, I109, I118, I124, I127, I133, I139, I140) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+NEExager <- date %>%  select(gen, I104, I110, I119, I125, I128, I134, I141, I143) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+NEVulner <- date %>%  select(gen, I105, I111, I120, I126, I129, I135, I142, I144) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+```
+
+Analiza consistenței în funcție de **genul biologic** nu pune în evidență comportamente diferite ale bărbaților în comparație cu femeile, cu excepția factorilor **Timiditate** și **Vulnerabilitate**, unde consistențele sunt ușor mai reduse la bărbați în comparație cu femeile:
+
++ Factorul **Anxietate**: Bărbați: alpha=`r NEAnxiet[[1]]$total$raw_alpha`, Femei: alpha=`r NEAnxiet[[2]]$total$raw_alpha`.
+
++ Factorul **Furie**: Bărbați: alpha=`r NEFuriee[[1]]$total$raw_alpha`, Femei: alpha=`r NEFuriee[[2]]$total$raw_alpha`.
+
++ Factorul **Depresie**: Bărbați: alpha=`r NEDepres[[1]]$total$raw_alpha`, Femei: alpha=`r NEDepres[[2]]$total$raw_alpha`.
+
++ Factorul **Timiditate**: Bărbați: alpha=`r NETimidi[[1]]$total$raw_alpha`, Femei: alpha=`r NETimidi[[2]]$total$raw_alpha`.
+
++ Factorul **Exagerare**: Bărbați: alpha=`r NEExager[[1]]$total$raw_alpha`, Femei: alpha=`r NEExager[[2]]$total$raw_alpha`.
+
++ Factorul **Vulnerabilitate**: Bărbați: alpha=`r NEVulner[[1]]$total$raw_alpha`, Femei: alpha=`r NEVulner[[2]]$total$raw_alpha`.
+
+#### Conscientiousness
+```{r cons-conscientiousness, echo = F, include = F}
+  # Valori totale
+  COEficie <- date %>% select(I145, I154, I160, I162, I169, I178, I184, I192) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COOrdine <- date %>% select(I146, I149, I155, I161, I163, I170, I179, I185) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  CODatori <- date %>% select(I147, I150, I156, I164, I165, I171, I180, I186) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COAmbiti <- date %>% select(I148, I151, I157, I166, I172, I181, I187, I188) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COPersev <- date %>% select(I152, I158, I167, I173, I175, I182, I189, I191) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COPruden <- date %>% select(I153, I159, I168, I174, I176, I177, I183, I190) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+```
+```{r CON-Total, results='asis'}
+con.df <- as.data.frame(COEficie$total)
+con.df <- rbind(con.df, COOrdine$total, CODatori$total, COAmbiti$total, 
+                COPersev$total, COPruden$total); con.df <- select(con.df, -5)
+Var.names <- c( "Self-efficacy", "Orderliness", "Dutifulness",
+                "Achievement-striving", "Self-discipline", "Cautiousness")
+con.df <- cbind(Var.names, con.df)
+names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                   "Mean", "SD", "Median")
+
+apa_table(con.df, row.names = F, caption = "Conscientiousness - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Eficiență personală** este m~r~=`r COEficie$total$average_r`, cu media scalei m~scale~=`r COEficie$total$mean` și abaterea standard sd~scale~=`r COEficie$total$sd`, rezultând un coeficient de consistență internă *alfa=`r COEficie$total$raw_alpha`* (CI~95%~= `r alpha.ci(COEficie$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(COEficie$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r COEficie$total$std.alpha`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.679, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(COEficie$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității bun (U=`r round(COEficie$Unidim$Unidim, 3)`). Se constată că itemul *I160*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r COEficie$alpha.drop[3,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COEficie$item.stats[3,2]`, respectiv r=`r COEficie$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Planificare** este m~r~=`r COOrdine$total$average_r`, cu media scalei m~scale~=`r COOrdine$total$mean` și abaterea standard sd~scale~=`r COOrdine$total$sd`, rezultând un coeficient de consistență internă *alfa=`r COOrdine$total$raw_alpha`* (CI~95%~= `r alpha.ci(COOrdine$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(COOrdine$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r COOrdine$total$std.alpha`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.650, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(COOrdine$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(COOrdine$Unidim$Unidim, 3)`). Se constată că itemul *I170*, dacă ar fi eliminat, ar conduce la creșterea ușoară a consistenței scalei (alpha=`r COOrdine$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COOrdine$item.stats[6,2]`, respectiv r=`r COOrdine$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei), în timp ce eliminarea itemului *179* nu ar determina modificarea consistenței scalei (alpha=`r COOrdine$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind mică (r=`r COOrdine$item.stats[7,2]`, respectiv r=`r COOrdine$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei)
+
+
++ În cazul factorului **Rigiditate morală**, media corelațiilor inter-itemi este m~r~=`r CODatori$total$average_r`, cu media scalei m~scale~=`r CODatori$total$mean` și abaterea standard sd~scale~=`r CODatori$total$sd`, rezultând un coeficient de consistență internă *alfa=`r CODatori$total$raw_alpha`* (CI~95%~= `r alpha.ci(CODatori$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(CODatori$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r CODatori$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.648, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(CODatori$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității destul de slab (U=`r round(CODatori$Unidim$Unidim, 3)`). Se constată că itemul *I147*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r CODatori$alpha.drop[1,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r CODatori$item.stats[1,2]`, respectiv r=`r CODatori$item.stats[1,4]` după corecția de suprapunere și fidelitate a scalei)
+
++ Pentru factorul **Ambiție**, media corelațiilor inter-itemi este m~r~=`r COAmbiti$total$average_r`, cu media scalei m~scale~=`r COAmbiti$total$mean` și abaterea standard sd~scale~=`r COAmbiti$total$sd`, rezultând un coeficient de consistență internă *alfa=`r COAmbiti$total$raw_alpha`* (CI~95%~= `r alpha.ci(COAmbiti$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(COAmbiti$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r COAmbiti$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.646, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(COAmbiti$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității destul de slab (U=`r round(COAmbiti$Unidim$Unidim, 3)`). Se constată că itemii *I172* și *I188*, dacă ar fi eliminați, nu ar conduce la modificarea consistenței scalei (alpha=`r COAmbiti$alpha.drop[5,1]` respectiv alpha=`r COAmbiti$alpha.drop[8,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COAmbiti$item.stats[5,2]`, și r=`r COAmbiti$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r COAmbiti$item.stats[8,2]`, și r=`r COAmbiti$item.stats[8,4]` după corecția de suprapunere și fidelitate a scalei)
+
++ Factorul **Perseverență**, are o medie a corelațiilor inter-itemi m~r~=`r COPersev$total$average_r`, cu media scalei m~scale~=`r COPersev$total$mean` și abaterea standard sd~scale~=`r COPersev$total$sd`, rezultând un coeficient de consistență internă *alfa=`r COPersev$total$raw_alpha`* (CI~95%~= `r alpha.ci(COPersev$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(COPersev$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r COPersev$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.655, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(COPersev$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(COPersev$Unidim$Unidim, 3)`).
+
++ În fine, factorul **Prudență**, are o medie a corelațiilor inter-itemi m~r~=`r COPruden$total$average_r`, cu media scalei m~scale~=`r COPruden$total$mean` și abaterea standard sd~scale~=`r COPruden$total$sd`, rezultând un coeficient de consistență internă *alfa=`r COPruden$total$raw_alpha`* (CI~95%~= `r alpha.ci(COPruden$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(COPruden$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r COPruden$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.729, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(COPruden$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(COPruden$Unidim$Unidim, 3)`).  Se constată că itemul *I174*, dacă ar fi eliminat, nu ar determina creșterea consistenței scalei (alpha=`r COPruden$alpha.drop[4,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COPruden$item.stats[4,2]`, respectiv r=`r COPruden$item.stats[4,4]` după corecția de suprapunere și fidelitate a scalei)
+
+```{r cons-conscientiousness-gender, echo = F, include = F}
+  # Valori functie de gen
+COEficie <- date %>%  select(gen, I145, I154, I160, I162, I169, I178, I184, I192) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+COOrdine <- date %>%  select(gen, I146, I149, I155, I161, I163, I170, I179, I185) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+CODatori <- date %>%  select(gen, I147, I150, I156, I164, I165, I171, I180, I186) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+COAmbiti <- date %>%  select(gen, I148, I151, I157, I166, I172, I181, I187, I188) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+COPersev <- date %>%  select(gen, I152, I158, I167, I173, I175, I182, I189, I191) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+COPruden <- date %>%  select(gen, I153, I159, I168, I174, I176, I177, I183, I190) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+```
+
+Analiza consistenței în funcție de **genul biologic** nu pune în evidență comportamente diferite ale bărbaților în comparație cu femeile, cu excepția factoruli **Rigiditate morală**, unde consistențele sunt ușor mai reduse la bărbați în comparație cu femeile:
+
++ Factorul **Eficiență personală**: Bărbați: alpha=`r COEficie[[1]]$total$raw_alpha`, Femei: alpha=`r COEficie[[2]]$total$raw_alpha`.
+
++ Factorul **Planificare**: Bărbați: alpha=`r COOrdine[[1]]$total$raw_alpha`, Femei: alpha=`r COOrdine[[2]]$total$raw_alpha`.
+
++ Factorul **Rigiditate modală**: Bărbați: alpha=`r CODatori[[1]]$total$raw_alpha`, Femei: alpha=`r CODatori[[2]]$total$raw_alpha`.
+
++ Factorul **Ambiție**: Bărbați: alpha=`r COAmbiti[[1]]$total$raw_alpha`, Femei: alpha=`r COAmbiti[[2]]$total$raw_alpha`.
+
++ Factorul **Perseverență**: Bărbați: alpha=`r COPersev[[1]]$total$raw_alpha`, Femei: alpha=`r COPersev[[2]]$total$raw_alpha`.
+
++ Factorul **Prudență**: Bărbați: alpha=`r COPruden[[1]]$total$raw_alpha`, Femei: alpha=`r COPruden[[2]]$total$raw_alpha`.
+
+#### Openness to experience
+```{r cons-openness, echo = F, include = F}
+  # Valori totale
+  DEImagin <- date %>% select(I193, I197, I202, I208, I210, I217, I226, I232) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEIntere <- date %>% select(I194, I198, I203, I209, I211, I218, I227, I233) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEEmotio <- date %>% select(I195, I199, I204, I212, I213, I219, I228, I234) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DESpirit <- date %>% select(I196, I205, I214, I220, I223, I229, I235, I236) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEIntele <- date %>% select(I200, I206, I215, I221, I224, I230, I237, I239) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DELibera <- date %>% select(I201, I207, I216, I222, I225, I231, I238, I240) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+```
+```{r OPE-Total, results='asis'}
+con.df <- as.data.frame(DEImagin$total)
+con.df <- rbind(con.df, DEIntere$total, DEEmotio$total, DESpirit$total, 
+                DEIntele$total, DELibera$total); con.df <- select(con.df, -5)
+Var.names <- c( "Imagination", "Artistic interests", "Emotionality",
+                "Adventurousness", "Intellect", "Liberalism")
+con.df <- cbind(Var.names, con.df)
+names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                   "Mean", "SD", "Median")
+
+apa_table(con.df, row.names = F, caption = "Openness to experience - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Imaginație** este m~r~=`r DEImagin$total$average_r`, cu media scalei m~scale~=`r DEImagin$total$mean` și abaterea standard sd~scale~=`r DEImagin$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DEImagin$total$raw_alpha`* (CI~95%~= `r alpha.ci(DEImagin$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DEImagin$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DEImagin$total$std.alpha`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.658, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DEImagin$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(DEImagin$Unidim$Unidim, 3)`). Se constată că itemul *I217*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r DEImagin$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEImagin$item.stats[6,2]`, respectiv r=`r DEImagin$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Interes artistic** este m~r~=`r DEIntere$total$average_r`, cu media scalei m~scale~=`r DEIntere$total$mean` și abaterea standard sd~scale~=`r DEIntere$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DEIntere$total$raw_alpha`* (CI~95%~= `r alpha.ci(DEIntere$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DEIntere$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DEIntere$total$std.alpha`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.732, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DEIntere$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității bun (U=`r round(DEIntere$Unidim$Unidim, 3)`).
+
++ În cazul factorului **Emoționalitate**, media corelațiilor inter-itemi este m~r~=`r DEEmotio$total$average_r`, cu media scalei m~scale~=`r DEEmotio$total$mean` și abaterea standard sd~scale~=`r DEEmotio$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DEEmotio$total$raw_alpha`* (CI~95%~= `r alpha.ci(DEEmotio$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DEEmotio$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DEEmotio$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.671, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DEEmotio$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității destul de redus (U=`r round(DEEmotio$Unidim$Unidim, 3)`). Se constată că itemul *I196 este un item cu varianță negativă și care pare a fi codat invers*, iar dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r DEEmotio$alpha.drop[1,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEEmotio$item.stats[1,2]`, respectiv r=`r DEEmotio$item.stats[1,4]` după corecția de suprapunere și fidelitate a scalei).
+
+
++ Pentru factorul **Spirit aventurier**, media corelațiilor inter-itemi este m~r~=`r DESpirit$total$average_r`, cu media scalei m~scale~=`r DESpirit$total$mean` și abaterea standard sd~scale~=`r DESpirit$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DESpirit$total$raw_alpha`* (CI~95%~= `r alpha.ci(DESpirit$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DESpirit$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DESpirit$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.750, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DESpirit$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r round(DESpirit$Unidim$Unidim, 3)`).
+
++ Factorul **Intelect**, are o medie a corelațiilor inter-itemi m~r~=`r DEIntele$total$average_r`, cu media scalei m~scale~=`r DEIntele$total$mean` și abaterea standard sd~scale~=`r DEIntele$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DEIntele$total$raw_alpha`* (CI~95%~= `r alpha.ci(DEIntele$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DEIntele$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DEIntele$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.572, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DEIntele$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității foarte redus (U=`r round(DEIntele$Unidim$Unidim, 3)`). Se constată că itemul *I230 este un item cu varianță negativă și care pare a fi codat invers*, iar dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r DEIntele$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEIntele$item.stats[6,2]`, respectiv r=`r DEIntele$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Liberalism**, are o medie a corelațiilor inter-itemi m~r~=`r DELibera$total$average_r`, cu media scalei m~scale~=`r DELibera$total$mean` și abaterea standard sd~scale~=`r DELibera$total$sd`, rezultând un coeficient de consistență internă *alfa=`r DELibera$total$raw_alpha`* (CI~95%~= `r alpha.ci(DELibera$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$lower.ci` și `r alpha.ci(DELibera$total$raw_alpha, n.obs=gender$output.table[3], n.var=8, p.val = .05)$upper.ci`, standardizat alfa=`r DELibera$total$std.alpha`), apropiată de cea raportată de autori în manualul probei (*alpha=.607, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r round(DELibera$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității foarte redus (U=`r round(DELibera$Unidim$Unidim, 3)`). Se constată că itemii *I207* și *I216*, dacă ar fi eliminați, ar conduce la creșterea consistenței scalei (alpha=`r DELibera$alpha.drop[2,1]`, respectiv alpha=`r DELibera$alpha.drop[3,1]`), corelația acestora cu scorul total fiind cea mai mică (r=`r DELibera$item.stats[2,2]`, și r=`r DELibera$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r DELibera$item.stats[3,2]`, și r=`r DELibera$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
+```{r cons-openness-gender, echo = F, include = F}
+  # Valori functie de gen
+DEImagin <- date %>%  select(gen, I193, I197, I202, I208, I210, I217, I226, I232) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+DEIntere <- date %>%  select(gen, I194, I198, I203, I209, I211, I218, I227, I233) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+DEEmotio <- date %>%  select(gen, I195, I199, I204, I212, I213, I219, I228, I234) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+DESpirit <- date %>%  select(gen, I196, I205, I214, I220, I223, I229, I235, I236) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+DEIntele <- date %>%  select(gen, I200, I206, I215, I221, I224, I230, I237, I239) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+DELibera <- date %>%  select(gen, I201, I207, I216, I222, I225, I231, I238, I240) %>%
+  group_split(gen) %>% 
+  map(~ psych::alpha(.[-1], cumulative = T, na.rm = T, check.keys = T, n.iter = 100))
+```
+
+Analiza consistenței în funcție de **genul biologic** nu pune în evidență comportamente diferite ale bărbaților în comparație cu femeile, cu excepția factorilor **Emoționalitate**, **Spirit aventurier**, **Intelect** și **Liberalism**, unde consistențele sunt  mai reduse la bărbați în comparație cu femeile:
+
++ Factorul **Imaginație**: Bărbați: alpha=`r DEImagin[[1]]$total$raw_alpha`, Femei: alpha=`r DEImagin[[2]]$total$raw_alpha`.
+
++ Factorul **Interes artistic**: Bărbați: alpha=`r DEIntere[[1]]$total$raw_alpha`, Femei: alpha=`r DEIntere[[2]]$total$raw_alpha`.
+
++ Factorul **Emoționalitate**: Bărbați: alpha=`r DEEmotio[[1]]$total$raw_alpha`, Femei: alpha=`r DEEmotio[[2]]$total$raw_alpha`.
+
++ Factorul **Spirit aventurier**: Bărbați: alpha=`r DESpirit[[1]]$total$raw_alpha`, Femei: alpha=`r DESpirit[[2]]$total$raw_alpha`.
+
++ Factorul **Intelect**: Bărbați: alpha=`r DEIntele[[1]]$total$raw_alpha`, Femei: alpha=`r DEIntele[[2]]$total$raw_alpha`.
+
++ Factorul **Liberalism**: Bărbați: alpha=`r DELibera[[1]]$total$raw_alpha`, Femei: alpha=`r DELibera[[2]]$total$raw_alpha`.
+
+
+## Confirmatory factor analysis
+
+Inventarul BigFive Plus este un model clasic de analiză factorială confirmatorie cu factori de ordin secund necorelați, ce va fi analizat folosindu-se pachetul **lavaan** [@R-lavaan]. Deoarece indicatorii sunt dihotomici, vom folosi *metoda estimării pragurilor categoriilor de răspuns* în care fiecare indicator devine încărcat în factor latent și determină un răspuns activ (1-Da) dacă depășește valoarea prag a sa, determinată de poziția itemului pe continuumul factorului latent. Drept estimator vom folosi unul din categoria metodelor bazate pe cele mai mici pătrate, mai precis **„WLSM”**, ce utilizează doar diagonala matricii ponderate „W” (**„DWLS”**) și folosind, la testele statistici, mediile ajustate. În vederea testării potrivirii globale s-a folosit versiunea „Satorra Bentler” a testului \(\chi\)^2^, ajustându-se mediile [@Skrondal-2005].
+
+#### Extraversion
+```{r sem-extra, echo = F, include = F}
+  date.Extra <- date %>%
+  select (I1, I5, I10, I16, I18, I25, I34, I40,
+          I2, I6, I11, I17, I19, I26, I35, I41,
+          I3, I7, I12, I20, I21, I27, I36, I42,
+          I4, I13, I22, I28, I31, I37, I43, I44,
+          I8, I14, I23, I29, I32, I38, I45, I47,
+          I9, I15, I24, I30, I33, I39, I46, I48)
+  m.Extraversion <- '
+          Friendliness =~ I1 + I5 + I10 + I16 + I18 + I25 + I34 + I40
+          Gregariousness =~ I2 + I6 + I11 + I17 + I19 + I26 + I35 + I41
+          Assertiveness =~ I3 + I7 + I12 + I20 + I21 + I27 + I36 + I42
+          Activity =~ I4 + I13 + I22 + I28 + I31 + I37 + I43 + I44
+          Excitement  =~ I8 + I14 + I23 + I29 + I32 + I38 + I45 + I47
+          Cheerfulness =~ I9 + I15 + I24 + I30 + I33 + I39 + I46 + I48
+          
+          Extraversion =~ Friendliness + Gregariousness + Assertiveness +
+                          Activity + Excitement + Cheerfulness'
+
+  r.Extraversion <- '
+          Friendliness =~ I1 + I5 + I10 + I16 + I18 + I25 + I34 + I40
+          Gregariousness =~ I2 + I6 + I11 + I17 + I19 + I26 + I35 + I41
+          Assertiveness =~ I3 + I12 + I20 + I21 + I27 + I36 + I42
+          Activity =~ I4 + I13 + I22 + I43 + I44
+          #Excitement  =~ I8 + I14 + I23 + I29 + I32 + I38 + I45 + I47
+          Cheerfulness =~ I9 + I15 + I24 + I33 + I39 + I46 + I48
+          
+          Extraversion =~ Friendliness + Gregariousness + Assertiveness +
+                          Activity + Cheerfulness'
+  
+  evaluare.1 <- lavaan(model = m.Extraversion, data = date.Extra,
+                   estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
+                   model.type = "cfa", ordered = names(date.Extra), fixed.x = T)
+  extraversion.1 <- summary(evaluare.1, fit.measures = T, standardized = T, rsquare = T)
+  
+  evaluare.r <- lavaan(model = r.Extraversion, data = date.Extra,
+                   estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
+                   model.type = "cfa", ordered = names(date.Extra), fixed.x = T)
+  extraversion.r <- summary(evaluare.r, fit.measures = T, standardized = T, rsquare = T)
+  
+```
+
+Varianța celor 48 de itemi dihotomici explicată de cei 6 factori latenți a căror varianță, mai apoi, va fi explicată de un factor de ordin doi, mai exact de **dimensiunea Extraversiune**, în urma analizei a generat o soluție stabilă după 29 de iterații, estimându-se un număr `r as.numeric(extraversion.1$FIT["npar"])` parametri liberi, pentru o estimare validă fiind necesare minimum `r as.numeric(extraversion.1$FIT["npar"]) * 10` observații, ideal `r as.numeric(extraversion.1$FIT["npar"]) * 20` observații, condiția volumului lotului de cercetare fiind îndeplinită.
+
+Modelul global cu un singur factor latent de ordin doi nu este însă susținut în mod corespunzător de date *(Robust \(\chi\)^2^~(`r as.numeric(extraversion.1$FIT["df.scaled"])`)~=`r as.numeric(extraversion.1$FIT["chisq.scaled"])`, p=`r as.numeric(extraversion.1$FIT["pvalue.scaled"])`)*, testul de potrivire a modelului eșuând și respingându-se ipoteza nulă **H~0~:** *Nu există nicio discrepanță statistic semnificativă între covarianțele stipulate la nivelul populației și covarianțele estimate de model.* Erorile de aproximare sunt însă acceptabile *(RMSEA=`r as.numeric(extraversion.1$FIT["rmsea"])`, p=`r as.numeric(extraversion.1$FIT["rmsea.pvalue"])`, CI~90%~=`r as.numeric(extraversion.1$FIT["rmsea.ci.lower"])` - `r as.numeric(extraversion.1$FIT["rmsea.ci.upper"])`)*, chiar dacă ipoteza nulă de potrivire **H~0~:** *Reziduurile standardizate dintre covarianțele rezultate din date și matricea ipotetică de covarianțe sunt nule* este respinsă, valoarea arătând eșecul testul de nepotrivire (\(\epsilon\)>.10) și reziduuri standardizate statistic semnificative între covarianțele rezultate din date și matricea ipotetică de covarianțe.
+
+Indicele Tucker-Lewis de comparare cu modelul de bază *(Robust TLI=`r as.numeric(extraversion.1$FIT["tli.scaled"])`, SRMR=`r as.numeric(extraversion.1$FIT["srmr"])`)* arată că modelul se îmbunătățește cu `r as.numeric(extraversion.1$FIT["tli.scaled"]) * 100`% în comparație cu modelul nul, în condițiile în care indicatorul standardizat al reziduurilor are o valoare ușor ridicată.
+
+Din cauza unei probleme de identificare empirică și care a generat o matrice neinversabilă, erorile standard ale estimării parametrilor nu au putut fi calculate, prin urmare nici testele statistice, așadar parametrii vor fi apreciați pe baza valorilor nestandardizate și standardizate.
+
+```{r EXT-diag, fig.align = 'center', fig.cap = "CFA path diagram for latent trait Extraversion. Loading coefficients are reported unstandardized and standardizes"}
+  knitr::include_graphics("imgs/EXT.png")
+```
+#### Agreeableness
+```{r sem-agrea, echo = F, include = F}
+  date.Agrea<- date %>%
+  select (I49, I53, I58, I64, I66, I73, I82, I88,
+          I50, I54, I59, I65, I67, I74, I83, I89,
+          I51, I55, I60, I68, I69, I75, I84, I90,
+          I52, I61, I70, I76, I79, I85, I91, I92,
+          I56, I62, I71, I77, I80, I86, I93, I95,
+          I57, I63, I72, I78, I81, I87, I94, I96)
+  m.Agreeableness <- '
+          Trust =~ I49 + I53 + I58 + I64 + I66 + I73 + I82 + I88
+          Morality =~ I50 + I54 + I59 + I65 + I67 + I74 + I83 + I89
+          Altruism =~ I51 + I55 + I60 + I68 + I69 + I75 + I84 + I90
+          Cooperation =~ I52 + I61 + I70 + I76 + I79 + I85 + I91 + I92
+          Modesty  =~ I56 + I62 + I71 + I77 + I80 + I86 + I93 + I95
+          Sympathy =~ I57 + I63 + I72 + I78 + I81 + I87 + I94 + I96
+          
+          Agreeableness =~ Trust + Morality + Altruism +
+                          Cooperation + Modesty + Sympathy'
+  # Evaluarea modelului
+evaluare.1 <- lavaan(model = m.Agreeableness, data = date.Agrea,
+                   estimator = "WLSM", test = "Satorra.Bentler",
+                   model.type="cfa", verbose = T, warn = T, auto.var = T,
+                   ordered = names(date.Agrea), fixed.x = T)
+agreeableness.1 <- summary(evaluare.1, fit.measures = T, standardized = T, rsquare = T) 
+  
+```
+
+Varianța celor 48 de itemi dihotomici explicată de cei 6 factori latenți a căror varianță, mai apoi, va fi explicată de un factor de ordin doi, mai exact de **dimensiunea Agreabilitate**, în urma analizei a generat o soluție stabilă după 29 de iterații, estimându-se un număr `r as.numeric(agreeableness.1$FIT["npar"])` parametri liberi, pentru o estimare validă fiind necesare minimum `r as.numeric(agreeableness.1$FIT["npar"]) * 10` observații, ideal `r as.numeric(agreeableness.1$FIT["npar"]) * 20` observații, condiția volumului lotului de cercetare fiind îndeplinită.
+
+Modelul global cu un singur factor latent de ordin doi nu este însă susținut în mod corespunzător de date *(Robust \(\chi\)^2^~(`r as.numeric(agreeableness.1$FIT["df.scaled"])`)~=`r as.numeric(agreeableness.1$FIT["chisq.scaled"])`, p=`r as.numeric(agreeableness.1$FIT["pvalue.scaled"])`)*, testul de potrivire a modelului eșuând și respingându-se ipoteza nulă **H~0~:** *Nu există nicio discrepanță statistic semnificativă între covarianțele stipulate la nivelul populației și covarianțele estimate de model.* Erorile de aproximare sunt însă acceptabile *(RMSEA=`r as.numeric(agreeableness.1$FIT["rmsea"])`, p=`r as.numeric(agreeableness.1$FIT["rmsea.pvalue"])`, CI~90%~=`r as.numeric(agreeableness.1$FIT["rmsea.ci.lower"])` - `r as.numeric(agreeableness.1$FIT["rmsea.ci.upper"])`)*, chiar dacă ipoteza nulă de potrivire **H~0~:** *Reziduurile standardizate dintre covarianțele rezultate din date și matricea ipotetică de covarianțe sunt nule* este respinsă, valoarea arătând eșecul testul de nepotrivire (\(\epsilon\)>.10) și reziduuri standardizate statistic semnificative între covarianțele rezultate din date și matricea ipotetică de covarianțe.
+
+Indicele Tucker-Lewis de comparare cu modelul de bază *(Robust TLI=`r as.numeric(agreeableness.1$FIT["tli.scaled"])`, SRMR=`r as.numeric(agreeableness.1$FIT["srmr"])`)* arată că modelul se îmbunătățește cu `r as.numeric(agreeableness.1$FIT["tli.scaled"]) * 100`% în comparație cu modelul nul, în condițiile în care indicatorul standardizat al reziduurilor are o valoare mare.
+
+Din cauza unei probleme de identificare empirică și care a generat o matrice neinversabilă, erorile standard ale estimării parametrilor nu au putut fi calculate, prin urmare nici testele statistice, așadar parametrii vor fi apreciați pe baza valorilor nestandardizate și standardizate.
+
+```{r AGR-diag, fig.align = 'center', fig.cap = "CFA path diagram for latent trait Agreeableness. Loading coefficients are reported unstandardized and standardizes"}
+  knitr::include_graphics("imgs/AGR.png")
+```
+#### Neuroticism
+
+#### Conscientiousness
+
+#### Openness to experience
+
+## Extraversion's parameters
+
+În privința **dimensiunii Extraversiune**, itemii se caracterizează printr-o consistență internă ridicată la nivelul fațetelor (peste .60), totuși modelul explicativ cu factori de ordin secund nu este bine susținut de date (*\(\chi\)^2^~(`r as.numeric(extraversion.1$FIT["df.scaled"])`)~=`r as.numeric(extraversion.1$FIT["chisq.scaled"])`, p=`r as.numeric(extraversion.1$FIT["pvalue.scaled"])`, TLI=`r as.numeric(extraversion.1$FIT["tli.scaled"])`, SRMR=`r as.numeric(extraversion.1$FIT["srmr"])`, RMSEA=`r as.numeric(extraversion.1$FIT["rmsea"])`, p=`r as.numeric(extraversion.1$FIT["rmsea.pvalue"])`, CI~90%~=`r as.numeric(extraversion.1$FIT["rmsea.ci.lower"])` - `r as.numeric(extraversion.1$FIT["rmsea.ci.upper"])`*).
+
+```{r EXT-result, include=F, echo=F}
+  b_high_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Extraversion" & extraversion.1$PE$rhs == "Gregariousness" & extraversion.1$PE$op == "=~"), 5]
+  beta_high_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Extraversion" & extraversion.1$PE$rhs == "Gregariousness" & extraversion.1$PE$op == "=~"), 11]
+  r_high_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Gregariousness" & extraversion.1$PE$op == "r2"), 5]
+
+  b_low_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Extraversion" & extraversion.1$PE$rhs == "Excitement" & extraversion.1$PE$op == "=~"), 5]
+  beta_low_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Extraversion" & extraversion.1$PE$rhs == "Excitement" & extraversion.1$PE$op == "=~"), 11]
+  r_low_EXT <- extraversion.1$PE[which(extraversion.1$PE$lhs == "Excitement" & extraversion.1$PE$op == "r2"), 5]
+```
+
+**Extraversiunea**, ca factor latent de ordin doi, încarcă cel mai puternic factorul latent *Sociabilitate* (B=`r b_high_EXT`, \(\beta\)=`r beta_high_EXT`, R^2^=`r r_high_EXT`) și cel mai slab factorul latent *Excitabilitate* (B=`r b_low_EXT`, \(\beta\)=`r beta_low_EXT`, R^2^=`r r_low_EXT`), valorile varianței explicate și ale coeficientului de încărcare sugerând, de fapt, că *Excitabilitatea* nu reprezintă o fațetă a extraversiunii, cu atât mai mult cu cât cei 8 itemi sunt încărcați foarte bine de acesta
+
+```{r EXT-Loading, results='asis'}
+  load.tbl <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Friendliness" & extraversion.1$PE$op == "=~"),])
+  load.tbl <- select(load.tbl, 3, 5, 7, 8, 10)
+  load.tbl <- cbind(rep("Friendliness", times = 8), load.tbl)
+  names(load.tbl) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+
+  load.tbl.2 <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Gregariousness" & extraversion.1$PE$op == "=~"),])
+  load.tbl.2 <- select(load.tbl.2, 3, 5, 7, 8, 10)
+  load.tbl.2 <- cbind(rep("Gregariousness", times = 8), load.tbl.2)
+  names(load.tbl.2) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+  
+  load.tbl.3 <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Assertiveness" & extraversion.1$PE$op == "=~"),])
+  load.tbl.3 <- select(load.tbl.3, 3, 5, 7, 8, 10)
+  load.tbl.3 <- cbind(rep("Assertiveness", times = 8), load.tbl.3)
+  names(load.tbl.3) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+  
+  load.tbl.4 <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Activity" & extraversion.1$PE$op == "=~"),])
+  load.tbl.4<- select(load.tbl.4, 3, 5, 7, 8, 10)
+  load.tbl.4 <- cbind(rep("Activity", times = 8), load.tbl.4)
+  names(load.tbl.4) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+
+  load.tbl.5 <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Excitement" & extraversion.1$PE$op == "=~"),])
+  load.tbl.5 <- select(load.tbl.5, 3, 5, 7, 8, 10)
+  load.tbl.5 <- cbind(rep("Excitement", times = 8), load.tbl.5)
+  names(load.tbl.5) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+
+  load.tbl.6 <- as.data.frame(extraversion.1$PE[which(extraversion.1$PE$lhs == "Cheerfulness" & extraversion.1$PE$op == "=~"),])
+  load.tbl.6 <- select(load.tbl.6, 3, 5, 7, 8, 10)
+  load.tbl.6 <- cbind(rep("Cheerfulness", times = 8), load.tbl.6)
+  names(load.tbl.6) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
+
+  apa_table(load.tbl, row.names = F, caption = "Loadings for Friendliness' latent trait")
+  apa_table(load.tbl.2, row.names = F, caption = "Loadings for Gregariousness' latent trait")
+  apa_table(load.tbl.3, row.names = F, caption = "Loadings for Assertiveness' latent trait")
+  apa_table(load.tbl.4, row.names = F, caption = "Loadings for Activity's latent trait")
+  apa_table(load.tbl.5, row.names = F, caption = "Loadings for Excitement's latent trait")
+  apa_table(load.tbl.6, row.names = F, caption = "Loadings for Cheerfulness' latent trait")
+```
+```{r EXT-items, include=F, echo=F}
+  I7.N <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I7" & extraversion.1$PE$op == "r2"), 3]
+  I7.R <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I7" & extraversion.1$PE$op == "r2"), 5]
+  I7.B <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I7" & extraversion.1$PE$op == "=~"), 5]
+  I7.Beta <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I7" & extraversion.1$PE$op == "=~"), 11]
+  
+  I28.N <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I28" & extraversion.1$PE$op == "r2"), 3]
+  I28.R <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I28" & extraversion.1$PE$op == "r2"), 5]
+  I28.B <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I28" & extraversion.1$PE$op == "=~"), 5]
+  I28.Beta <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I28" & extraversion.1$PE$op == "=~"), 11]
+  
+  I31.N <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I31" & extraversion.1$PE$op == "r2"), 3]
+  I31.R <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I31" & extraversion.1$PE$op == "r2"), 5]
+  I31.B <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I31" & extraversion.1$PE$op == "=~"), 5]
+  I31.Beta <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I31" & extraversion.1$PE$op == "=~"), 11]
+  
+  I37.N <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I37" & extraversion.1$PE$op == "r2"), 3]
+  I37.R <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I37" & extraversion.1$PE$op == "r2"), 5]
+  I37.B <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I37" & extraversion.1$PE$op == "=~"), 5]
+  I37.Beta <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I37" & extraversion.1$PE$op == "=~"), 11]
+  
+  I30.N <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I30" & extraversion.1$PE$op == "r2"), 3]
+  I30.R <- extraversion.1$PE[which(extraversion.1$PE$lhs == "I30" & extraversion.1$PE$op == "r2"), 5]
+  I30.B <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I30" & extraversion.1$PE$op == "=~"), 5]
+  I30.Beta <- extraversion.1$PE[which(extraversion.1$PE$rhs == "I30" & extraversion.1$PE$op == "=~"), 11]
+```
+
+În privința itemilor problematici, remarcăm itemul **`r I7.N`** încărcat foarte slab de factorul **Asertivitate** (B=`r I7.B`, \(\beta\)=`r I7.Beta`, R^2^=`r I7.R`), itemii **`r I28.N`, `r I31.N` și `r I37.N`** încărcați foarte slab de factorul **Activitate** (Itemul 28: B=`r I28.B`, \(\beta\)=`r I28.Beta`, R^2^=`r I28.R`, Itemul 31: B=`r I31.B`, \(\beta\)=`r I31.Beta`, R^2^=`r I31.R` și Itemul 37: B=`r I37.B`, \(\beta\)=`r I37.Beta`, R^2^=`r I37.R`), precum și itemul **`r I30.N`** încărcat foarte slab de factorul **Veselie** (B=`r I30.B`, \(\beta\)=`r I30.Beta`, R^2^=`r I30.R`)
+
+Respecificând modelul prin eliminarea itemilor problematici și a factorului latent *Excitabilitate*, obținem o îmbunătățire a modelului în ce privește potrivirea globală (\(\chi\)^2^~(`r as.numeric(extraversion.r$FIT["df.scaled"])`)~=`r as.numeric(extraversion.r$FIT["chisq.scaled"])`, p=`r as.numeric(extraversion.r$FIT["pvalue.scaled"])`,  RMSEA=`r as.numeric(extraversion.r$FIT["rmsea"])`, p=`r as.numeric(extraversion.r$FIT["rmsea.pvalue"])`, CI~90%~=`r as.numeric(extraversion.r$FIT["rmsea.ci.lower"])` - `r as.numeric(extraversion.r$FIT["rmsea.ci.upper"])` față de \(\chi\)^2^~(`r as.numeric(extraversion.1$FIT["df.scaled"])`)~=`r as.numeric(extraversion.1$FIT["chisq.scaled"])`, p=`r as.numeric(extraversion.1$FIT["pvalue.scaled"])`,  RMSEA=`r as.numeric(extraversion.1$FIT["rmsea"])`, p=`r as.numeric(extraversion.1$FIT["rmsea.pvalue"])`, CI~90%~=`r as.numeric(extraversion.1$FIT["rmsea.ci.lower"])` - `r as.numeric(extraversion.1$FIT["rmsea.ci.upper"])`), însă noul model tot nu este susținut în mod corespunzător de datele observate.
+
+Singurul aspect remarcabil îl reprezintă creșterea capacității explicative față de modelul nul la `r as.numeric(extraversion.r$FIT["tli.scaled"]) * 100`% (TLI=`r as.numeric(extraversion.r$FIT["tli.scaled"])`, SRMR=`r as.numeric(extraversion.r$FIT["srmr"])`) față de modelul inițial cu `r as.numeric(extraversion.1$FIT["tli.scaled"]) * 100`% (TLI=`r as.numeric(extraversion.1$FIT["tli.scaled"])`, SRMR=`r as.numeric(extraversion.1$FIT["srmr"])`).
+
+## Agreeableness' parameters
+
+
+## Neuroticism's parameters
+
+## Conscientiousness' parameters
+
+## Openness to experience's parameters
+
+
+
+# Discussion
+
+\newpage
+
+# References
+
+```{=tex}
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+```
+::: {#refs custom-style="Bibliography"}
+:::
+
+\endgroup
