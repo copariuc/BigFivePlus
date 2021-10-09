@@ -40,10 +40,16 @@ sat.2.2 <- omega(omegaData, nfactors = 2, flip = T,  fm = "pc", poly = T,
 sat.2.3 <- omega(omegaData, nfactors = 2, flip = T,  fm = "pc", poly = T,
                    title = "Friendliness", plot = T, option="second", digits = 2)
 cat("\014"); sat.3
+cat("\014"); sat.3$schmid$sl; sat.3$schmid; sat.3$schmid$gloading
+cat("\014");sat.3$gstats
+sat.3$stats
+
 cat("\014"); sat.2.1
 cat("\014"); sat.2.2
 cat("\014"); sat.2.3
-sat.3$stats
+sat.3$schmid
+
+
 sat.2.1$stats
 sat.2.2$stats
 

@@ -568,26 +568,49 @@ Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` ș
 ### Extraversion
 ```{r sat-agreeableness, echo = F, include = F}
   # Compute saturation for Friendliness
-  omegaData <- date %>%dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40)
+  omegaData <- date %>% dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40)
   colnames(omegaData) <- c("I01", "I05", "I10", "I16", "I18", "I25", "I34", "I40")
   sat.3 <- omega(omegaData, nfactors = 3, flip = T,  fm = "pc", poly = T,
                    title = "Friendliness", plot = T, digits = 2)
-  sat.2.1 <- omega(omegaData, nfactors = 2, flip = T,  fm = "pc", poly = T,
-                   title = "Friendliness", plot = T, option="equal", digits = 2)
-  sat.2.2 <- omega(omegaData, nfactors = 2, flip = T,  fm = "pc", poly = T,
-                   title = "Friendliness", plot = T, option="first", digits = 2)
-  sat.2.3 <- omega(omegaData, nfactors = 2, flip = T,  fm = "pc", poly = T,
-                   title = "Friendliness", plot = T, option="second", digits = 2)
   # Retuning values - Friendliness
   Afe.omega.h <- sat.3$omega_h; Afe.omega.inf <- sat.3$omega.lim; 
   Afe.lambda.6 <- sat.3$omega.tot; Afe.alpha = sat.3$alpha
-  Afe.G.min <- round(min(sat.3$schmid$sl[1]), 2); Afe.G.max <- round(max(sat.3$schmid$sl[1]), 2)
-  Afe.F1.min <- round(min(sat.3$schmid$sl[2]), 2); Afe.F1.max <- round(max(sat.3$schmid$sl[2]), 2)
-  Afe.F2.min <- round(min(sat.3$schmid$sl[3]), 2); Afe.F2.max <- round(max(sat.3$schmid$sl[3]), 2)
-  Afe.F3.min <- round(min(sat.3$schmid$sl[4]), 2); Afe.F3.max <- round(max(sat.3$schmid$sl[4]), 2)
+  ## Subcomponents analysis - Friendliness
+  Afe.G.min <- round(min(sat.3$schmid$sl[,1]), 2); Afe.G.max <- round(max(sat.3$schmid$sl[,1]), 2)
+  Afe.F1.min <- round(min(sat.3$schmid$sl[,2]), 2); Afe.F1.max <- round(max(sat.3$schmid$sl[,2]), 2)
+  Afe.F2.min <- round(min(sat.3$schmid$sl[,3]), 2); Afe.F2.max <- round(max(sat.3$schmid$sl[,3]), 2)
+  Afe.F3.min <- round(min(sat.3$schmid$sl[,4]), 2); Afe.F3.max <- round(max(sat.3$schmid$sl[,4]), 2)
   Afe.G.F1 <- round(sat.3$schmid$gloading[1], 2); Afe.G.F2 <- round(sat.3$schmid$gloading[2], 2)
   Afe.G.F3 <- round(sat.3$schmid$gloading[3], 2)
-  
+  ## Items fit analysis - Friendliness
+  Afe.it.df <- round(sat.3$schmid$dof, 2); Afe.it.n <- round(sat.3$schmid$n.obs, 2)
+  Afe.it.chi <- round(sat.3$schmid$STATISTIC, 2); Afe.it.p <- round(sat.3$schmid$PVAL, 2)
+  Afe.it.RMSR <- round(sat.3$schmid$rms, 2); Afe.it.Fit <- round(sat.3$schmid$objective, 2)
+  ## Hypothesis that 1 factor is sufficient - Friendliness
+  Afe.1.df <- round(sat.3$gstats$dof, 2); Afe.1.n <- round(sat.3$gstats$n.obs, 2)
+  Afe.1.chi <- round(sat.3$gstats$STATISTIC, 2); Afe.1.p <- round(sat.3$gstats$PVAL, 2)
+  Afe.1.RMSR <- round(sat.3$gstats$rms, 2); Afe.1.CRMSR <- round(sat.3$gstats$crms, 2); 
+  Afe.1.Fit <- round(sat.3$gstats$objective, 2); Afe.1.TLI <- round(sat.3$gstats$TLI, 2)
+  Afe.1.BIC <- round(sat.3$gstats$BIC, 2); Afe.1.R2 <- round(sat.3$gstats$R2, 2)
+  Afe.1.RMSEA <- round(sat.3$gstats$RMSEA[1], 2); Afe.1.RMSEA.CI <- round(sat.3$gstats$RMSEA[4], 2)
+  Afe.1.RMSEA.LO <- round(sat.3$gstats$RMSEA[2], 2); Afe.1.RMSEA.HI <- round(sat.3$gstats$RMSEA[3], 2)
+  ## Hypothesis that 4 factor are sufficient - Friendliness
+  Afe.4.df <- round(sat.3$stats$dof, 2); Afe.4.n <- round(sat.3$stats$n.obs, 2)
+  Afe.4.chi <- round(sat.3$stats$STATISTIC, 2); Afe.4.p <- round(sat.3$stats$PVAL, 2)
+  Afe.4.RMSR <- round(sat.3$stats$rms, 2); Afe.4.CRMSR <- round(sat.3$stats$crms, 2); 
+  Afe.4.Fit <- round(sat.3$stats$objective, 2); Afe.4.TLI <- round(sat.3$stats$TLI, 2)
+  Afe.4.RMSEA <- round(sat.3$stats$RMSEA[1], 2); Afe.4.RMSEA.CI <- round(sat.3$stats$RMSEA[4], 2)
+  Afe.4.RMSEA.LO <- round(sat.3$stats$RMSEA[2], 2);  Afe.4.RMSEA.HI <- round(sat.3$stats$RMSEA[3], 2)
+  Afe.4.BIC <- round(sat.3$stats$BIC, 2); Afe.4.R2.G <- round(sat.3$stats$R2[1], 2)
+  Afe.4.R2.F1 <- round(sat.3$stats$R2[2], 2); Afe.4.R2.F2 <- round(sat.3$stats$R2[3], 2)
+  Afe.4.R2.F3 <- round(sat.3$stats$R2[4], 2)
+  # Saturation by components - Friendliness
+  Afe.OT.G <- round(sat.3$omega.group$total[1], 2); Afe.OT.F1 <- round(sat.3$omega.group$total[2], 2)
+  Afe.OT.F2 <- round(sat.3$omega.group$total[3], 2); Afe.OT.F3 <- round(sat.3$omega.group$total[4], 2)
+  Afe.OGE.G <- round(sat.3$omega.group$general[1], 2); Afe.OGE.F1 <- round(sat.3$omega.group$general[2], 2)
+  Afe.OGE.F2 <- round(sat.3$omega.group$general[3], 2); Afe.OGE.F3 <- round(sat.3$omega.group$general[4], 2)
+  Afe.OGG.G <- round(sat.3$omega.group$group[1], 2); Afe.OGG.F1 <- round(sat.3$omega.group$group[2], 2)
+  Afe.OGG.F2 <- round(sat.3$omega.group$group[3], 2); Afe.OGG.F3 <- round(sat.3$omega.group$group[4], 2)
 ```
 ### Agreeableness
 ```{r EXT-sat-3, fig.align = 'center', fig.cap = "Saturation for a hypotetically lumpy scale loaded in one general dimension (Agreeableness) and 3 components."}
@@ -597,11 +620,21 @@ Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` ș
 
 În privința sub-componentelor rezultate (vezi figura \@ref(fig:EXT-sat-3)), **factorul general (Agreeableness)** saturează cei 8 itemi cu valori cuprinse între `r Afe.G.min` și `r Afe.G.max`, valoarea proprie a factorului general fiind *3.12*. **Prima sub-componentă** este cea mai importantă, având o valoare proprie de *1.77*, încărcând itemii cu valori cuprinse între `r Afe.F1.min` și `r Afe.F1.max`. Sensul și semnificația aceste sub-componente este dată de itemii **I01**, **I10** și **I16**. Următoarea sub-componentă, ca importanță, este **a treia sub-componentă** cu o valoare proprie de *0.94* și care încarcă cei 8 itemi cu valori cuprinse între `r Afe.F3.min` și `r Afe.F3.max`, semnificația fiind determinată de itemii **I25** și **I34**. În fine, ultima componentă este **componenta a doua**, cu o valoare proprie neglijabilă (*0.09*) și care încarcă cei 8 itemi cu valori cuprinse între `r Afe.F2.min` și `r Afe.F2.max` și corespunde mai curând specificului factorului general, specificul acestuia fiind determinat de itemii **I05**, **I18** și **I40**.
 
-Factorul general explică circa *47.5%* din varianța celor 3 sub-componente, fiind, în mod evident, determinat de itemii menționați anterior, specifici celei de-a doua componente (**\(\lambda\)=`r Afe.G.F2`**) celelalte două sub-componente sunt încărcate în mod aproximativ egal de factorul general (\(\lambda\)~F1~=`r Afe.G.F1`, respectiv \(\lambda\)~F3~=`r Afe.G.F3`), cu saturații ușor mai mari în cea de-a treia sub-componentă. 
+Factorul general explică circa *47.5%* din varianța celor 3 sub-componente, fiind, în mod evident, determinat de itemii menționați anterior, specifici celei de-a doua componente (**\(\lambda\)=`r Afe.G.F2`**), celelalte două sub-componente fiind încărcate în mod aproximativ egal de factorul general (**\(\lambda\)~F1~=`r Afe.G.F1`**, respectiv **\(\lambda\)~F3~=`r Afe.G.F3`**), cu saturații ușor mai mari în cea de-a treia sub-componentă.
 
- 
+Se observă că, la nivel global, modul în care cei 8 itemi sunt încărcați de cei 4 factori nu este susținut în mod corespunzător de date **(\(\chi\)^2^(`r Afe.it.df`, `r Afe.it.n`)=`r Afe.it.chi`, p<`r Afe.it.p`, RMSR=`r Afe.it.RMSR`)**, funcția obiectivă indicând un grad de potrivire **fit=`r Afe.it.Fit`**.
 
+În comparație cu acest model, **modelul cu un sigur factor general și fără sub-componente** are o funcție obiectivă de potrivire statistic semnificativ mai mare **(fit= `r Afe.1.Fit`, \(\chi\)^2^(`r Afe.1.df`, `r Afe.1.n`)=`r Afe.1.chi`, p<`r Afe.1.p`)**, reușind să explice mult mai slab varianța itemilor, așadar modelul nu poate fi considerat un model plauzibil **(TLI=`r Afe.1.TLI`, RMSR= `r Afe.1.RMSR`, CRMSR=`r Afe.1.CRMSR`, RMSEA= `r Afe.1.RMSEA`, CI~(`r Afe.1.RMSEA.CI * 100`%)~= `r Afe.1.RMSEA.LO` - `r Afe.1.RMSEA.HI`)**. Chiar în condițiile în care corelația multiplă a scorurilor cu factorul general este **R^2^=`r Afe.1.R2`**, valoarea criteriului informațional bayesian a acestui model este una ridicată **(BIC=`r Afe.1.BIC`)**.
 
+A doua ipoteză testată este aceea în care **sunt suficiente un factor general și 3 sub-componente pentru explicarea varianței itemilor**, o ipoteză care urmează a fi respinsă **(\(\chi\)^2^(`r Afe.4.df`, `r Afe.4.n`)=`r Afe.4.chi`, p<`r Afe.4.p`)**, așadar modelul nu poate fi considerat un model plauzibil **(TLI=`r Afe.4.TLI`, RMSR= `r Afe.4.RMSR`, CRMSR=`r Afe.4.CRMSR`, RMSEA= `r Afe.4.RMSEA`, CI~(`r Afe.4.RMSEA.CI * 100`%)~= `r Afe.4.RMSEA.LO` - `r Afe.4.RMSEA.HI`)**. Valoarea criteriului informațional bayesian a acestui model **(BIC=`r Afe.4.BIC`)**, mai mică în comparație cu modelul cu un singur factor general.
+
+Pe lângă corelația multiplă a scorurilor cu factorul general, **R^2^=`r Afe.4.R2.G`**, existența acestuia fiind una certă, se constată și corelații multiple puternice cu prima sub-componentă **(R^2^=`r Afe.4.R2.F1`)** și cu a treia sub-componentă **(R^2^=`r Afe.4.R2.F3`)**, fapt care ne conduce la ideea existenței unei scale „lumpy”. A doua componentă se pare că este caracteristică doar factorului general, răspunsurile la itemii **I05, I18 și I40** formând un cluster separat în comparație cu celelalte răspunsuri **(R^2^=`r Afe.4.R2.F2`)**.
+
+**Factorului general** are o saturație totală **\(\omega\)~total~= `r Afe.OT.G`**, adică varianța dimensiunii generale explicată atât de acest factor general, cât și de subcomponente, partea de saturație generală fiind **\(\omega\)~general~= `r Afe.OGE.G`**, iar partea de saturație explicată de sub-componente fiind **\(\omega\)~grup~= `r Afe.OGG.G`**. Saturația totală a **primei sub-componente** este **\(\omega\)~total~= `r Afe.OT.F1`**, ea fiind reprezentată de încărcarea pe care o determină factorul general **\(\omega\)~general~= `r Afe.OGE.F1`** și de încărcările secundare ale celorlalte două sub-componente **\(\omega\)~grup~= `r Afe.OGG.F1`**, așadar prima sub-componentă este afectată de de structura dimensional-axială a scalei.
+
+La fel sau lucrurile și în cazul celei **de-a treia sub-componente**, saturația totală fiind **\(\omega\)~total~= `r Afe.OT.F3`**, la aceasta contribuind saturația determinată de factorul general, **\(\omega\)~general~= `r Afe.OGE.F3`**, și saturația determinată de prima și a doua componentă **\(\omega\)~grup~= `r Afe.OGG.F3`**, fiind din nou evidentă influența axei.
+
+**Cea de-a doua componantă** are o saturație totală **\(\omega\)~total~= `r Afe.OT.F3`**, ea fiind determinată aproape în totalitate de factorul general **\(\omega\)~general~= `r Afe.OGE.F2`** și în foarte mică măsură de încărcările componentelor 1 și 3 - **\(\omega\)~grup~= `r Afe.OGG.F2`**. Într-adevăr, se pare că itemii **I05, I18 și I40** sunt încărcați de constructul latent al „agreabilității”, în timp ce restul formează o axă de nuanțare, scala fiind una „lumpy”.
 
 ### Neuroticism
 
