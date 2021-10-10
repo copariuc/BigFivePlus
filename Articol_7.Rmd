@@ -91,15 +91,7 @@ header-includes:
   set.seed(4482)
   knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
   # Import and prepare dataset
-  date <- read.spss("Baza de date.sav", use.value.labels = T, to.data.frame = T)
-  date$online <- factor(date$online, labels = c("Paper-Pencil", "Online"))
-  date$gen <- factor(date$online, labels = c("Male", "Female"))
-  date$studii <- ordered(date$studii, labels = c("Illiterate", 
-                                                 "Primary (4 years)", "Gymnasium (8 years)",
-                                                 "Arts and crafts school", "Highschool (12 years)", 
-                                                 "Post graduated school", 
-                                                 "University (Bachelor level)", 
-                                                 "University (Master level)", "Doctoral school"))
+  load("Date.Rdata")
   # Inluding custom functions
   Skewness.Kurtosis = function(x){
     # Extracting case number and moments
