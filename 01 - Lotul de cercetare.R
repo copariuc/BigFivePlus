@@ -10,6 +10,7 @@ date$studii <- ordered(date$studii, labels = c("Illiterate", "Primary (4 years)"
                                                "Arts and crafts school", "Highschool (12 years)", 
                                                "Post graduated school", "University (Bachelor level)", 
                                                "University (Master level)", "Doctoral school"))
+save(date, file = "Date.Rdata")
 
 # Distributia dupa principalele variabile
 gender <- tab1(date$gen, graph = T,

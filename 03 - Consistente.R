@@ -1,6 +1,9 @@
 # Incarcarea pachetelor necersare
 library(psych); library(dplyr); library(purrr)
 
+# Incarcarea setului de date
+load("Date.RData")
+
 # Extraversiune - ALPHA =====
 cat("\014"); EXAffect <- date %>%
   dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40) %>%
