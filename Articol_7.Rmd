@@ -636,6 +636,52 @@ La fel sau lucrurile și în cazul celei **de-a treia sub-componente**, saturaț
 
 **Cea de-a doua componantă** are o saturație totală **\(\omega\)~total~= `r Afe.OT.F3`**, ea fiind determinată aproape în totalitate de factorul general **\(\omega\)~general~= `r Afe.OGE.F2`** și în foarte mică măsură de încărcările componentelor 1 și 3 - **\(\omega\)~grup~= `r Afe.OGG.F2`**. Într-adevăr, se pare că itemii **I05, I18 și I40** sunt încărcați de constructul latent al „agreabilității”, în timp ce restul formează o axă de nuanțare, scala fiind una „lumpy”.
 
+```{r sat-neuroticism, echo = F, include = F}
+  # Compute saturation for Friendliness
+  omegaData <- date %>% dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40)
+  colnames(omegaData) <- c("I01", "I05", "I10", "I16", "I18", "I25", "I34", "I40")
+  sat.3 <- omega(omegaData, nfactors = 3, flip = T,  fm = "pc", poly = T,
+                   title = "Friendliness", plot = T, digits = 2)
+  # Retuning values - Friendliness
+  Afe.omega.h <- sat.3$omega_h; Afe.omega.inf <- sat.3$omega.lim; 
+  Afe.lambda.6 <- sat.3$omega.tot; Afe.alpha = sat.3$alpha
+  ## Subcomponents analysis - Friendliness
+  Afe.G.min <- round(min(sat.3$schmid$sl[,1]), 2); Afe.G.max <- round(max(sat.3$schmid$sl[,1]), 2)
+  Afe.F1.min <- round(min(sat.3$schmid$sl[,2]), 2); Afe.F1.max <- round(max(sat.3$schmid$sl[,2]), 2)
+  Afe.F2.min <- round(min(sat.3$schmid$sl[,3]), 2); Afe.F2.max <- round(max(sat.3$schmid$sl[,3]), 2)
+  Afe.F3.min <- round(min(sat.3$schmid$sl[,4]), 2); Afe.F3.max <- round(max(sat.3$schmid$sl[,4]), 2)
+  Afe.G.F1 <- round(sat.3$schmid$gloading[1], 2); Afe.G.F2 <- round(sat.3$schmid$gloading[2], 2)
+  Afe.G.F3 <- round(sat.3$schmid$gloading[3], 2)
+  ## Items fit analysis - Friendliness
+  Afe.it.df <- round(sat.3$schmid$dof, 2); Afe.it.n <- round(sat.3$schmid$n.obs, 2)
+  Afe.it.chi <- round(sat.3$schmid$STATISTIC, 2); Afe.it.p <- round(sat.3$schmid$PVAL, 2)
+  Afe.it.RMSR <- round(sat.3$schmid$rms, 2); Afe.it.Fit <- round(sat.3$schmid$objective, 2)
+  ## Hypothesis that 1 factor is sufficient - Friendliness
+  Afe.1.df <- round(sat.3$gstats$dof, 2); Afe.1.n <- round(sat.3$gstats$n.obs, 2)
+  Afe.1.chi <- round(sat.3$gstats$STATISTIC, 2); Afe.1.p <- round(sat.3$gstats$PVAL, 2)
+  Afe.1.RMSR <- round(sat.3$gstats$rms, 2); Afe.1.CRMSR <- round(sat.3$gstats$crms, 2); 
+  Afe.1.Fit <- round(sat.3$gstats$objective, 2); Afe.1.TLI <- round(sat.3$gstats$TLI, 2)
+  Afe.1.BIC <- round(sat.3$gstats$BIC, 2); Afe.1.R2 <- round(sat.3$gstats$R2, 2)
+  Afe.1.RMSEA <- round(sat.3$gstats$RMSEA[1], 2); Afe.1.RMSEA.CI <- round(sat.3$gstats$RMSEA[4], 2)
+  Afe.1.RMSEA.LO <- round(sat.3$gstats$RMSEA[2], 2); Afe.1.RMSEA.HI <- round(sat.3$gstats$RMSEA[3], 2)
+  ## Hypothesis that 4 factor are sufficient - Friendliness
+  Afe.4.df <- round(sat.3$stats$dof, 2); Afe.4.n <- round(sat.3$stats$n.obs, 2)
+  Afe.4.chi <- round(sat.3$stats$STATISTIC, 2); Afe.4.p <- round(sat.3$stats$PVAL, 2)
+  Afe.4.RMSR <- round(sat.3$stats$rms, 2); Afe.4.CRMSR <- round(sat.3$stats$crms, 2); 
+  Afe.4.Fit <- round(sat.3$stats$objective, 2); Afe.4.TLI <- round(sat.3$stats$TLI, 2)
+  Afe.4.RMSEA <- round(sat.3$stats$RMSEA[1], 2); Afe.4.RMSEA.CI <- round(sat.3$stats$RMSEA[4], 2)
+  Afe.4.RMSEA.LO <- round(sat.3$stats$RMSEA[2], 2);  Afe.4.RMSEA.HI <- round(sat.3$stats$RMSEA[3], 2)
+  Afe.4.BIC <- round(sat.3$stats$BIC, 2); Afe.4.R2.G <- round(sat.3$stats$R2[1], 2)
+  Afe.4.R2.F1 <- round(sat.3$stats$R2[2], 2); Afe.4.R2.F2 <- round(sat.3$stats$R2[3], 2)
+  Afe.4.R2.F3 <- round(sat.3$stats$R2[4], 2)
+  # Saturation by components - Friendliness
+  Afe.OT.G <- round(sat.3$omega.group$total[1], 2); Afe.OT.F1 <- round(sat.3$omega.group$total[2], 2)
+  Afe.OT.F2 <- round(sat.3$omega.group$total[3], 2); Afe.OT.F3 <- round(sat.3$omega.group$total[4], 2)
+  Afe.OGE.G <- round(sat.3$omega.group$general[1], 2); Afe.OGE.F1 <- round(sat.3$omega.group$general[2], 2)
+  Afe.OGE.F2 <- round(sat.3$omega.group$general[3], 2); Afe.OGE.F3 <- round(sat.3$omega.group$general[4], 2)
+  Afe.OGG.G <- round(sat.3$omega.group$group[1], 2); Afe.OGG.F1 <- round(sat.3$omega.group$group[2], 2)
+  Afe.OGG.F2 <- round(sat.3$omega.group$group[3], 2); Afe.OGG.F3 <- round(sat.3$omega.group$group[4], 2)
+```
 ### Neuroticism
 
 
