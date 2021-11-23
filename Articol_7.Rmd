@@ -184,9 +184,8 @@ Din punct de vedere al simetriei, distribuția probabilităților de apariție a
 ```
 
 ## Material
-Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], varianta 2020, datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).
+Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).  Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
 
-**TO BE DONE: Prezentarea generală a instrumentului**
 
 ## Procedure
 Analiza va presupune studiul inițial al consistenței interne, omogenității și unidimensionalității, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~), dar și al coeficienților ierarhici de saturație \(\omega\) [@Zinbarg-2007] deoarece deoarece instrumentul nu este unul unifactorial. 
