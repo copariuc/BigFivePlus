@@ -1,0 +1,699 @@
+---
+title             : "Factorial structure of the indicators in Big Five Plus Inventory"
+shorttitle        : "Factorial structure of the indicators in Big Five Plus Inventory"
+author: 
+  - name          : "Cristian Opariuc-Dan"
+    affiliation   : "1,2,3"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Ovidius University Campus, Aleea Universității, No. 2, Constanța, Romania"
+    email         : "copariuc@gmail.com"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - Conceptualization
+      - Writing - Original Draft Preparation
+      - Writing - Data analysis
+  - name          : "Gabriela Nicuță"
+    affiliation   : "3"
+    role:
+      - Writing - Systematic review
+      - Writing - Data analysis
+      - Proofreading
+  - name          : "Ticu Constantin"
+    affiliation   : "3"
+    role:
+      - Data provider
+      - Writing - Review & Editing
+affiliation:
+  - id            : "1"
+    institution   : "Ovidius University, Constanta, Romania"
+  - id            : "2"
+    institution   : "Bucharest University, Bucharest, Romania"
+  - id            : "3"
+    institution   : "Al. I. Cuza University, Iassy, Romania"
+authornote: |
+  Cristian Opariuc-Dan, PhD Lecturer, Department of Administrative Sciences, Ovidius University, Constanta
+  
+  Cristian Opariuc-Dan, PhD Lecturer, Department of Psychology, University of Bucharest, Romania
+  
+  Gabriela Nicuță, Department of Psychology, Al. I. Cuza University, Iassy
+  
+  Ticu Constantin, PhD Professor, Department of Psychology, Al. I. Cuza University, Iassy
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  
+  <!-- https://tinyurl.com/ybremelq -->
+keywords          : "BigFive, Confirmatory Factor Analysis, Homogenity analysis"
+wordcount         : "X"
+bibliography      : ["r-references.bib", "Big Five Plus.bib"]
+link-citations    : TRUE
+biblio-style      : "apalike"
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : yes
+documentclass     : "apa7"
+csl               : "apa.csl"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+header-includes:
+  - \usepackage[document]{ragged2e}
+---
+
+```{r setup, include = FALSE}
+  # Including necessary libraries
+  library(papaja); library(stargazer); library(epiDisplay)
+  library(psych); library(nortest); library(dplyr)
+  library(purrr); library(lavaan)
+
+  # Including references file for R libraries
+  r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+  # Seed for random number generation
+  set.seed(4482)
+  knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+  # Import and prepare dataset
+  load("Date.Rdata")
+  # Inluding custom functions
+  Skewness.Kurtosis = function(x){
+    # Extracting case number and moments
+    w = length(x); m1 = mean(x, na.rm = T); m2 = sum((x-m1)^2, na.rm = T)
+    m3 = sum((x-m1)^3, na.rm = T); m4 = sum((x-m1)^4, na.rm = T); s1 = sd(x, na.rm = T)
+    # Computing skewness and standard error
+    Skewness = w*m3/(w-1)/(w -2)/s1^3
+    SE.Skewness = sqrt(6*w*(w-1)/((w-2)*(w+1)*(w+3)))
+    # Ccomputing kurtosis and standard error
+    Kurtosis = (w*(w+1)*m4-3*m2^2*(w-1))/((w-1)*(w-2)*(w-3)*s1^4)
+    SE.Kurtosis= sqrt(4*(w^2-1)*SE.Skewness^2/((w-3)*(w+5)))
+    # Generating and returning the rezult
+    rez = matrix(c(Skewness, Kurtosis, SE.Skewness, SE.Kurtosis), 2, 
+                 dimnames = list(c("Skewness", "Kurtosis"), c("Value", "SE")))
+    return(rez)}
+```
+
+# Methods
+\justify
+Studiul este unul exploratoriu și urmărește **analiza modului în care modelul teoretic Big Five este susținut de date**. Volumul de date, chiar dacă este unul foarte mare și oferă putere studiului, nu constituie un eșantion deoarece nu s-a utilizat nicio tehnică de eșantionare, ci reprezintă rezultatele unor testări efectuate cu Inventarul de Personalitate Big Five Plus [@BigFive-plus] în perioada 2015 - 2020 pe populația din România. Răspunsurile la itemi au rezultat fie în urma unei administrări online folosindu-se platforma [link](http://www.psihoprofile.ro/), fie în urma administrării clasice, creion-hârtie, apoi a introducerii răspunsurilor în platformă în vederea cotării automate și generării protocoalelor.
+
+La nivel de bază, variabilele manifeste reprezintă cei 244 de itemi dihotomici ai Inventarului de Personalitate Big Five Plus, analiza intrând în domeniul analizelor factoriale confirmatorii folosindu-se indicatori categoriali, mai precis dihotomici, iar acest lucru implică o abordare specifică.
+
+Modelul nu prevede existența unor indicatori încărcați de mai mult de un singur factor latent, fiecare factor latent încărcând 8 indicatori, prin urmare și aceștia vor reprezenta variabile latente categoriale, deoarece o amplitudine de 8 puncte nu-i poate califica drept variabile continui.
+
+Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărcați de una dintre cele 5 dimensiuni Big Five, rezultând un model de analiză factorială de ordin secund [@Byrne-2010] cu factori de ordin secund necorelați, aceștia fiind reprezentați după cum urmează:
+
++ **Extraversion**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Friendliness*, *Gregariousness*, *Assertiveness*, *Activity level*, *Excitement seeking* și *Cheerfulness*.
+
++ **Agreeableness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Trust*, *Morality*, *Altruism*, *Cooperation*, *Modesty* și *Sympathy*.
+
++ **Neuroticism**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Anxiety*, *Anger*, *Depression*, *Timidity*, *Immoderation* și *Vulnerability*.
+
++ **Conscientiousness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Self-efficacy*, *Orderliness*, *Dutifulness*, *Achievement-striving*, *Self-discipline* și *Cautiousness*.
+
++ **Openness to experience**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Imagination*, *Artistic interests*, *Emotionality*, *Adventurousness*, *Intellect* și *Liberalism*.
+
+## Participants
+```{r participants, echo = F, include = F}
+  # Computing data
+  gender <- tab1(date$gen, graph = F)
+  studies <- tab1(date$studii, graph = T)
+  age <- describe(date$varsta)[c(-1, -6, -7, -13)]
+  SK <- Skewness.Kurtosis(date$varsta)
+  normal <- lillie.test(date$varsta)
+  # Returning values - n
+  n <- gender$output.table[3]
+  # Returning values - n by gender
+  n.male <- gender$output.table[1]
+  n.male.prc <- gender$output.table[4]
+  n.female <- gender$output.table[2]
+  n.female.prc <- gender$output.table[2]
+  # Returning values - n by educational level
+  n.st.lic <- studies$output.table[7]
+  n.st.lic.prc <- studies$output.table[18]
+  n.st.hsc <- studies$output.table[5]
+  n.st.hsc.prc <- studies$output.table[16]
+  n.st.mst <- studies$output.table[8]
+  n.st.mst.prc <- studies$output.table[19]
+  n.st.phs <- studies$output.table[6]
+  n.st.phs.prc <- studies$output.table[17]
+  n.st.art <- studies$output.table[4]
+  n.st.art.prc <- studies$output.table[15]
+  n.nost <- studies$output.table[10]
+  n.nost.prc <- studies$output.table[21]
+  # Returning values - Sk and K for age
+  sk <- SK[1, 1]; sk.se <- SK[1, 2]
+  k <- SK[2, 1]; k.se <- SK[2, 2]
+```
+Cercetarea a fost realizată în urma colectării unui număr de `r n` de protocoale **(n=`r n`)**, administrate unui număr de `r n.male` *bărbați* (`r n.male.prc `%) și `r n.female` *femei* (`r n.female.prc`%).
+```{r gender, results='asis'}
+  stargazer::stargazer(gender$output.table, type = "latex", 
+                       header = F, float = T, title = "Participants's gender")
+```
+Sub aspectul **nivelului de studii**, cele mai multe persoane sunt absolvente de *universitate, cu diplomă de licență* (`r n.st.lic`, reprezentând `r n.st.lic.prc`%), fiind urmate de *absolvenții de liceu* (`r n.st.hsc`, reprezentând `r n.st.hsc.prc`%) și de persoanele absolvente de *universitate, cu diplomă de master* (`r n.st.mst`, reprezentând `r n.st.mst.prc`%). Întâlnim, de asemenea, și persoane absolvente de *școli postliceale*, (`r n.st.phs`, reprezentând `r n.st.phs.prc`%) și persoane absolvente de școli de arte și meserii (`r n.st.art`, reprezentând `r n.st.art.prc`%), celelalte categorii fiind mult mai slab reprezentate.
+```{r education, results='asis'}
+    stargazer::stargazer(studies$output.table, type = "latex", 
+                       header = F, float = T,  title = "Participants's educational level")
+```
+Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r n.nost`, reprezentând `r n.nost.prc`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile.
+
+În privința **vârstei participanților**, `r age$n` persoane au date valide. Media de vârstă este de `r age$mean` ani cu o abatere standard de `r age$sd` ani *(m=`r age$mean`, sd=`r age$sd`)*, mediana fiind situată la nivelul vârstei de `r age$median` ani. Participanții au o vârstă cuprinsă între `r age$min` și `r age$max` ani, amplitudinea fiind de `r age$range` ani.
+
+Din punct de vedere al simetriei, distribuția probabilităților de apariție a vârstelor este una *simetrică (Skewness=`r sk`, SE=`r sk.se`)* și *mezocurtică (Kurtosis=`r k`, SE=`r k.se`)*, putând fi asimilată unei distribuții continui normale în ciuda faptului că ipoteza nulă **H~0~:** *Nu există nicio diferență statistic semnificativă între distribuția normală teoretică și distribuția empirică a vârstei (Anderson-Darling A=`r normal$statistic`, p=`r normal$p`)* nu poate fi respinsă.
+```{r age, results='asis'}
+  colnames(age) <- c("N", "Mean", "SD", 
+                     "Median", "Min", "Max", 
+                     "Range", "Skewness", "Kurtosis")
+  apa_table(age, row.names = F, caption = "Participants's age")
+```
+
+## Material
+Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).  Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
+
+
+## Procedure
+Analiza va presupune studiul inițial al consistenței interne, omogenității și unidimensionalității, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~), dar și al coeficienților ierarhici de saturație \(\omega\) [@Zinbarg-2007] deoarece deoarece instrumentul nu este unul unifactorial. 
+În vederea analizei de structură internă și a adecvării la model unidimensional, vom testa, la nivelul fiecărei fațete, atât acest model, cât și două modele alternative, cu două și 3 sub-componente în vederea identificării unei structuri axiale (prezența unor scale cu sub-componente - lumpyness).
+
+Vom testa apoi modelul în care factorul latent încarcă cei 8 indicatori, pentru fiecare dintre cele 6 fațete ale unei dimensiuni, și existența dimensiunii comune pentru toți cei 6 factori latenți.
+
+În urma interpretării parametrilor și a diagnosticului modelelor acestea vor fi respecificate, identificându-se, dacă este cazul, modele explicative mai bune.
+
+## Data analysis
+Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` și următoarele pachete: `r cite_r("r-references.bib")`. 
+
+# Results
+
+**În prima fază** vom prezenta comparativ analizele autorilor privind consistența internă utilizându-se **metoda alpha Cronbach a fidelității tau-echivalente** [@Cronbach-1951], incluzând atât indicatorii globali, cât și cei defalcați în funcție de genul biologic și de modalitatea de administrare. Analiza s-a realizat utilizându-se pachetul **„psych”** [@R-psych], plecându-se de la condiția itemilor cumulativi, scorul total rezultând în urma adunării celor 8 itemi (amplitudinea teoretică de 8 puncte) cu identificarea varianțelor negative ale itemilor și recodare automată și utilizând o reeșantionare neparametrică folosind 100 de eșantioane în vederea verificării stabilității parametrilor.
+
+**În cea de-a doua fază** se vor calcula coeficienții ierarhici de saturație *\(\omega\)h* [@Zinbarg-2007], efectuându-se o analiză ierarhică a componentelor principale cu rotație oblică *(oblimin)* pe baza unei matrici de corelații tetrachorice cu inversarea automată a itemilor ce prezintă covarianțe negative cu factorul general, apoi aplicarea transformării Schmid Leiman asupra acesteia, testându-se astfel un număr de două modele în vederea identificării unei potențiale structuri „lumpyness”: **primul**, în care presupunem că itemii sunt încărcați de trei sub-componente ale factorului general, **al doilea**, în care vom pleca de la ipoteza în care itemii sunt încărcați de două sub-componente ale factorului general, iar în acest caz vom trata trei situații: (1) încărcările factorului general vor fi redistribuite egal pe cele două subcomponente, (2) încărcările factorului general vor fi echivalate cu cele ale primei sub-componente și (3) încărcările factorului general vor fi echivalate cu ale celei de-a doua sub-componentă.
+
+## Internal consistency analysis
+### Extraversion
+```{r cons-extraversion, echo = F, include = F}
+  # Select scale's items and compute alpha 
+  EXAffect <- date %>%  select(I1, I5, I10, I16, I18, I25, I34, I40) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExSociab <- date %>% select(I2, I6, I11, I17, I19, I26, I35, I41) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExAssert <- date %>%  select(I3, I7, I12, I20, I21, I27, I36, I42) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExActivi <- date %>% select(I4, I13, I22, I28, I31, I37, I43, I44) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExExcita <- date %>% select(I8, I14, I23, I29, I32, I38, I45, I47) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  ExVeseli <- date %>% select(I9, I15, I24, I30, I33, I39, I46, I48) %>%
+    psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  # Returning values - Friendliness
+  Afe.mean.cor <- EXAffect$total$average_r; Afe.mean <- EXAffect$total$mean; Afe.sd <- EXAffect$total$sd; 
+  Afe.alpha <- EXAffect$total$raw_alpha; Afe.alpha.std <- EXAffect$total$std.alpha
+  Afe.alpha.ci.lo <- alpha.ci(Afe.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Afe.alpha.ci.hi <- alpha.ci(Afe.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Afe.alpha.fit <- round(EXAffect$Fit$Fit, 3); Afe.uni <- round(EXAffect$Unidim$Unidim, 3)
+  # Returning values - Gregariousness
+  Soc.mean.cor <- ExSociab$total$average_r; Soc.mean <- ExSociab$total$mean; Soc.sd <- ExSociab$total$sd; 
+  Soc.alpha <- ExSociab$total$raw_alpha; Soc.alpha.std <- ExSociab$total$std.alpha
+  Soc.alpha.ci.lo <- alpha.ci(Soc.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Soc.alpha.ci.hi <- alpha.ci(Soc.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Soc.alpha.fit <- round(ExSociab$Fit$Fit, 3); Soc.uni <- round(ExSociab$Unidim$Unidim, 3)
+  # Returning values - Assertiveness
+  Ase.mean.cor <- ExAssert$total$average_r; Ase.mean <- ExAssert$total$mean; Ase.sd <- ExAssert$total$sd; 
+  Ase.alpha <- ExAssert$total$raw_alpha; Ase.alpha.std <- ExAssert$total$std.alpha
+  Ase.alpha.ci.lo <- alpha.ci(Ase.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Ase.alpha.ci.hi <- alpha.ci(Ase.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Ase.alpha.fit <- round(ExAssert$Fit$Fit, 3); Ase.uni <- round(ExAssert$Unidim$Unidim, 3)
+  # Returning values - Activity level
+  Act.mean.cor <- ExActivi$total$average_r; Act.mean <- ExActivi$total$mean; Act.sd <- ExActivi$total$sd; 
+  Act.alpha <- ExActivi$total$raw_alpha; Act.alpha.std <- ExActivi$total$std.alpha
+  Act.alpha.ci.lo <- alpha.ci(Act.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Act.alpha.ci.hi <- alpha.ci(Act.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Act.alpha.fit <- round(ExActivi$Fit$Fit, 3); Act.uni <- round(ExActivi$Unidim$Unidim, 3)
+  # Returning values - Excitement seeking
+  Exc.mean.cor <- ExExcita$total$average_r; Exc.mean <- ExExcita$total$mean; Exc.sd <- ExExcita$total$sd; 
+  Exc.alpha <- ExExcita$total$raw_alpha; Exc.alpha.std <- ExExcita$total$std.alpha
+  Exc.alpha.ci.lo <- alpha.ci(Exc.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Exc.alpha.ci.hi <- alpha.ci(Exc.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Exc.alpha.fit <- round(ExExcita$Fit$Fit, 3); Exc.uni <- round(ExExcita$Unidim$Unidim, 3)
+  # Returning values - Cheerfulness
+  Che.mean.cor <- ExVeseli$total$average_r; Che.mean <- ExVeseli$total$mean; Che.sd <- ExVeseli$total$sd; 
+  Che.alpha <- ExVeseli$total$raw_alpha; Che.alpha.std <- ExVeseli$total$std.alpha
+  Che.alpha.ci.lo <- alpha.ci(Che.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Che.alpha.ci.hi <- alpha.ci(Che.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Che.alpha.fit <- round(ExVeseli$Fit$Fit, 3); Che.uni <- round(ExVeseli$Unidim$Unidim, 3)
+```
+```{r EXT-Total, results='asis'}
+  # Generating table
+  con.df <- as.data.frame(EXAffect$total)
+  con.df <- rbind(con.df, ExSociab$total, ExAssert$total, ExActivi$total, 
+                  ExExcita$total, ExVeseli$total); con.df <- select(con.df, -5)
+  Var.names <- c( "Friendliness", "Gregariousness", "Assertiveness",
+                  "Activity level", "Excitement seeking", "Cheerfulness")
+  con.df <- cbind(Var.names, con.df)
+  names(con.df) <- c("Variable", "Raw", "Std", "Lambda 6", "Avg.cor.", "Avg.se", 
+                     "Mean", "SD", "Median")
+  apa_table(con.df, row.names = F, caption = "Extraversion - Global alpha Cronbach")
+```
++ Media corelațiilor inter-itemi la factorul **Afectivitate** este m~r~=`r Afe.mean.cor`, cu media scalei m~scale~=`r Afe.mean` și abaterea standard sd~scale~=`r Afe.sd`, rezultând un coeficient de consistență internă *alfa=`r Afe.alpha`* (CI~95%~= `r Afe.alpha.ci.lo` - `r Afe.alpha.ci.hi`, alfa standardizat=`r Afe.alpha.std`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.744, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Afe.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Afe.uni`). Se constată că itemul *I34*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r EXAffect$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r EXAffect$item.stats[7,2]`, respectiv r=`r EXAffect$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Sociabilitate** este m~r~=`r Soc.mean.cor`, cu media scalei m~scale~=`r Soc.mean` și abaterea standard sd~scale~=`r Soc.sd`, rezultând un coeficient de consistență internă *alfa=`r Soc.alpha`* (CI~95%~= `r Soc.alpha.ci.lo` - `r Soc.alpha.ci.hi`, alfa standardizat=`r Soc.alpha.std`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.775, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Soc.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Soc.uni`). Se constată că itemul *I11*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r ExSociab$alpha.drop[3,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExSociab$item.stats[3,2]`, respectiv r=`r ExSociab$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În cazul factorului **Asertivitate**, media corelațiilor inter-itemi este m~r~=`r Ase.mean.cor`, cu media scalei m~scale~=`r Ase.mean` și abaterea standard sd~scale~=`r Ase.sd`, rezultând un coeficient de consistență internă *alfa=`r Ase.alpha`* (CI~95%~= `r Ase.alpha.ci.lo` - `r Ase.alpha.ci.hi`, alfa standardizat=`r Ase.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.702, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Ase.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Ase.uni`). Se constată că itemul *I7*, dacă ar fi eliminat, ar conduce o ușoară creștere a consistenței scalei (alpha=`r ExAssert$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExAssert$item.stats[2,2]`, respectiv r=`r ExAssert$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Pentru factorul **Activism**, media corelațiilor inter-itemi este m~r~=`r Act.mean.cor`, cu media scalei m~scale~=`r Act.mean` și abaterea standard sd~scale~=`r Act.sd`, rezultând un coeficient de consistență internă *alfa=`r Act.alpha`* (CI~95%~= `r Act.alpha.ci.lo` - `r Act.alpha.ci.hi`, alfa standardizat=`r Act.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.696, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Act.alpha.fit`), itemii având un indicator al unidimensionalității ușor redus (U=`r Act.uni`). Se constată că itemul *I28*, dacă ar fi eliminat, ar conduce o ușoară creștere a consistenței scalei (alpha=`r ExActivi$alpha.drop[4,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExActivi$item.stats[4,2]`, respectiv r=`r ExActivi$item.stats[4,4]` după corecția de suprapunere și fidelitate a scalei). De asemenea, eliminarea itemilor *I31* și *I37* nu ar modifica fidelitatea (alpha=`r ExActivi$alpha.drop[5,1]`, respectiv alpha=`r ExActivi$alpha.drop[6,1]`) corelațiile cu scorul total fiind reduse (r=`r ExActivi$item.stats[5,2]`, respectiv r=`r ExActivi$item.stats[6,2]`, iar după corecția de suprapunere și fidelitate, r=`r ExActivi$item.stats[5,4]` respectiv r=`r ExActivi$item.stats[6,4]`).
+
++ Factorul **Excitabilitate** are o medie a corelațiilor inter-itemi m~r~=`r Exc.mean.cor`, cu media scalei m~scale~=`r Exc.mean` și abaterea standard sd~scale~=`r Exc.sd`, rezultând un coeficient de consistență internă *alfa=`r Exc.alpha`* (CI~95%~= `r Exc.alpha.ci.lo` - `r Exc.alpha.ci.hi`, alfa standardizat=`r Exc.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.786, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Exc.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Exc.uni`). Se constată că itemul *I32*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r ExExcita$alpha.drop[5,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r ExExcita$item.stats[5,2]`, respectiv r=`r ExExcita$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Veselie** are o medie a corelațiilor inter-itemi m~r~=`r Che.mean.cor`, cu media scalei m~scale~=`r Che.mean` și abaterea standard sd~scale~=`r Che.sd`, rezultând un coeficient de consistență internă *alfa=`r Che.alpha`* (CI~95%~= `r Che.alpha.ci.lo` - `r Che.alpha.ci.hi`, alfa standardizat=`r Che.alpha.std`), ușor diferită de cea raportată de autori în manualul probei (*alpha=.735, n=1340*), neexistând itemi care, dacă ar fi eliminați, ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r round(ExVeseli$Fit$Fit, 3)`), itemii având un indicator al unidimensionalității acceptabil (U=`r Che.uni`).
+
+### Agreeableness
+```{r cons-agreeableness, echo = F, include = F}
+  # Scale items and alphas
+  AGIncred <- date %>% select(I49, I53, I58, I64, I66, I73, I82, I88) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGMorali <- date %>% select(I50, I54, I59, I65, I67, I74, I83, I89) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGAltrui <- date %>% select(I51, I55, I60, I68, I69, I75, I84, I90) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGCooper <- date %>% select(I52, I61, I70, I76, I79, I85, I91, I92) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGModest <- date %>% select(I56, I62, I71, I77, I80, I86, I93, I95) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  AGCompas <- date %>% select(I57, I63, I72, I78, I81, I87, I94, I96) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+
+  # Returning values - Incredere
+  Incred.mean.cor <- AGIncred$total$average_r
+  Incred.mean <- AGIncred$total$mean
+  Incred.sd <- AGIncred$total$sd
+  Incred.alpha <- AGIncred$total$raw_alpha
+  Incred.alpha.std <- AGIncred$total$std.alpha
+  Incred.alpha.ci.lo <- alpha.ci(Incred.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Incred.alpha.ci.hi <- alpha.ci(Incred.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Incred.alpha.fit <- round(AGIncred$Fit$Fit, 3); Incred.uni <- round(AGIncred$Unidim$Unidim, 3)
+  # Returning values - Moralitate
+  Morali.mean.cor <- AGMorali$total$average_r; Morali.mean <- AGMorali$total$mean; Morali.sd <- AGMorali$total$sd; 
+  Morali.alpha <- AGMorali$total$raw_alpha; Morali.alpha.std <- AGMorali$total$std.alpha
+  Morali.alpha.ci.lo <- alpha.ci(Morali.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Morali.alpha.ci.hi <- alpha.ci(Morali.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Morali.alpha.fit <- round(AGMorali$Fit$Fit, 3); Morali.uni <- round(AGMorali$Unidim$Unidim, 3)
+  # Returning values - Altruism
+  Altrui.mean.cor <- AGAltrui$total$average_r; Altrui.mean <- AGAltrui$total$mean; Altrui.sd <- AGAltrui$total$sd; 
+  Altrui.alpha <- AGAltrui$total$raw_alpha; Altrui.alpha.std <- AGAltrui$total$std.alpha
+  Altrui.alpha.ci.lo <- alpha.ci(Altrui.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Altrui.alpha.ci.hi <- alpha.ci(Altrui.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Altrui.alpha.fit <- round(AGAltrui$Fit$Fit, 3); Altrui.uni <- round(AGAltrui$Unidim$Unidim, 3)
+  # Returning values - Cooperare
+  Cooper.mean.cor <- AGCooper$total$average_r; Cooper.mean <- AGCooper$total$mean; Cooper.sd <- AGCooper$total$sd; 
+  Cooper.alpha <- AGCooper$total$raw_alpha; Cooper.alpha.std <- AGCooper$total$std.alpha
+  Cooper.alpha.ci.lo <- alpha.ci(Cooper.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Cooper.alpha.ci.hi <- alpha.ci(Cooper.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Cooper.alpha.fit <- round(AGCooper$Fit$Fit, 3); Cooper.uni <- round(AGCooper$Unidim$Unidim, 3)
+  # Returning values - Modestie
+  Modest.mean.cor <- AGModest$total$average_r; Modest.mean <- AGModest$total$mean;     Modest.sd <- AGModest$total$sd; 
+  Modest.alpha <- AGModest$total$raw_alpha; Modest.alpha.std <- AGModest$total$std.alpha
+  Modest.alpha.ci.lo <- alpha.ci(Modest.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Modest.alpha.ci.hi <- alpha.ci(Modest.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Modest.alpha.fit <- round(AGModest$Fit$Fit, 3); Modest.uni <- round(AGModest$Unidim$Unidim, 3)
+  # Returning values - Compasiune
+  Compas.mean.cor <- AGCompas$total$average_r; Compas.mean <- AGCompas$total$mean; Compas.sd <- AGCompas$total$sd; 
+  Compas.alpha <- AGCompas$total$raw_alpha; Compas.alpha.std <- AGCompas$total$std.alpha
+  Compas.alpha.ci.lo <- alpha.ci(Compas.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Compas.alpha.ci.hi <- alpha.ci(Compas.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Compas.alpha.fit <- round(AGCompas$Fit$Fit, 3); Compas.uni <- round(AGCompas$Unidim$Unidim, 3)
+```
++ Media corelațiilor inter-itemi la factorul **Încredere** este m~r~=`r Incred.mean.cor`, cu media scalei m~scale~=`r Incred.mean` și abaterea standard sd~scale~=`r Incred.sd`, rezultând un coeficient de consistență internă *alfa=`r Incred.alpha`* (CI~95%~= `r Incred.alpha.ci.lo` și `r Incred.alpha.ci.hi`, standardizat alfa=`r Incred.alpha.std`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.660, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Incred.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Incred.uni`). Se constată că itemul *I82*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r AGIncred$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r AGIncred$item.stats[7,2]`, respectiv r=`r AGIncred$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Simț moral** este m~r~=`r Morali.mean.cor`, cu media scalei m~scale~=`r Morali.mean` și abaterea standard sd~scale~=`r Morali.sd`, rezultând un coeficient de consistență internă *alfa=`r Morali.alpha`* (CI~95%~= `r Morali.alpha.ci.lo` și `r Morali.alpha.ci.hi`, standardizat alfa=`r Morali.alpha.std`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.708, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Morali.alpha.fit`), itemii având un indicator al unidimensionalității ușor redus (U=`r Morali.uni`).
+
++ În cazul factorului **Altruism**, media corelațiilor inter-itemi este m~r~=`r Altrui.mean.cor`, cu media scalei m~scale~=`r Altrui.mean` și abaterea standard sd~scale~=`r Altrui.sd`, rezultând un coeficient de consistență internă *alfa=`r Altrui.alpha`* (CI~95%~= `r Altrui.alpha.ci.lo` și `r Altrui.alpha.ci.hi`, standardizat alfa=`r Altrui.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.653, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Altrui.alpha.fit`), itemii având un indicator al unidimensionalității destul de mic (U=`r Altrui.uni`).
+
++ Pentru factorul **Cooperare**, media corelațiilor inter-itemi este m~r~=`r Cooper.mean.cor`, cu media scalei m~scale~=`r Cooper.mean` și abaterea standard sd~scale~=`r Cooper.sd`, rezultând un coeficient de consistență internă *alfa=`r Cooper.alpha`* (CI~95%~= `r Cooper.alpha.ci.lo` și `r Cooper.alpha.ci.hi`, standardizat alfa=`r Cooper.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.641, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Cooper.alpha.fit`), itemii având un indicator al unidimensionalității ușor redus (U=`r Cooper.uni`). Se constată că itemul *I79*, dacă ar fi eliminat, ar conduce la creșterea ușoară a consistenței scalei (alpha=`r AGCooper$alpha.drop[5,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r AGCooper$item.stats[5,2]`, respectiv r=`r AGCooper$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei), iar dacă am elimina itemul *I61* consistența scalei nu s-ar modifica (alpha=`r AGCooper$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mică (r=`r AGCooper$item.stats[2,2]`, respectiv r=`r AGCooper$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Factorul **Modestie**, are o medie a corelațiilor inter-itemi m~r~=`r Modest.mean.cor`, cu media scalei m~scale~=`r Modest.mean` și abaterea standard sd~scale~=`r Modest.sd`, rezultând un coeficient de consistență internă *alfa=`r Modest.alpha`* (CI~95%~= `r Modest.alpha.ci.lo` și `r Modest.alpha.ci.hi`, standardizat alfa=`r Modest.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.660, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Modest.alpha.fit`), itemii având un indicator al unidimensionalității ușor redus (U=`r Modest.uni`). Se constată că itemii *I86* și *I93*, dacă ar fi eliminați, nu ar conduce la modificarea consistenței scalei (alpha=`r AGModest$alpha.drop[6,1]`, respectiv alpha=`r AGModest$alpha.drop[7,1]`), corelația acestora cu scorul total fiind cea mai mică (r=`r AGModest$item.stats[6,2]`, și r=`r AGModest$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r AGModest$item.stats[7,2]` și r=`r AGModest$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Compasiune**, are o medie a corelațiilor inter-itemi m~r~=`r Compas.mean.cor`, cu media scalei m~scale~=`r Compas.mean` și abaterea standard sd~scale~=`r Compas.sd`, rezultând un coeficient de consistență internă *alfa=`r Compas.alpha`* (CI~95%~= `r Compas.alpha.ci.lo` și `r Compas.alpha.ci.hi`, standardizat alfa=`r Compas.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.705, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Compas.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Compas.uni`).
+
+### Neuroticism
+```{r cons-neuroticism, echo = F, include = F}
+  # Valori totale
+  NEAnxiet <- date %>% select(I97, I101, I106, I112, I114, I121, I130, I136) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEFurie <- date %>% select(I98, I102, I107, I113, I115, I122, I131, I137) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEDepres <- date %>% select(I99, I103, I108, I116, I117, I123, I132, I138) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NETimidi <- date %>% select(I100, I109, I118, I124, I127, I133, I139, I140) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEExager <- date %>% select(I104, I110, I119, I125, I128, I134, I141, I143) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  NEVulner <- date %>% select(I105, I111, I120, I126, I129, I135, I142, I144) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+
+  # Returning values - Anxietate
+  Anxiet.mean.cor <- NEAnxiet$total$average_r
+  Anxiet.mean <- NEAnxiet$total$mean
+  Anxiet.sd <- NEAnxiet$total$sd
+  Anxiet.alpha <- NEAnxiet$total$raw_alpha
+  Anxiet.alpha.std <- NEAnxiet$total$std.alpha
+  Anxiet.alpha.ci.lo <- alpha.ci(Anxiet.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Anxiet.alpha.ci.hi <- alpha.ci(Anxiet.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Anxiet.alpha.fit <- round(NEAnxiet$Fit$Fit, 3); Anxiet.uni <- round(NEAnxiet$Unidim$Unidim, 3)
+  # Returning values - Furie
+  Furie.mean.cor <- NEFurie$total$average_r; Furie.mean <- NEFurie$total$mean; Furie.sd <- NEFurie$total$sd; 
+  Furie.alpha <- NEFurie$total$raw_alpha; Furie.alpha.std <- NEFurie$total$std.alpha
+  Furie.alpha.ci.lo <- alpha.ci(Furie.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Furie.alpha.ci.hi <- alpha.ci(Furie.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Furie.alpha.fit <- round(NEFurie$Fit$Fit, 3); Furie.uni <- round(NEFurie$Unidim$Unidim, 3)
+  # Returning values - Depresie
+  Depres.mean.cor <- NEDepres$total$average_r; Depres.mean <- NEDepres$total$mean; Depres.sd <- NEDepres$total$sd; 
+  Depres.alpha <- NEDepres$total$raw_alpha; Depres.alpha.std <- NEDepres$total$std.alpha
+  Depres.alpha.ci.lo <- alpha.ci(Depres.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Depres.alpha.ci.hi <- alpha.ci(Depres.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Depres.alpha.fit <- round(NEDepres$Fit$Fit, 3); Depres.uni <- round(NEDepres$Unidim$Unidim, 3)
+  # Returning values - Timiditate
+  Timidi.mean.cor <- NETimidi$total$average_r; Timidi.mean <- NETimidi$total$mean; Timidi.sd <- NETimidi$total$sd; 
+  Timidi.alpha <- NETimidi$total$raw_alpha; Timidi.alpha.std <- NETimidi$total$std.alpha
+  Timidi.alpha.ci.lo <- alpha.ci(Timidi.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Timidi.alpha.ci.hi <- alpha.ci(Timidi.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Timidi.alpha.fit <- round(NETimidi$Fit$Fit, 3); Timidi.uni <- round(NETimidi$Unidim$Unidim, 3)
+  # Returning values - Exagerare
+  Exager.mean.cor <- NEExager$total$average_r; Exager.mean <- NEExager$total$mean;     Exager.sd <- NEExager$total$sd; 
+  Exager.alpha <- NEExager$total$raw_alpha; Exager.alpha.std <- NEExager$total$std.alpha
+  Exager.alpha.ci.lo <- alpha.ci(Exager.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Exager.alpha.ci.hi <- alpha.ci(Exager.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Exager.alpha.fit <- round(NEExager$Fit$Fit, 3); Exager.uni <- round(NEExager$Unidim$Unidim, 3)
+  # Returning values - Vulnerabilitate
+  Vulner.mean.cor <- NEVulner$total$average_r; Vulner.mean <- NEVulner$total$mean; Vulner.sd <- NEVulner$total$sd; 
+  Vulner.alpha <- NEVulner$total$raw_alpha; Vulner.alpha.std <- NEVulner$total$std.alpha
+  Vulner.alpha.ci.lo <- alpha.ci(Vulner.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Vulner.alpha.ci.hi <- alpha.ci(Vulner.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Vulner.alpha.fit <- round(NEVulner$Fit$Fit, 3); Vulner.uni <- round(NEVulner$Unidim$Unidim, 3)
+```
++ Media corelațiilor inter-itemi la factorul **Anxietate** este m~r~=`r Anxiet.mean.cor`, cu media scalei m~scale~=`r Anxiet.mean` și abaterea standard sd~scale~=`r Anxiet.sd`, rezultând un coeficient de consistență internă *alfa=`r Anxiet.alpha`* (CI~95%~= `r Anxiet.alpha.ci.lo` și `r Anxiet.alpha.ci.hi`, standardizat alfa=`r Anxiet.alpha.std`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.708, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Anxiet.alpha.fit`), itemii având un indicator al unidimensionalității foarte bun (U=`r Anxiet.uni`).
+
++ Media corelațiilor inter-itemi la factorul **Furie** este m~r~=`r Furie.mean.cor`, cu media scalei m~scale~=`r Furie.mean` și abaterea standard sd~scale~=`r Furie.sd`, rezultând un coeficient de consistență internă *alfa=`r Furie.alpha`* (CI~95%~= `r Furie.alpha.ci.lo` și `r Furie.alpha.ci.hi`, standardizat alfa=`r Furie.alpha.std`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.839, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Furie.alpha.fit`), itemii având un indicator al unidimensionalității foarte bun (U=`r Furie.uni`).
+
++ În cazul factorului **Depresie**, media corelațiilor inter-itemi este m~r~=`r Depres.mean.cor`, cu media scalei m~scale~=`r Depres.mean` și abaterea standard sd~scale~=`r Depres.sd`, rezultând un coeficient de consistență internă *alfa=`r Depres.alpha`* (CI~95%~= `r Depres.alpha.ci.lo` și `r Depres.alpha.ci.hi`, standardizat alfa=`r Depres.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.730, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Depres.alpha.fit`), itemii având un indicator al unidimensionalității foarte bun (U=`r Depres.uni`).
+
++ Pentru factorul **Timiditate**, media corelațiilor inter-itemi este m~r~=`r Timidi.mean.cor`, cu media scalei m~scale~=`r Timidi.mean` și abaterea standard sd~scale~=`r Timidi.sd`, rezultând un coeficient de consistență internă *alfa=`r Timidi.alpha`* (CI~95%~= `r Timidi.alpha.ci.lo` și `r Timidi.alpha.ci.hi`, standardizat alfa=`r Timidi.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.649, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Timidi.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Timidi.uni`). Se constată că itemul *I109*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r NETimidi$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r NETimidi$item.stats[2,2]`, respectiv r=`r NETimidi$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Factorul **Exagerare**, are o medie a corelațiilor inter-itemi m~r~=`r Exager.mean.cor`, cu media scalei m~scale~=`r Exager.mean` și abaterea standard sd~scale~=`r Exager.sd`, rezultând un coeficient de consistență internă *alfa=`r Exager.alpha`* (CI~95%~= `r Exager.alpha.ci.lo` și `r Exager.alpha.ci.hi`, standardizat alfa=`r Exager.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.761, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Exager.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Exager.uni`).
+
++ În fine, factorul **Vulnerabilitate**, are o medie a corelațiilor inter-itemi m~r~=`r Vulner.mean.cor`, cu media scalei m~scale~=`r Vulner.mean` și abaterea standard sd~scale~=`r Vulner.sd`, rezultând un coeficient de consistență internă *alfa=`r Vulner.alpha`* (CI~95%~= `r Vulner.alpha.ci.lo` și `r Vulner.alpha.ci.hi`, standardizat alfa=`r Vulner.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.749, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Vulner.alpha.fit`), itemii având un indicator al unidimensionalității bun (U=`r Vulner.uni`). Se constată că itemul *I111*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r NEVulner$alpha.drop[2,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r NEVulner$item.stats[2,2]`, respectiv r=`r NEVulner$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei).
+
+### Conscientiousness
+```{r cons-conscientiousness, echo = F, include = F}
+  # Valori totale
+  COEficie <- date %>% select(I145, I154, I160, I162, I169, I178, I184, I192) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COOrdine <- date %>% select(I146, I149, I155, I161, I163, I170, I179, I185) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  CODatori <- date %>% select(I147, I150, I156, I164, I165, I171, I180, I186) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COAmbiti <- date %>% select(I148, I151, I157, I166, I172, I181, I187, I188) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COPersev <- date %>% select(I152, I158, I167, I173, I175, I182, I189, I191) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  COPruden <- date %>% select(I153, I159, I168, I174, I176, I177, I183, I190) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+
+  # Returning values – Eficienta personala
+  Eficie.mean.cor <- COEficie$total$average_r
+  Eficie.mean <- COEficie$total$mean
+  Eficie.sd <- COEficie$total$sd
+  Eficie.alpha <- COEficie$total$raw_alpha
+  Eficie.alpha.std <- COEficie$total$std.alpha
+  Eficie.alpha.ci.lo <- alpha.ci(Eficie.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Eficie.alpha.ci.hi <- alpha.ci(Eficie.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Eficie.alpha.fit <- round(COEficie$Fit$Fit, 3); Eficie.uni <- round(COEficie$Unidim$Unidim, 3)
+  # Returning values - Ordine
+  Ordine.mean.cor <- COOrdine$total$average_r; Ordine.mean <- COOrdine$total$mean; Ordine.sd <- COOrdine$total$sd; 
+  Ordine.alpha <- COOrdine$total$raw_alpha; Ordine.alpha.std <- COOrdine$total$std.alpha
+  Ordine.alpha.ci.lo <- alpha.ci(Ordine.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Ordine.alpha.ci.hi <- alpha.ci(Ordine.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Ordine.alpha.fit <- round(COOrdine$Fit$Fit, 3); Ordine.uni <- round(COOrdine$Unidim$Unidim, 3)
+  # Returning values - Datorie
+  Datori.mean.cor <- CODatori$total$average_r; Datori.mean <- CODatori$total$mean; Datori.sd <- CODatori$total$sd; 
+  Datori.alpha <- CODatori$total$raw_alpha; Datori.alpha.std <- CODatori$total$std.alpha
+  Datori.alpha.ci.lo <- alpha.ci(Datori.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Datori.alpha.ci.hi <- alpha.ci(Datori.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Datori.alpha.fit <- round(CODatori$Fit$Fit, 3); Datori.uni <- round(CODatori$Unidim$Unidim, 3)
+  # Returning values - Ambitie
+  Ambiti.mean.cor <- COAmbiti$total$average_r; Ambiti.mean <- COAmbiti$total$mean; Ambiti.sd <- COAmbiti$total$sd; 
+  Ambiti.alpha <- COAmbiti$total$raw_alpha; Ambiti.alpha.std <- COAmbiti$total$std.alpha
+  Ambiti.alpha.ci.lo <- alpha.ci(Ambiti.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Ambiti.alpha.ci.hi <- alpha.ci(Ambiti.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Ambiti.alpha.fit <- round(COAmbiti$Fit$Fit, 3); Ambiti.uni <- round(COAmbiti$Unidim$Unidim, 3)
+  # Returning values - Perseverenta
+  Persev.mean.cor <- COPersev$total$average_r; Persev.mean <- COPersev$total$mean;     Persev.sd <- COPersev$total$sd; 
+  Persev.alpha <- COPersev$total$raw_alpha; Persev.alpha.std <- COPersev$total$std.alpha
+  Persev.alpha.ci.lo <- alpha.ci(Persev.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Persev.alpha.ci.hi <- alpha.ci(Persev.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Persev.alpha.fit <- round(COPersev$Fit$Fit, 3); Persev.uni <- round(COPersev$Unidim$Unidim, 3)
+  # Returning values - Prudenta
+  Pruden.mean.cor <- COPruden$total$average_r; Pruden.mean <- COPruden$total$mean; Pruden.sd <- COPruden$total$sd; 
+  Pruden.alpha <- COPruden$total$raw_alpha; Pruden.alpha.std <- COPruden$total$std.alpha
+  Pruden.alpha.ci.lo <- alpha.ci(Pruden.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Pruden.alpha.ci.hi <- alpha.ci(Pruden.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Pruden.alpha.fit <- round(COPruden$Fit$Fit, 3); Pruden.uni <- round(COPruden$Unidim$Unidim, 3)
+```
++ Media corelațiilor inter-itemi la factorul **Eficiență personală** este m~r~=`r Eficie.mean.cor`, cu media scalei m~scale~=`r Eficie.mean` și abaterea standard sd~scale~=`r Eficie.sd`, rezultând un coeficient de consistență internă *alfa=`r Eficie.alpha`* (CI~95%~= `r Eficie.alpha.ci.lo` și `r Eficie.alpha.ci.hi`, standardizat alfa=`r Eficie.alpha.std`), valoare foarte apropiată de cea raportată de autori în manualul probei (*alpha=.679, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Eficie.alpha.fit`), itemii având un indicator al unidimensionalității bun (U=`r Eficie.uni`). Se constată că itemul *I160*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r COEficie$alpha.drop[3,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COEficie$item.stats[3,2]`, respectiv r=`r COEficie$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Planificare** este m~r~=`r Ordine.mean.cor`, cu media scalei m~scale~=`r Ordine.mean` și abaterea standard sd~scale~=`r Ordine.sd`, rezultând un coeficient de consistență internă *alfa=`r Ordine.alpha`* (CI~95%~= `r Ordine.alpha.ci.lo` și `r Ordine.alpha.ci.hi`, standardizat alfa=`r Ordine.alpha.std`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.650, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Ordine.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Ordine.uni`). Se constată că itemul *I170*, dacă ar fi eliminat, ar conduce la creșterea ușoară a consistenței scalei (alpha=`r COOrdine$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COOrdine$item.stats[6,2]`, respectiv r=`r COOrdine$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei), în timp ce eliminarea itemului *179* nu ar determina modificarea consistenței scalei (alpha=`r COOrdine$alpha.drop[7,1]`), corelația acestuia cu scorul total fiind mică (r=`r COOrdine$item.stats[7,2]`, respectiv r=`r COOrdine$item.stats[7,4]` după corecția de suprapunere și fidelitate a scalei).
+
+
++ În cazul factorului **Rigiditate morală**, media corelațiilor inter-itemi este m~r~=`r Datori.mean.cor`, cu media scalei m~scale~=`r Datori.mean` și abaterea standard sd~scale~=`r Datori.sd`, rezultând un coeficient de consistență internă *alfa=`r Datori.alpha`* (CI~95%~= `r Datori.alpha.ci.lo` și `r Datori.alpha.ci.hi`, standardizat alfa=`r Datori.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.648, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Datori.alpha.fit`), itemii având un indicator al unidimensionalității destul de slab (U=`r Datori.uni`). Se constată că itemul *I147*, dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r CODatori$alpha.drop[1,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r CODatori$item.stats[1,2]`, respectiv r=`r CODatori$item.stats[1,4]` după corecția de suprapunere și fidelitate a scalei)
+
++ Pentru factorul **Ambiție**, media corelațiilor inter-itemi este m~r~=`r Ambiti.mean.cor`, cu media scalei m~scale~=`r Ambiti.mean` și abaterea standard sd~scale~=`r Ambiti.sd`, rezultând un coeficient de consistență internă *alfa=`r Ambiti.alpha`* (CI~95%~= `r Ambiti.alpha.ci.lo` și `r Ambiti.alpha.ci.hi`, standardizat alfa=`r Ambiti.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.646, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Ambiti.alpha.fit`), itemii având un indicator al unidimensionalității destul de slab (U=`r Ambiti.uni`). Se constată că itemii *I172* și *I188*, dacă ar fi eliminați, nu ar conduce la modificarea consistenței scalei (alpha=`r COAmbiti$alpha.drop[5,1]` respectiv alpha=`r COAmbiti$alpha.drop[8,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COAmbiti$item.stats[5,2]`, și r=`r COAmbiti$item.stats[5,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r COAmbiti$item.stats[8,2]`, și r=`r COAmbiti$item.stats[8,4]` după corecția de suprapunere și fidelitate a scalei)
+
++ Factorul **Perseverență**, are o medie a corelațiilor inter-itemi m~r~=`r Persev.mean.cor`, cu media scalei m~scale~=`r Persev.mean` și abaterea standard sd~scale~=`r Persev.sd`, rezultând un coeficient de consistență internă *alfa=`r Persev.alpha`* (CI~95%~= `r Persev.alpha.ci.lo` și `r Persev.alpha.ci.hi`, standardizat alfa=`r Persev.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.655, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Persev.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Persev.uni`).
+
++ În fine, factorul **Prudență**, are o medie a corelațiilor inter-itemi m~r~=`r Pruden.mean.cor`, cu media scalei m~scale~=`r Pruden.mean` și abaterea standard sd~scale~=`r Pruden.sd`, rezultând un coeficient de consistență internă *alfa=`r Pruden.alpha`* (CI~95%~= `r Pruden.alpha.ci.lo` și `r Pruden.alpha.ci.hi`, standardizat alfa=`r Pruden.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.729, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Pruden.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Pruden.uni`).  Se constată că itemul *I174*, dacă ar fi eliminat, nu ar determina creșterea consistenței scalei (alpha=`r COPruden$alpha.drop[4,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r COPruden$item.stats[4,2]`, respectiv r=`r COPruden$item.stats[4,4]` după corecția de suprapunere și fidelitate a scalei). 
+
+### Openness to experience
+```{r cons-openness, echo = F, include = F}
+  # Valori totale
+  DEImagin <- date %>% select(I193, I197, I202, I208, I210, I217, I226, I232) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEIntere <- date %>% select(I194, I198, I203, I209, I211, I218, I227, I233) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEEmotio <- date %>% select(I195, I199, I204, I212, I213, I219, I228, I234) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DESpirit <- date %>% select(I196, I205, I214, I220, I223, I229, I235, I236) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DEIntele <- date %>% select(I200, I206, I215, I221, I224, I230, I237, I239) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+  DELibera <- date %>% select(I201, I207, I216, I222, I225, I231, I238, I240) %>%
+  psych::alpha(cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+
+  # Returning values – Imaginatie
+  Imagin.mean.cor <- DEImagin$total$average_r
+  Imagin.mean <- DEImagin$total$mean
+  Imagin.sd <- DEImagin$total$sd
+  Imagin.alpha <- DEImagin$total$raw_alpha
+  Imagin.alpha.std <- DEImagin$total$std.alpha
+  Imagin.alpha.ci.lo <- alpha.ci(Imagin.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Imagin.alpha.ci.hi <- alpha.ci(Imagin.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Imagin.alpha.fit <- round(DEImagin$Fit$Fit, 3); Imagin.uni <- round(DEImagin$Unidim$Unidim, 3)
+  # Returning values – Interes artistic
+  Intere.mean.cor <- DEIntere$total$average_r; Intere.mean <- DEIntere$total$mean; Intere.sd <- DEIntere$total$sd; 
+  Intere.alpha <- DEIntere$total$raw_alpha; Intere.alpha.std <- DEIntere$total$std.alpha
+  Intere.alpha.ci.lo <- alpha.ci(Intere.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Intere.alpha.ci.hi <- alpha.ci(Intere.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Intere.alpha.fit <- round(DEIntere$Fit$Fit, 3); Intere.uni <- round(DEIntere$Unidim$Unidim, 3)
+  # Returning values - Emotionalitate
+  Emotio.mean.cor <- DEEmotio$total$average_r; Emotio.mean <- DEEmotio$total$mean; Emotio.sd <- DEEmotio$total$sd; 
+  Emotio.alpha <- DEEmotio$total$raw_alpha; Emotio.alpha.std <- DEEmotio$total$std.alpha
+  Emotio.alpha.ci.lo <- alpha.ci(Emotio.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Emotio.alpha.ci.hi <- alpha.ci(Emotio.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Emotio.alpha.fit <- round(DEEmotio$Fit$Fit, 3); Emotio.uni <- round(DEEmotio$Unidim$Unidim, 3)
+  # Returning values – Spirit aventurier
+  Spirit.mean.cor <- DESpirit$total$average_r; Spirit.mean <- DESpirit$total$mean; Spirit.sd <- DESpirit$total$sd; 
+  Spirit.alpha <- DESpirit$total$raw_alpha; Spirit.alpha.std <- DESpirit$total$std.alpha
+  Spirit.alpha.ci.lo <- alpha.ci(Spirit.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Spirit.alpha.ci.hi <- alpha.ci(Spirit.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Spirit.alpha.fit <- round(DESpirit$Fit$Fit, 3); Spirit.uni <- round(DESpirit$Unidim$Unidim, 3)
+  # Returning values - Intelect
+  Intele.mean.cor <- DEIntele$total$average_r; Intele.mean <- DEIntele$total$mean;     Intele.sd <- DEIntele$total$sd; 
+  Intele.alpha <- DEIntele$total$raw_alpha; Intele.alpha.std <- DEIntele$total$std.alpha
+  Intele.alpha.ci.lo <- alpha.ci(Intele.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Intele.alpha.ci.hi <- alpha.ci(Intele.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Intele.alpha.fit <- round(DEIntele$Fit$Fit, 3); Intele.uni <- round(DEIntele$Unidim$Unidim, 3)
+  # Returning values – Liberalism
+  Libera.mean.cor <- DELibera$total$average_r; Libera.mean <- DELibera$total$mean; Libera.sd <- DELibera$total$sd; 
+  Libera.alpha <- DELibera$total$raw_alpha; Libera.alpha.std <- DELibera$total$std.alpha
+  Libera.alpha.ci.lo <- alpha.ci(Libera.alpha, n.obs=n, n.var=8, p.val = .05)$lower.ci
+  Libera.alpha.ci.hi <- alpha.ci(Libera.alpha, n.obs=n, n.var=8, p.val = .05)$upper.ci
+  Libera.alpha.fit <- round(DELibera$Fit$Fit, 3); Libera.uni <- round(DELibera$Unidim$Unidim, 3)
+```
++ Media corelațiilor inter-itemi la factorul **Imaginație** este m~r~=`r Imagin.mean.cor`, cu media scalei m~scale~=`r Imagin.mean` și abaterea standard sd~scale~=`r Imagin.sd`, rezultând un coeficient de consistență internă *alfa=`r Imagin.alpha`* (CI~95%~= `r Imagin.alpha.ci.lo` și `r Imagin.alpha.ci.hi`, standardizat alfa=`r Imagin.alpha.std`), valoarea foarte apropiată de cea raportată de autori în manualul probei (*alpha=.658, n=1340*). În urma reeșantionării parametrul s-a dovedit a fi stabil (Fit=`r Imagin.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Imagin.uni`). Se constată că itemul *I217*, dacă ar fi eliminat, nu ar conduce la modificarea consistenței scalei (alpha=`r DEImagin$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEImagin$item.stats[6,2]`, respectiv r=`r DEImagin$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ Media corelațiilor inter-itemi la factorul **Interes artistic** este m~r~=`r Intere.mean.cor`, cu media scalei m~scale~=`r Intere.mean` și abaterea standard sd~scale~=`r Intere.sd`, rezultând un coeficient de consistență internă *alfa=`r Intere.alpha`* (CI~95%~= `r Intere.alpha.ci.lo` și `r Intere.alpha.ci.hi`, standardizat alfa=`r Intere.alpha.std`), valoarea de asemenea apropiată de cea raportată de autori în manualul probei (*alpha=.732, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Intere.alpha.fit`), itemii având un indicator al unidimensionalității bun (U=`r Intere.uni`).
+
++ În cazul factorului **Emoționalitate**, media corelațiilor inter-itemi este m~r~=`r Emotio.mean.cor`, cu media scalei m~scale~=`r Emotio.mean` și abaterea standard sd~scale~=`r Emotio.sd`, rezultând un coeficient de consistență internă *alfa=`r Emotio.alpha`* (CI~95%~= `r Emotio.alpha.ci.lo` și `r Emotio.alpha.ci.hi`, standardizat alfa=`r Emotio.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.671, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Emotio.alpha.fit`), itemii având un indicator al unidimensionalității destul de redus (U=`r Emotio.uni`). Se constată că itemul *I196 este un item cu varianță negativă și care pare a fi codat invers*, iar dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r DEEmotio$alpha.drop[1,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEEmotio$item.stats[1,2]`, respectiv r=`r DEEmotio$item.stats[1,4]` după corecția de suprapunere și fidelitate a scalei).
+
+
++ Pentru factorul **Spirit aventurier**, media corelațiilor inter-itemi este m~r~=`r Spirit.mean.cor`, cu media scalei m~scale~=`r Spirit.mean` și abaterea standard sd~scale~=`r Spirit.sd`, rezultând un coeficient de consistență internă *alfa=`r Spirit.alpha`* (CI~95%~= `r Spirit.alpha.ci.lo` și `r Spirit.alpha.ci.hi`, standardizat alfa=`r Spirit.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.750, n=1340*), neexistând itemi care dacă ar fi eliminați ar putea duce la creșterea consistenței scalare. În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Spirit.alpha.fit`), itemii având un indicator al unidimensionalității acceptabil (U=`r Spirit.uni`).
+
++ Factorul **Intelect**, are o medie a corelațiilor inter-itemi m~r~=`r Intele.mean.cor`, cu media scalei m~scale~=`r Intele.mean` și abaterea standard sd~scale~=`r Intele.sd`, rezultând un coeficient de consistență internă *alfa=`r Intele.alpha`* (CI~95%~= `r Intele.alpha.ci.lo` și `r Intele.alpha.ci.hi`, standardizat alfa=`r Intele.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.572, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Intele.alpha.fit`), itemii având un indicator al unidimensionalității foarte redus (U=`r Intele.uni`). Se constată că itemul *I230 este un item cu varianță negativă și care pare a fi codat invers*, iar dacă ar fi eliminat, ar conduce la creșterea consistenței scalei (alpha=`r DEIntele$alpha.drop[6,1]`), corelația acestuia cu scorul total fiind cea mai mică (r=`r DEIntele$item.stats[6,2]`, respectiv r=`r DEIntele$item.stats[6,4]` după corecția de suprapunere și fidelitate a scalei).
+
++ În fine, factorul **Liberalism**, are o medie a corelațiilor inter-itemi m~r~=`r Libera.mean.cor`, cu media scalei m~scale~=`r Libera.mean` și abaterea standard sd~scale~=`r Libera.sd`, rezultând un coeficient de consistență internă *alfa=`r Libera.alpha`* (CI~95%~= `r Libera.alpha.ci.lo` și `r Libera.alpha.ci.hi`, standardizat alfa=`r Libera.alpha.std`), apropiată de cea raportată de autori în manualul probei (*alpha=.607, n=1340*). În urma reeșantionării, parametrul s-a dovedit a fi stabil (Fit=`r Libera.alpha.fit`), itemii având un indicator al unidimensionalității foarte redus (U=`r Libera.uni`). Se constată că itemii *I207* și *I216*, dacă ar fi eliminați, ar conduce la creșterea consistenței scalei (alpha=`r DELibera$alpha.drop[2,1]`, respectiv alpha=`r DELibera$alpha.drop[3,1]`), corelația acestora cu scorul total fiind cea mai mică (r=`r DELibera$item.stats[2,2]`, și r=`r DELibera$item.stats[2,4]` după corecția de suprapunere și fidelitate a scalei, respectiv r=`r DELibera$item.stats[3,2]`, și r=`r DELibera$item.stats[3,4]` după corecția de suprapunere și fidelitate a scalei).
+
+## Saturation analysis
+### Extraversion
+```{r sat-agreeableness, echo = F, include = F}
+  # Compute saturation for Friendliness
+  omegaData <- date %>% dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40)
+  colnames(omegaData) <- c("I01", "I05", "I10", "I16", "I18", "I25", "I34", "I40")
+  sat.3 <- omega(omegaData, nfactors = 3, flip = T,  fm = "pc", poly = T,
+                   title = "Friendliness", plot = T, digits = 2)
+  # Retuning values - Friendliness
+  Afe.omega.h <- sat.3$omega_h; Afe.omega.inf <- sat.3$omega.lim; 
+  Afe.lambda.6 <- sat.3$omega.tot; Afe.alpha = sat.3$alpha
+  ## Subcomponents analysis - Friendliness
+  Afe.G.min <- round(min(sat.3$schmid$sl[,1]), 2); Afe.G.max <- round(max(sat.3$schmid$sl[,1]), 2)
+  Afe.F1.min <- round(min(sat.3$schmid$sl[,2]), 2); Afe.F1.max <- round(max(sat.3$schmid$sl[,2]), 2)
+  Afe.F2.min <- round(min(sat.3$schmid$sl[,3]), 2); Afe.F2.max <- round(max(sat.3$schmid$sl[,3]), 2)
+  Afe.F3.min <- round(min(sat.3$schmid$sl[,4]), 2); Afe.F3.max <- round(max(sat.3$schmid$sl[,4]), 2)
+  Afe.G.F1 <- round(sat.3$schmid$gloading[1], 2); Afe.G.F2 <- round(sat.3$schmid$gloading[2], 2)
+  Afe.G.F3 <- round(sat.3$schmid$gloading[3], 2)
+  ## Items fit analysis - Friendliness
+  Afe.it.df <- round(sat.3$schmid$dof, 2); Afe.it.n <- round(sat.3$schmid$n.obs, 2)
+  Afe.it.chi <- round(sat.3$schmid$STATISTIC, 2); Afe.it.p <- round(sat.3$schmid$PVAL, 2)
+  Afe.it.RMSR <- round(sat.3$schmid$rms, 2); Afe.it.Fit <- round(sat.3$schmid$objective, 2)
+  ## Hypothesis that 1 factor is sufficient - Friendliness
+  Afe.1.df <- round(sat.3$gstats$dof, 2); Afe.1.n <- round(sat.3$gstats$n.obs, 2)
+  Afe.1.chi <- round(sat.3$gstats$STATISTIC, 2); Afe.1.p <- round(sat.3$gstats$PVAL, 2)
+  Afe.1.RMSR <- round(sat.3$gstats$rms, 2); Afe.1.CRMSR <- round(sat.3$gstats$crms, 2); 
+  Afe.1.Fit <- round(sat.3$gstats$objective, 2); Afe.1.TLI <- round(sat.3$gstats$TLI, 2)
+  Afe.1.BIC <- round(sat.3$gstats$BIC, 2); Afe.1.R2 <- round(sat.3$gstats$R2, 2)
+  Afe.1.RMSEA <- round(sat.3$gstats$RMSEA[1], 2); Afe.1.RMSEA.CI <- round(sat.3$gstats$RMSEA[4], 2)
+  Afe.1.RMSEA.LO <- round(sat.3$gstats$RMSEA[2], 2); Afe.1.RMSEA.HI <- round(sat.3$gstats$RMSEA[3], 2)
+  ## Hypothesis that 4 factor are sufficient - Friendliness
+  Afe.4.df <- round(sat.3$stats$dof, 2); Afe.4.n <- round(sat.3$stats$n.obs, 2)
+  Afe.4.chi <- round(sat.3$stats$STATISTIC, 2); Afe.4.p <- round(sat.3$stats$PVAL, 2)
+  Afe.4.RMSR <- round(sat.3$stats$rms, 2); Afe.4.CRMSR <- round(sat.3$stats$crms, 2); 
+  Afe.4.Fit <- round(sat.3$stats$objective, 2); Afe.4.TLI <- round(sat.3$stats$TLI, 2)
+  Afe.4.RMSEA <- round(sat.3$stats$RMSEA[1], 2); Afe.4.RMSEA.CI <- round(sat.3$stats$RMSEA[4], 2)
+  Afe.4.RMSEA.LO <- round(sat.3$stats$RMSEA[2], 2);  Afe.4.RMSEA.HI <- round(sat.3$stats$RMSEA[3], 2)
+  Afe.4.BIC <- round(sat.3$stats$BIC, 2); Afe.4.R2.G <- round(sat.3$stats$R2[1], 2)
+  Afe.4.R2.F1 <- round(sat.3$stats$R2[2], 2); Afe.4.R2.F2 <- round(sat.3$stats$R2[3], 2)
+  Afe.4.R2.F3 <- round(sat.3$stats$R2[4], 2)
+  # Saturation by components - Friendliness
+  Afe.OT.G <- round(sat.3$omega.group$total[1], 2); Afe.OT.F1 <- round(sat.3$omega.group$total[2], 2)
+  Afe.OT.F2 <- round(sat.3$omega.group$total[3], 2); Afe.OT.F3 <- round(sat.3$omega.group$total[4], 2)
+  Afe.OGE.G <- round(sat.3$omega.group$general[1], 2); Afe.OGE.F1 <- round(sat.3$omega.group$general[2], 2)
+  Afe.OGE.F2 <- round(sat.3$omega.group$general[3], 2); Afe.OGE.F3 <- round(sat.3$omega.group$general[4], 2)
+  Afe.OGG.G <- round(sat.3$omega.group$group[1], 2); Afe.OGG.F1 <- round(sat.3$omega.group$group[2], 2)
+  Afe.OGG.F2 <- round(sat.3$omega.group$group[3], 2); Afe.OGG.F3 <- round(sat.3$omega.group$group[4], 2)
+```
+### Agreeableness
+```{r EXT-sat-3, fig.align = 'center', fig.cap = "Saturation for a hypotetically lumpy scale loaded in one general dimension (Agreeableness) and 3 components."}
+  knitr::include_graphics("Articol_7_files/figure-latex/sat-agreeableness-1.png")
+```
++ Prima ipoteză testată este aceea conform căreia **itemii sunt încărcați de un factor general și un număr de 3 sub-componente**, rezultând un coeficient de saturație omega ierarhic **\(\omega\)~h~= `r Afe.omega.h`**, indicând un nivel acceptabil de saturație a itemilor în factor latent. Adăugarea asimptotică la infinit de itemi din aceeași categorie ar duce la o ușoară creștere a saturației în în factor latent, omega asimptotic devenind **\(\omega\)~inf~= `r Afe.omega.inf`**, în timp ce coeficientul Gutmann de unicitate a itemilor este **\(\lambda\)~6~= `r Afe.lambda.6`**, o valoare mai mare în comparație cu \(\alpha\)-Cronbach.
+
+În privința sub-componentelor rezultate (vezi figura \@ref(fig:EXT-sat-3)), **factorul general (Agreeableness)** saturează cei 8 itemi cu valori cuprinse între `r Afe.G.min` și `r Afe.G.max`, valoarea proprie a factorului general fiind *3.12*. **Prima sub-componentă** este cea mai importantă, având o valoare proprie de *1.77*, încărcând itemii cu valori cuprinse între `r Afe.F1.min` și `r Afe.F1.max`. Sensul și semnificația aceste sub-componente este dată de itemii **I01**, **I10** și **I16**. Următoarea sub-componentă, ca importanță, este **a treia sub-componentă** cu o valoare proprie de *0.94* și care încarcă cei 8 itemi cu valori cuprinse între `r Afe.F3.min` și `r Afe.F3.max`, semnificația fiind determinată de itemii **I25** și **I34**. În fine, ultima componentă este **componenta a doua**, cu o valoare proprie neglijabilă (*0.09*) și care încarcă cei 8 itemi cu valori cuprinse între `r Afe.F2.min` și `r Afe.F2.max` și corespunde mai curând specificului factorului general, specificul acestuia fiind determinat de itemii **I05**, **I18** și **I40**.
+
+Factorul general explică circa *47.5%* din varianța celor 3 sub-componente, fiind, în mod evident, determinat de itemii menționați anterior, specifici celei de-a doua componente (**\(\lambda\)=`r Afe.G.F2`**), celelalte două sub-componente fiind încărcate în mod aproximativ egal de factorul general (**\(\lambda\)~F1~=`r Afe.G.F1`**, respectiv **\(\lambda\)~F3~=`r Afe.G.F3`**), cu saturații ușor mai mari în cea de-a treia sub-componentă.
+
+Se observă că, la nivel global, modul în care cei 8 itemi sunt încărcați de cei 4 factori nu este susținut în mod corespunzător de date **(\(\chi\)^2^(`r Afe.it.df`, `r Afe.it.n`)=`r Afe.it.chi`, p<`r Afe.it.p`, RMSR=`r Afe.it.RMSR`)**, funcția obiectivă indicând un grad de potrivire **fit=`r Afe.it.Fit`**.
+
+În comparație cu acest model, **modelul cu un sigur factor general și fără sub-componente** are o funcție obiectivă de potrivire statistic semnificativ mai mare **(fit= `r Afe.1.Fit`, \(\chi\)^2^(`r Afe.1.df`, `r Afe.1.n`)=`r Afe.1.chi`, p<`r Afe.1.p`)**, reușind să explice mult mai slab varianța itemilor, așadar modelul nu poate fi considerat un model plauzibil **(TLI=`r Afe.1.TLI`, RMSR= `r Afe.1.RMSR`, CRMSR=`r Afe.1.CRMSR`, RMSEA= `r Afe.1.RMSEA`, CI~(`r Afe.1.RMSEA.CI * 100`%)~= `r Afe.1.RMSEA.LO` - `r Afe.1.RMSEA.HI`)**. Chiar în condițiile în care corelația multiplă a scorurilor cu factorul general este **R^2^=`r Afe.1.R2`**, valoarea criteriului informațional bayesian a acestui model este una ridicată **(BIC=`r Afe.1.BIC`)**.
+
+A doua ipoteză testată este aceea în care **sunt suficiente un factor general și 3 sub-componente pentru explicarea varianței itemilor**, o ipoteză care urmează a fi respinsă **(\(\chi\)^2^(`r Afe.4.df`, `r Afe.4.n`)=`r Afe.4.chi`, p<`r Afe.4.p`)**, așadar modelul nu poate fi considerat un model plauzibil **(TLI=`r Afe.4.TLI`, RMSR= `r Afe.4.RMSR`, CRMSR=`r Afe.4.CRMSR`, RMSEA= `r Afe.4.RMSEA`, CI~(`r Afe.4.RMSEA.CI * 100`%)~= `r Afe.4.RMSEA.LO` - `r Afe.4.RMSEA.HI`)**. Valoarea criteriului informațional bayesian a acestui model **(BIC=`r Afe.4.BIC`)**, mai mică în comparație cu modelul cu un singur factor general.
+
+Pe lângă corelația multiplă a scorurilor cu factorul general, **R^2^=`r Afe.4.R2.G`**, existența acestuia fiind una certă, se constată și corelații multiple puternice cu prima sub-componentă **(R^2^=`r Afe.4.R2.F1`)** și cu a treia sub-componentă **(R^2^=`r Afe.4.R2.F3`)**, fapt care ne conduce la ideea existenței unei scale „lumpy”. A doua componentă se pare că este caracteristică doar factorului general, răspunsurile la itemii **I05, I18 și I40** formând un cluster separat în comparație cu celelalte răspunsuri **(R^2^=`r Afe.4.R2.F2`)**.
+
+**Factorului general** are o saturație totală **\(\omega\)~total~= `r Afe.OT.G`**, adică varianța dimensiunii generale explicată atât de acest factor general, cât și de subcomponente, partea de saturație generală fiind **\(\omega\)~general~= `r Afe.OGE.G`**, iar partea de saturație explicată de sub-componente fiind **\(\omega\)~grup~= `r Afe.OGG.G`**. Saturația totală a **primei sub-componente** este **\(\omega\)~total~= `r Afe.OT.F1`**, ea fiind reprezentată de încărcarea pe care o determină factorul general **\(\omega\)~general~= `r Afe.OGE.F1`** și de încărcările secundare ale celorlalte două sub-componente **\(\omega\)~grup~= `r Afe.OGG.F1`**, așadar prima sub-componentă este afectată de de structura dimensional-axială a scalei.
+
+La fel sau lucrurile și în cazul celei **de-a treia sub-componente**, saturația totală fiind **\(\omega\)~total~= `r Afe.OT.F3`**, la aceasta contribuind saturația determinată de factorul general, **\(\omega\)~general~= `r Afe.OGE.F3`**, și saturația determinată de prima și a doua componentă **\(\omega\)~grup~= `r Afe.OGG.F3`**, fiind din nou evidentă influența axei.
+
+**Cea de-a doua componantă** are o saturație totală **\(\omega\)~total~= `r Afe.OT.F3`**, ea fiind determinată aproape în totalitate de factorul general **\(\omega\)~general~= `r Afe.OGE.F2`** și în foarte mică măsură de încărcările componentelor 1 și 3 - **\(\omega\)~grup~= `r Afe.OGG.F2`**. Într-adevăr, se pare că itemii **I05, I18 și I40** sunt încărcați de constructul latent al „agreabilității”, în timp ce restul formează o axă de nuanțare, scala fiind una „lumpy”.
+
+```{r sat-neuroticism, echo = F, include = F}
+  # Compute saturation for Friendliness
+  omegaData <- date %>% dplyr::select(I1, I5, I10, I16, I18, I25, I34, I40)
+  colnames(omegaData) <- c("I01", "I05", "I10", "I16", "I18", "I25", "I34", "I40")
+  sat.3 <- omega(omegaData, nfactors = 3, flip = T,  fm = "pc", poly = T,
+                   title = "Friendliness", plot = T, digits = 2)
+  # Retuning values - Friendliness
+  Afe.omega.h <- sat.3$omega_h; Afe.omega.inf <- sat.3$omega.lim; 
+  Afe.lambda.6 <- sat.3$omega.tot; Afe.alpha = sat.3$alpha
+  ## Subcomponents analysis - Friendliness
+  Afe.G.min <- round(min(sat.3$schmid$sl[,1]), 2); Afe.G.max <- round(max(sat.3$schmid$sl[,1]), 2)
+  Afe.F1.min <- round(min(sat.3$schmid$sl[,2]), 2); Afe.F1.max <- round(max(sat.3$schmid$sl[,2]), 2)
+  Afe.F2.min <- round(min(sat.3$schmid$sl[,3]), 2); Afe.F2.max <- round(max(sat.3$schmid$sl[,3]), 2)
+  Afe.F3.min <- round(min(sat.3$schmid$sl[,4]), 2); Afe.F3.max <- round(max(sat.3$schmid$sl[,4]), 2)
+  Afe.G.F1 <- round(sat.3$schmid$gloading[1], 2); Afe.G.F2 <- round(sat.3$schmid$gloading[2], 2)
+  Afe.G.F3 <- round(sat.3$schmid$gloading[3], 2)
+  ## Items fit analysis - Friendliness
+  Afe.it.df <- round(sat.3$schmid$dof, 2); Afe.it.n <- round(sat.3$schmid$n.obs, 2)
+  Afe.it.chi <- round(sat.3$schmid$STATISTIC, 2); Afe.it.p <- round(sat.3$schmid$PVAL, 2)
+  Afe.it.RMSR <- round(sat.3$schmid$rms, 2); Afe.it.Fit <- round(sat.3$schmid$objective, 2)
+  ## Hypothesis that 1 factor is sufficient - Friendliness
+  Afe.1.df <- round(sat.3$gstats$dof, 2); Afe.1.n <- round(sat.3$gstats$n.obs, 2)
+  Afe.1.chi <- round(sat.3$gstats$STATISTIC, 2); Afe.1.p <- round(sat.3$gstats$PVAL, 2)
+  Afe.1.RMSR <- round(sat.3$gstats$rms, 2); Afe.1.CRMSR <- round(sat.3$gstats$crms, 2); 
+  Afe.1.Fit <- round(sat.3$gstats$objective, 2); Afe.1.TLI <- round(sat.3$gstats$TLI, 2)
+  Afe.1.BIC <- round(sat.3$gstats$BIC, 2); Afe.1.R2 <- round(sat.3$gstats$R2, 2)
+  Afe.1.RMSEA <- round(sat.3$gstats$RMSEA[1], 2); Afe.1.RMSEA.CI <- round(sat.3$gstats$RMSEA[4], 2)
+  Afe.1.RMSEA.LO <- round(sat.3$gstats$RMSEA[2], 2); Afe.1.RMSEA.HI <- round(sat.3$gstats$RMSEA[3], 2)
+  ## Hypothesis that 4 factor are sufficient - Friendliness
+  Afe.4.df <- round(sat.3$stats$dof, 2); Afe.4.n <- round(sat.3$stats$n.obs, 2)
+  Afe.4.chi <- round(sat.3$stats$STATISTIC, 2); Afe.4.p <- round(sat.3$stats$PVAL, 2)
+  Afe.4.RMSR <- round(sat.3$stats$rms, 2); Afe.4.CRMSR <- round(sat.3$stats$crms, 2); 
+  Afe.4.Fit <- round(sat.3$stats$objective, 2); Afe.4.TLI <- round(sat.3$stats$TLI, 2)
+  Afe.4.RMSEA <- round(sat.3$stats$RMSEA[1], 2); Afe.4.RMSEA.CI <- round(sat.3$stats$RMSEA[4], 2)
+  Afe.4.RMSEA.LO <- round(sat.3$stats$RMSEA[2], 2);  Afe.4.RMSEA.HI <- round(sat.3$stats$RMSEA[3], 2)
+  Afe.4.BIC <- round(sat.3$stats$BIC, 2); Afe.4.R2.G <- round(sat.3$stats$R2[1], 2)
+  Afe.4.R2.F1 <- round(sat.3$stats$R2[2], 2); Afe.4.R2.F2 <- round(sat.3$stats$R2[3], 2)
+  Afe.4.R2.F3 <- round(sat.3$stats$R2[4], 2)
+  # Saturation by components - Friendliness
+  Afe.OT.G <- round(sat.3$omega.group$total[1], 2); Afe.OT.F1 <- round(sat.3$omega.group$total[2], 2)
+  Afe.OT.F2 <- round(sat.3$omega.group$total[3], 2); Afe.OT.F3 <- round(sat.3$omega.group$total[4], 2)
+  Afe.OGE.G <- round(sat.3$omega.group$general[1], 2); Afe.OGE.F1 <- round(sat.3$omega.group$general[2], 2)
+  Afe.OGE.F2 <- round(sat.3$omega.group$general[3], 2); Afe.OGE.F3 <- round(sat.3$omega.group$general[4], 2)
+  Afe.OGG.G <- round(sat.3$omega.group$group[1], 2); Afe.OGG.F1 <- round(sat.3$omega.group$group[2], 2)
+  Afe.OGG.F2 <- round(sat.3$omega.group$group[3], 2); Afe.OGG.F3 <- round(sat.3$omega.group$group[4], 2)
+```
+### Neuroticism
+
+
+### Conscientiousness
+
+
+### Openness to experience
+
+
+# Discussion
+
+
+
+
+\newpage
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
