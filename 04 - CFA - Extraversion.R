@@ -82,3 +82,4 @@ evaluare.r <- lavaan(model = r.Extraversion, data = date.Extra,
                        estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
                        model.type = "cfa", ordered = names(date.Extra), fixed.x = T)
 extraversion.r <- summary(evaluare.r, fit.measures = T, standardized = T, rsquare = T)
+

@@ -68,9 +68,5 @@ names(load.tbl.6) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
 # Evaluarea modelului respecificat
 
-evaluare2 <- lavaan(model = m.Agreab.r, data = date.Agreab,
-                  estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
-                  model.type = "cfa", ordered = names(date.Agreab), fixed.x = T)
-Agreab.r <- summary(evaluare2, fit.measures = T, standardized = T, rsquare = T)
 
 

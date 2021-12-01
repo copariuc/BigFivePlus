@@ -26,41 +26,41 @@ m.deschidere <-'Imaginatie =~ I193 + I197 + I202 + I208 + I210 + I217 + I226 + I
 evaluare1 <- lavaan(model = m.deschidere, data = date.deschidere,
                     estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
                     model.type = "cfa", ordered = names(date.deschidere), fixed.x = T)
-deschidere.ini <- summary(evaluare1, fit.measures = T, standardized = T, rsquare = T)
+Deschidere.ini <- summary(evaluare1, fit.measures = T, standardized = T, rsquare = T)
 
 # Crearea tabelului cu incarcarile itemilor
-load.tbl.1 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Imaginatie" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.1 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Imaginatie" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.1 <- dplyr::select(load.tbl.1, 3, 5, 7, 8, 10)
 load.tbl.1 <- cbind(rep("Imaginatie", times = 8), load.tbl.1)
 names(load.tbl.1) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
-load.tbl.2 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Artistic" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.2 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Artistic" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.2 <- dplyr::select(load.tbl.2, 3, 5, 7, 8, 10)
 load.tbl.2 <- cbind(rep("Artistic", times = 8), load.tbl.2)
 names(load.tbl.2) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
-load.tbl.3 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Emotionalitate" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.3 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Emotionalitate" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.3 <- dplyr::select(load.tbl.3, 3, 5, 7, 8, 10)
 load.tbl.3 <- cbind(rep("Emotionalitate", times = 8), load.tbl.3)
 names(load.tbl.3) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
-load.tbl.4 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Aventurier" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.4 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Aventurier" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.4<- dplyr::select(load.tbl.4, 3, 5, 7, 8, 10)
 load.tbl.4 <- cbind(rep("Aventurier", times = 8), load.tbl.4)
 names(load.tbl.4) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
-load.tbl.5 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Intelect" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.5 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Intelect" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.5 <- dplyr::select(load.tbl.5, 3, 5, 7, 8, 10)
 load.tbl.5 <- cbind(rep("Intelect", times = 8), load.tbl.5)
 names(load.tbl.5) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
 
-load.tbl.6 <- as.data.frame(deschidere.ini$PE[which(deschidere.ini$PE$lhs == "Liberalism" & 
-                                                 deschidere.ini$PE$op == "=~"),])
+load.tbl.6 <- as.data.frame(Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Liberalism" & 
+                                                 Deschidere.ini$PE$op == "=~"),])
 load.tbl.6 <- dplyr::select(load.tbl.6, 3, 5, 7, 8, 10)
 load.tbl.6 <- cbind(rep("Liberalism", times = 8), load.tbl.6)
 names(load.tbl.6) <- c("Latent trait", "Item", "B", "z", "p", "Beta")
@@ -81,4 +81,4 @@ evaluare2 <- lavaan(model = r.deschidere, data = date.deschidere,
                          estimator = "WLSM", test = "Satorra.Bentler", auto.var = T,
                          model.type = "cfa", ordered = names(date.deschidere), fixed.x = T)
 
-deschidere.fin <- summary(evaluare2, fit.measures = T, standardized = T, rsquare = T)
+Deschidere.fin <- summary(evaluare2, fit.measures = T, standardized = T, rsquare = T)
