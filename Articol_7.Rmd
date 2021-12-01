@@ -263,6 +263,57 @@ Respecificând modelul prin eliminarea itemilor problematici și a factorului la
 
 Singurul aspect remarcabil îl reprezintă creșterea capacității explicative față de modelul nul la `r r.tli * 100`% (TLI=`r r.tli`, SRMR=`r r.srmr`) față de modelul inițial cu `r tli * 100`% (TLI=`r tli`, SRMR=`r srmr`).
 
+### Neuroticism
+```{r echo=F, include=F}
+  source("05 - CFA - Neuroticism.R")
+  # Analiza modelului global
+  nr.param <- as.numeric(extraversion.ini$FIT["npar"])
+  df <- as.numeric(extraversion.ini$FIT["df.scaled"])
+  chi.sq <- as.numeric(extraversion.ini$FIT["chisq.scaled"])
+  p.val <- as.numeric(extraversion.ini$FIT["pvalue.scaled"])
+  rmsea <- as.numeric(extraversion.ini$FIT["rmsea"])
+  rmsea.p <- as.numeric(extraversion.ini$FIT["rmsea.pvalue"])
+  rmsea.ci.lo <- as.numeric(extraversion.ini$FIT["rmsea.ci.lower"])
+  rmsea.ci.hi <- as.numeric(extraversion.ini$FIT["rmsea.ci.upper"])
+  tli <- as.numeric(extraversion.ini$FIT["tli.scaled"])
+  srmr <- as.numeric(nevro.ini$FIT["srmr"])
+  
+  # Analiza parametrilor - Factorul cel mai puternic incarcat
+  b_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevro" & nevro.ini$PE$rhs == "Anxietate" & nevro.ini$PE$op == "=~"), 5]
+  beta_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevro" & nevro.ini$PE$rhs == "Anxietate" & nevro.ini$PE$op == "=~"), 11]
+  r_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Gregariousness" & nevro.ini$PE$op == "r2"), 5]
+  
+  # Analiza parametrilor - Factorul cel mai slab incarcat
+  b_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevro" & nevro.ini$PE$rhs == "Exagerare" & nevro.ini$PE$op == "=~"), 5]
+  beta_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevro" & nevro.ini$PE$rhs == "Exagerare" & nevro.ini$PE$op == "=~"), 11]
+  r_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Excitement" & nevro.ini$PE$op == "r2"), 5]
+  
+    # Analiza itemilor problematici
+   I109.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "109" & nevro.ini$PE$op == "r2"), 3]
+  I109.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 5]
+  I109.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 5]
+  I109.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 11]
+  
+  I110.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I110" & nevro.ini$PE$op == "r2"), 3]
+  I110.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I110" & nevro.ini$PE$op == "r2"), 5]
+  I110.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I110" & nevro.ini$PE$op == "=~"), 5]
+  I110.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I110" & nevro.ini$PE$op == "=~"), 11]
+  
+  I111.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I111" & nevro.ini$PE$op == "r2"), 3]
+  I111.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I111" & nevro.ini$PE$op == "r2"), 5]
+  I111.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 5]
+  I111.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 11]
+
+```
+În cazul dimensiunii Nevrozism, analiza a generat o soluție stabilă în 48 de iterații. Au fost estimați un număr de `r nr.param` paramentri. Pentru o estimare validă, ar fi necesar un număr minim de `nr.param * 10` cazuri și ideal un număr de `nr.param * 20` cazuri, astfel că putem considera îndeplinită această condiție. 
+
+Ca și în cazul dimensiunii Extraversiune, modelul nu este susținut în mod corespunzător de date,*(Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`)*. Cu toate acestea, erorile de aproximare sunt acceptabile *(RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`)*, iar indicele Tucker-Lewis de comparare cu modelul de bază *(Robust TLI=`r tli`, SRMR=`r srmr`)* arată că modelul se îmbunătățește cu `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare ușor ridicată, indicatorul standardizat al reziduurilor are o valoare acceptabilă, SRMR = `r srmr`.
+
+Factorul latent cel mai puternic încărcat de Extraversiune este **Anxietatea** (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`), în timp ce factorul cel mai slab încărcat este **Exagerarea** (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`), analizele indicând că aceasta nu reprezintă o fațetă reprezentativă a Extraversiunii.
+
+În privința itemilor problematici, remarcăm itemul **`r I109.N`** încărcat  slab de factorul **Timiditate** (B=`r I109.B`, \(\beta\)=`r I109.Beta`, R^2^=`r I109.R`), itemul **`r I110.N`** încărcat slab de factorul **Exagerare** (B=`r I110.B`, \(\beta\)=`r I110.Beta`, R^2^=`r I110.R`), precum și itemul **`r I111.N`** încărcat foarte slab de factorul **Vulnerabilitate** (B=`r I111.B`, \(\beta\)=`r I111.Beta`, R^2^=`r I111.R`)
+
+
 # Discussion
 
 
