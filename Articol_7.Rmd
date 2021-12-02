@@ -72,10 +72,7 @@ header-includes:
 
 ```{r setup, include = FALSE}
   # Including necessary libraries
-  library(papaja); library(stargazer); library(epiDisplay)
-  #library(psych); library(nortest); library(dplyr)
-  #library(purrr); #library(lavaan)
-
+  library(papaja); library(stargazer); library(kableExtra)
   # Including references file for R libraries
   r_refs("r-references.bib")
 ```
@@ -110,16 +107,15 @@ Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărca�
 
 ## Participants
 ```{r participants, echo = F, include = F}
-  # Computing data
-  gender <- tab1(date$gen, graph = F)
-  studies <- tab1(date$studii, graph = T)
+ # Computing data
+  source("01 - Lotul de cercetare.R")
   # Returning values - n
   n <- gender$output.table[3]
   # Returning values - n by gender
   n.male <- gender$output.table[1]
   n.male.prc <- gender$output.table[4]
   n.female <- gender$output.table[2]
-  n.female.prc <- gender$output.table[2]
+  n.female.prc <- gender$output.table[5]
   # Returning values - n by educational level
   n.st.lic <- studies$output.table[7]
   n.st.lic.prc <- studies$output.table[18]
@@ -133,44 +129,59 @@ Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărca�
   n.st.art.prc <- studies$output.table[15]
   n.nost <- studies$output.table[10]
   n.nost.prc <- studies$output.table[21]
+  # Returning values - n by Type of data gathering
+  n.paper <- online$output.table[1]
+  n.paper.prc <- online$output.table[4]
+  n.online <- online$output.table[2]
+  n.online.prc <- online$output.table[5]
 ```
-A total of `r n` protocols were collected **(n=`r n`)**, administered to a number of `r n.male` *males* (`r n.male.prc `%) and `r n.female` *females* (`r n.female.prc`%), most of them being *university graduates* (`r n.st.lic`, representing `r n.st.lic.prc`%), followed by *high school graduated* (`r n.st.hsc`, representing `r n.st.hsc.prc`%) and the persons with *master's degrees* (`r n.st.mst`, representing `r n.st.mst.prc`%). The research group also contains graduates of *post-secondary schools* (`r n.st.phs`, representing `r n.st.phs.prc`%) and graduates of *arts and crafts schools* (`r n.st.art`, representing `r n.st.art.prc`%), the other categories being much less represented.
-```{r gender, results='asis'}
-  stargazer::stargazer(gender$output.table, type = "latex", 
-                       header = F, float = T, title = "Participants's gender")
+A total of `r n` protocols were collected **(n=`r n`)**, administered to a number of `r n.male` *males* (`r n.male.prc `%) and `r n.female` *females* (`r n.female.prc`%, see Table \@ref(tab:gender)), most of them being *university graduates* (`r n.st.lic`, representing `r n.st.lic.prc`%), followed by *high school graduated* (`r n.st.hsc`, representing `r n.st.hsc.prc`%) and the persons with *master's degrees* (`r n.st.mst`, representing `r n.st.mst.prc`%). The research group also contains graduates of *post-secondary schools* (`r n.st.phs`, representing `r n.st.phs.prc`%) and graduates of *arts and crafts schools* (`r n.st.art`, representing `r n.st.art.prc`%), the other categories being much less represented.
+
+```{r gender, echo=FALSE}
+  knitr::kable(gender$output.table, format = "latex", digits = 2, booktabs = T,
+                       caption = "Participants's gender", escape = F)
 ```
-```{r education, results='asis'}
-    stargazer::stargazer(studies$output.table, type = "latex", 
-                       header = F, float = T,  title = "Participants's educational level")
+```{r education, echo=FALSE}
+   knitr::kable(studies$output.table, format = "latex", digits = 2, booktabs = T,
+                       caption = "Participants's educational level", escape = F)
+```
+Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r n.nost`, reprezentând `r n.nost.prc`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile (see Table \@ref(tab:education)).
+
+În privința modalității de administrate, un număr de `r n.paper` protocoale au fost administrate în *formă creion-hârtie (`r n.paper.prc`%)*, `r n.online` protocoale fiind colectate direct *online (`r n.online.prc`%)* (see Table \@ref(tab:gather))
+```{r gather, echo=FALSE}
+   knitr::kable(online$output.table, format = "latex", digits = 2, booktabs = T,
+                       caption = "Type of data gathering", escape = F)
 ```
 
-<<<<<<< HEAD
-Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r n.nost`, reprezentând `r n.nost.prc`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile.
 
-=======
->>>>>>> c93997bdb5aa6c6f4495472ebc605d1ed6fb9eb6
+
 ## Material
-Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).  Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
+Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`). Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
 
 ## Procedure
-Analiza va presupune studiul inițial al consistenței interne, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~), dar și al coeficienților ierarhici de saturație \(\omega\) [@Zinbarg-2007] deoarece deoarece instrumentul nu este unul unifactorial. 
-În vederea analizei de structură internă și a adecvării la model unidimensional, vom testa, la nivelul fiecărei fațete, atât acest model, cât și două modele alternative, cu două și 3 sub-componente în vederea identificării unei structuri axiale (prezența unor scale cu sub-componente - lumpyness).
+Analiza va presupune studiul inițial al consistenței interne, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~). 
 
 Vom testa apoi modelul în care factorul latent încarcă cei 8 indicatori, pentru fiecare dintre cele 6 fațete ale unei dimensiuni, și existența dimensiunii comune pentru toți cei 6 factori latenți.
 
 În urma interpretării parametrilor și a diagnosticului modelelor acestea vor fi respecificate, identificându-se, dacă este cazul, modele explicative mai bune.
 
+**În prima fază** vom prezenta comparativ analizele autorilor privind consistența internă utilizându-se **metoda alpha Cronbach a fidelității tau-echivalente** [@Cronbach-1951], incluzând atât indicatorii globali, cât și cei defalcați în funcție de *genul biologic* și de *modalitatea de administrare. Analiza s-a realizat utilizându-se pachetul **„psych”** [@R-psych], plecându-se de la condiția itemilor cumulativi, scorul total rezultând în urma adunării celor 8 itemi (amplitudinea teoretică de 8 puncte) cu identificarea varianțelor negative ale itemilor și recodare automată și utilizând o reeșantionare neparametrică folosind 100 de eșantioane în vederea verificării stabilității parametrilor.
+
+**În cea de-a doua fază**, analiza  Inventarul BigFive Plus va fi realizată după un model clasic de analiză factorială confirmatorie cu factori de ordin secund necorelați, ce va fi analizat folosindu-se pachetul **lavaan** [@R-lavaan]. Deoarece indicatorii sunt dihotomici, vom folosi *metoda estimării pragurilor categoriilor de răspuns* în care fiecare indicator devine încărcat în factor latent și determină un răspuns activ (1-Da) dacă depășește valoarea prag a sa, determinată de poziția itemului pe continuumul factorului latent. Drept estimator vom folosi unul din categoria metodelor bazate pe cele mai mici pătrate, mai precis **„WLSM”**, ce utilizează doar diagonala matricii ponderate „W” (**„DWLS”**) și folosind, la testele statistice, mediile ajustate. În vederea testării potrivirii globale s-a folosit versiunea „Satorra Bentler” a testului \(\chi\)^2^, ajustându-se mediile [@Skrondal-2005]. 
+
 ## Data analysis
 Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` și următoarele pachete: `r cite_r("r-references.bib")`. 
 
 # Results
+## Data screening and descriptive statistics
 
-**În prima fază** vom prezenta comparativ analizele autorilor privind consistența internă utilizându-se **metoda alpha Cronbach a fidelității tau-echivalente** [@Cronbach-1951], incluzând atât indicatorii globali, cât și cei defalcați în funcție de genul biologic și de modalitatea de administrare. Analiza s-a realizat utilizându-se pachetul **„psych”** [@R-psych], plecându-se de la condiția itemilor cumulativi, scorul total rezultând în urma adunării celor 8 itemi (amplitudinea teoretică de 8 puncte) cu identificarea varianțelor negative ale itemilor și recodare automată și utilizând o reeșantionare neparametrică folosind 100 de eșantioane în vederea verificării stabilității parametrilor.
 
-**În cea de-a doua fază** se vor calcula coeficienții ierarhici de saturație *\(\omega\)h* [@Zinbarg-2007], efectuându-se o analiză ierarhică a componentelor principale cu rotație oblică *(oblimin)* pe baza unei matrici de corelații tetrachorice cu inversarea automată a itemilor ce prezintă covarianțe negative cu factorul general, apoi aplicarea transformării Schmid Leiman asupra acesteia, testându-se astfel un număr de două modele în vederea identificării unei potențiale structuri „lumpyness”: **primul**, în care presupunem că itemii sunt încărcați de trei sub-componente ale factorului general, **al doilea**, în care vom pleca de la ipoteza în care itemii sunt încărcați de două sub-componente ale factorului general, iar în acest caz vom trata trei situații: (1) încărcările factorului general vor fi redistribuite egal pe cele două subcomponente, (2) încărcările factorului general vor fi echivalate cu cele ale primei sub-componente și (3) încărcările factorului general vor fi echivalate cu ale celei de-a doua sub-componentă.
+
+## Scales' reliability
+
 
 ## Confirmatory Factor Analisys
-Analiza  Inventarul BigFive Plus va fi realizată după un model clasic de analiză factorială confirmatorie cu factori de ordin secund necorelați, ce va fi analizat folosindu-se pachetul **lavaan** [@R-lavaan]. Deoarece indicatorii sunt dihotomici, vom folosi *metoda estimării pragurilor categoriilor de răspuns* în care fiecare indicator devine încărcat în factor latent și determină un răspuns activ (1-Da) dacă depășește valoarea prag a sa, determinată de poziția itemului pe continuumul factorului latent. Drept estimator vom folosi unul din categoria metodelor bazate pe cele mai mici pătrate, mai precis **„WLSM”**, ce utilizează doar diagonala matricii ponderate „W” (**„DWLS”**) și folosind, la testele statistici, mediile ajustate. În vederea testării potrivirii globale s-a folosit versiunea „Satorra Bentler” a testului \(\chi\)^2^, ajustându-se mediile [@Skrondal-2005].
+
 
 ### Extraversion
 ```{r sem-extra, echo=F, include=F}
@@ -198,7 +209,7 @@ Analiza  Inventarul BigFive Plus va fi realizată după un model clasic de anali
   r_low <- extraversion.ini$PE[which(extraversion.ini$PE$lhs == "Excitement" & extraversion.ini$PE$op == "r2"), 5]
   
   # Analiza itemilor problematici
-   I7.N <- extraversion.ini$PE[which(extraversion.ini$PE$lhs == "I7" & extraversion.ini$PE$op == "r2"), 3]
+  I7.N <- extraversion.ini$PE[which(extraversion.ini$PE$lhs == "I7" & extraversion.ini$PE$op == "r2"), 3]
   I7.R <- extraversion.ini$PE[which(extraversion.ini$PE$lhs == "I7" & extraversion.ini$PE$op == "r2"), 5]
   I7.B <- extraversion.ini$PE[which(extraversion.ini$PE$rhs == "I7" & extraversion.ini$PE$op == "=~"), 5]
   I7.Beta <- extraversion.ini$PE[which(extraversion.ini$PE$rhs == "I7" & extraversion.ini$PE$op == "=~"), 11]
@@ -257,34 +268,9 @@ Din cauza unei probleme de identificare empirică și care a generat o matrice n
 Respecificând modelul prin eliminarea itemilor problematici și a factorului latent *Excitabilitate*, obținem o îmbunătățire a modelului în ce privește potrivirea globală (\(\chi\)^2^~(`r r.df`)~=`r r.chi.sq`, p=`r r.p.val`,  RMSEA=`r r.rmsea`, p=`r r.rmsea.p`, CI~90%~=`r r.rmsea.ci.lo` - `r r.rmsea.ci.hi` față de \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`,  RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`), însă noul model tot nu este susținut în mod corespunzător de datele observate.
 
 Singurul aspect remarcabil îl reprezintă creșterea capacității explicative față de modelul nul la `r r.tli * 100`% (TLI=`r r.tli`, SRMR=`r r.srmr`) față de modelul inițial cu `r tli * 100`% (TLI=`r tli`, SRMR=`r srmr`).
-=======
-```
-Varianța celor 48 de itemi dihotomici explicată de cei 6 factori latenți a căror varianță, mai apoi, va fi explicată de un factor de ordin doi, mai exact de **dimensiunea Extraversiune**, în urma analizei a generat o soluție stabilă după 29 de iterații, estimându-se un număr `r nr.param` parametri liberi, pentru o estimare validă fiind necesare minimum `r nr.param * 10` observații, ideal `r nr.param * 20` observații, condiția volumului lotului de cercetare fiind îndeplinită.
-
-Modelul global cu un singur factor latent de ordin doi nu este însă susținut în mod corespunzător de date *(Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`)*, testul de potrivire a modelului eșuând și respingându-se ipoteza nulă **H~0~:** *Nu există nicio discrepanță statistic semnificativă între covarianțele stipulate la nivelul populației și covarianțele estimate de model.* Erorile de aproximare sunt însă acceptabile *(RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`)*, chiar dacă ipoteza nulă de potrivire **H~0~:** *Reziduurile standardizate dintre covarianțele rezultate din date și matricea ipotetică de covarianțe sunt nule* este respinsă, valoarea arătând eșecul testul de nepotrivire (\(\epsilon\)>.10) și reziduuri standardizate statistic semnificative între covarianțele rezultate din date și matricea ipotetică de covarianțe.
-
-Indicele Tucker-Lewis de comparare cu modelul de bază *(Robust TLI=`r tli`, SRMR=`r srmr`)* arată că modelul se îmbunătățește cu `r tli * 100`% în comparație cu modelul nul, în condițiile în care indicatorul standardizat al reziduurilor are o valoare ușor ridicată.
-
-Din cauza unei probleme de identificare empirică și care a generat o matrice neinversabilă, erorile standard ale estimării parametrilor nu au putut fi calculate, prin urmare nici testele statistice, așadar parametrii vor fi apreciați pe baza valorilor nestandardizate și standardizate.
-
-**Extraversiunea**, ca factor latent de ordin doi, încarcă cel mai puternic factorul latent *Sociabilitate* (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`) și cel mai slab factorul latent *Excitabilitate* (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`), valorile varianței explicate și ale coeficientului de încărcare sugerând, de fapt, că *Excitabilitatea* nu reprezintă o fațetă a extraversiunii, cu atât mai mult cu cât cei 8 itemi sunt încărcați foarte bine de aceasta.
-
-```{r EXT-Loading, results='asis'}
-  apa_table(load.tbl.1, row.names = F, caption = "Loadings for Friendliness' latent trait")
-  apa_table(load.tbl.2, row.names = F, caption = "Loadings for Gregariousness' latent trait")
-  apa_table(load.tbl.3, row.names = F, caption = "Loadings for Assertiveness' latent trait")
-  apa_table(load.tbl.4, row.names = F, caption = "Loadings for Activity's latent trait")
-  apa_table(load.tbl.5, row.names = F, caption = "Loadings for Excitement's latent trait")
-  apa_table(load.tbl.6, row.names = F, caption = "Loadings for Cheerfulness' latent trait")
-```
-În privința itemilor problematici, remarcăm itemul **`r I7.N`** încărcat foarte slab de factorul **Asertivitate** (B=`r I7.B`, \(\beta\)=`r I7.Beta`, R^2^=`r I7.R`), itemii **`r I28.N`, `r I31.N` și `r I37.N`** încărcați foarte slab de factorul **Activitate** (Itemul 28: B=`r I28.B`, \(\beta\)=`r I28.Beta`, R^2^=`r I28.R`, Itemul 31: B=`r I31.B`, \(\beta\)=`r I31.Beta`, R^2^=`r I31.R` și Itemul 37: B=`r I37.B`, \(\beta\)=`r I37.Beta`, R^2^=`r I37.R`), precum și itemul **`r I30.N`** încărcat foarte slab de factorul **Veselie** (B=`r I30.B`, \(\beta\)=`r I30.Beta`, R^2^=`r I30.R`)
-
-Respecificând modelul prin eliminarea itemilor problematici și a factorului latent *Excitabilitate*, obținem o îmbunătățire a modelului în ce privește potrivirea globală (\(\chi\)^2^~(`r r.df`)~=`r r.chi.sq`, p=`r r.p.val`,  RMSEA=`r r.rmsea`, p=`r r.rmsea.p`, CI~90%~=`r r.rmsea.ci.lo` - `r r.rmsea.ci.hi` față de \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`,  RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`), însă noul model tot nu este susținut în mod corespunzător de datele observate.
-
-Singurul aspect remarcabil îl reprezintă creșterea capacității explicative față de modelul nul la `r r.tli * 100`% (TLI=`r r.tli`, SRMR=`r r.srmr`) față de modelul inițial cu `r tli * 100`% (TLI=`r tli`, SRMR=`r srmr`).
 
 ### Neuroticism
-```{r echo=F, include=F}
+```{r sem-neuro, echo=F, include=F}
   source("05 - CFA - Neuroticism.R")
   # Analiza modelului global
   nr.param <- as.numeric(nevro.ini$FIT["npar"])
@@ -308,8 +294,8 @@ Singurul aspect remarcabil îl reprezintă creșterea capacității explicative 
   beta_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevrozism" & nevro.ini$PE$rhs == "Exagerare" & nevro.ini$PE$op == "=~"), 11]
   r_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Exagerare" & nevro.ini$PE$op == "r2"), 5]
   
-    # Analiza itemilor problematici
-   I109.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 3]
+  # Analiza itemilor problematici
+  I109.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 3]
   I109.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 5]
   I109.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 5]
   I109.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 11]
@@ -323,7 +309,6 @@ Singurul aspect remarcabil îl reprezintă creșterea capacității explicative 
   I111.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I111" & nevro.ini$PE$op == "r2"), 5]
   I111.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 5]
   I111.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 11]
-
 ```
 În cazul dimensiunii Nevrozism, analiza a generat o soluție stabilă în 48 de iterații. Au fost estimați un număr de `r nr.param` parametri liberi. Pentru o estimare validă, ar fi necesar un număr minim de `r nr.param * 10` cazuri și ideal un număr de `r nr.param * 20` cazuri, astfel că putem considera îndeplinită această condiție. 
 Ca și în cazul dimensiunii Extraversiune, modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*. Cu toate acestea, erorile de aproximare sunt acceptabile *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, iar indicele Tucker-Lewis de comparare cu modelul de bază *Robust TLI=`r tli`* arată că modelul se îmbunătățește cu `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare acceptabilă, SRMR = `r srmr`.
@@ -333,7 +318,7 @@ Factorul latent cel mai puternic încărcat de Nevrozism este **Anxietatea** (B=
 În privința itemilor problematici, remarcăm itemul **`r I109.N`** încărcat  slab de factorul **Timiditate** (B=`r I109.B`, \(\beta\)=`r I109.Beta`, R^2^=`r I109.R`), itemul **`r I110.N`** încărcat slab de factorul **Exagerare** (B=`r I110.B`, \(\beta\)=`r I110.Beta`, R^2^=`r I110.R`), precum și itemul **`r I111.N`** încărcat  slab de factorul **Vulnerabilitate** (B=`r I111.B`, \(\beta\)=`r I111.Beta`, R^2^=`r I111.R`)
 
 ### Agreabilitate
-```{r echo=F, include=F}
+```{r sem-agrea, echo=F, include=F}
   source("06 - CFA - Agreabilitate.R")
   df <- as.numeric(Agreab.ini$FIT["df.scaled"])
   chi.sq <- as.numeric(Agreab.ini$FIT["chisq.scaled"])
@@ -356,7 +341,7 @@ Factorul latent cel mai puternic încărcat de Nevrozism este **Anxietatea** (B=
   r_low <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Modestie" & Agreab.ini$PE$op == "r2"), 5]
   
     # Analiza itemilor problematici
-   I89.N <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I89" & Agreab.ini$PE$op == "r2"), 3]
+  I89.N <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I89" & Agreab.ini$PE$op == "r2"), 3]
   I89.R <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I89" & Agreab.ini$PE$op == "r2"), 5]
   I89.B <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I89" & Agreab.ini$PE$op == "=~"), 5]
   I89.Beta <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I89" & Agreab.ini$PE$op == "=~"), 11]
@@ -367,7 +352,6 @@ Factorul latent cel mai puternic încărcat de Nevrozism este **Anxietatea** (B=
   I79.Beta <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I79" & Agreab.ini$PE$op == "=~"), 11]
 ```
 
-
 Pentru meta-factorul Agreabilitate, analiza a generat o soluție stabilă în 29 de iterații. 
 
 Rezultatele arată că modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*, *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, *Robust TLI=`r tli`*. Modelul se îmbunătățește cu doar `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare pest pragul acceptabil, SRMR = `r srmr`.
@@ -377,7 +361,7 @@ Factorul latent cel mai puternic încărcat de Agreabilitate este **Altruismul**
 În privința itemilor problematici, observăm faptul că itemul **`r I89.N`** este încărcat  slab de factorul **Moralitate** (B=`r I89.B`, \(\beta\)=`r I89.Beta`, R^2^=`r I89.R`), iar itemul **`r I79.N`**  este încărcat slab de factorul **Modestie** (B=`r I79.B`, \(\beta\)=`r I79.Beta`, R^2^=`r I79.R`).
 
 ### Constiinciozitate
-```{r echo=F, include=F}
+```{r sem-const, echo=F, include=F}
   source("07 - CFA - Constiinciozitate.R")
   df <- as.numeric(Const.ini$FIT["df.scaled"])
   chi.sq <- as.numeric(Const.ini$FIT["chisq.scaled"])
@@ -400,7 +384,7 @@ Factorul latent cel mai puternic încărcat de Agreabilitate este **Altruismul**
   r_low <- Const.ini$PE[which(Agreab.ini$PE$lhs == "Prudenta" & Const.ini$PE$op == "r2"), 5]
   
     # Analiza itemilor problematici
-   I147.N <- Const.ini$PE[which(Const.ini$PE$lhs == "I147" & Const.ini$PE$op == "r2"), 3]
+  I147.N <- Const.ini$PE[which(Const.ini$PE$lhs == "I147" & Const.ini$PE$op == "r2"), 3]
   I147.R <- Const.ini$PE[which(Const.ini$PE$lhs == "I147" & Const.ini$PE$op == "r2"), 5]
   I147.B <- Const.ini$PE[which(Const.ini$PE$rhs == "I147" & Const.ini$PE$op == "=~"), 5]
   I147.Beta <- Const.ini$PE[which(Const.ini$PE$rhs == "I147" & Const.ini$PE$op == "=~"), 11]
@@ -425,7 +409,7 @@ Factorul latent cel mai puternic încărcat de Conștiinciozitate este **Perseve
 În privința itemilor problematici, observăm faptul că itemul **`r I147.N`** este încărcat  slab de factorul **Datorie** (B=`r I147.B`, \(\beta\)=`r I147.Beta`, R^2^=`r I147.R`), itemul **`r I172.N`**  este încărcat slab de factorul **Ambiție** (B=`r I79.B`, \(\beta\)=`r I79.Beta`, R^2^=`r I79.R`), iar itemul **`r I174.N`** încărcat  slab de factorul **Prudență** (B=`r I174.B`, \(\beta\)=`r I174.Beta`, R^2^=`r I174.R`).
 
 ### Deschidere
-```{r echo=F, include=F}
+```{r sem-open, echo=F, include=F}
   source("08 - CFA - Deschidere.R")
   df <- as.numeric(Deschidere.ini$FIT["df.scaled"])
   chi.sq <- as.numeric(Deschidere.ini$FIT["chisq.scaled"])
@@ -448,7 +432,7 @@ Factorul latent cel mai puternic încărcat de Conștiinciozitate este **Perseve
   r_low <- Deschidere.ini$PE[which(Agreab.ini$PE$lhs == "Emotionalitate" & Deschidere.ini$PE$op == "r2"), 5]
   
     # Analiza itemilor problematici
-   I195.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I195" & Deschidere.ini$PE$op == "r2"), 3]
+  I195.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I195" & Deschidere.ini$PE$op == "r2"), 3]
   I195.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I195" & Deschidere.ini$PE$op == "r2"), 5]
   I195.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I195" & Deschidere.ini$PE$op == "=~"), 5]
   I195.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I195" & Deschidere.ini$PE$op == "=~"), 11]
@@ -492,220 +476,8 @@ Factorul latent cel mai puternic încărcat de Deschidere este **Imaginația** (
 
 În privința itemilor problematici, observăm faptul că itemul **`r I195.N`** este încărcat  slab de factorul **Emoționalitate** (B=`r I147.B`, \(\beta\)=`r I147.Beta`, R^2^=`r I147.R`). În cazul factorului **Liberalism**, mai mulți itemi sunt problematici: itemul **`r I207.N`** (B=`r I207.B`, \(\beta\)=`r I207.Beta`, R^2^=`r I207.R`),itemul **`r I216.N`** (B=`r I216.B`, \(\beta\)=`r I216.Beta`, R^2^=`r I216.R`), itemul **`r I238.N`**  (B=`r I238.B`, \(\beta\)=`r I238.Beta`, R^2^=`r I238.R`), precum și itemul **`r I240.N`** (B=`r I240.B`, \(\beta\)=`r I240.Beta`, R^2^=`r I240.R`). Itemul **`r I221.N`** (B=`r I221.B`, \(\beta\)=`r I221.Beta`, R^2^=`r I221.R`), precum și itemul **`r I230.N`** (B=`r I230.B`, \(\beta\)=`r I230.Beta`, R^2^=`r I240.R`) sunt încărcați slab de factorul Intelect.
 
-
-### Neuroticism
-
-```{r echo=F, include=F}
-  source("05 - CFA - Neuroticism.R")
-  # Analiza modelului global
-  nr.param <- as.numeric(nevro.ini$FIT["npar"])
-  df <- as.numeric(nevro.ini$FIT["df.scaled"])
-  chi.sq <- as.numeric(nevro.ini$FIT["chisq.scaled"])
-  p.val <- as.numeric(nevro.ini$FIT["pvalue.scaled"])
-  rmsea <- as.numeric(nevro.ini$FIT["rmsea"])
-  rmsea.p <- as.numeric(nevro.ini$FIT["rmsea.pvalue"])
-  rmsea.ci.lo <- as.numeric(nevro.ini$FIT["rmsea.ci.lower"])
-  rmsea.ci.hi <- as.numeric(nevro.ini$FIT["rmsea.ci.upper"])
-  tli <- as.numeric(nevro.ini$FIT["tli.scaled"])
-  srmr <- as.numeric(nevro.ini$FIT["srmr"])
-  
-  # Analiza parametrilor - Factorul cel mai puternic incarcat
-  b_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevrozism" & nevro.ini$PE$rhs == "Anxietate" & nevro.ini$PE$op == "=~"), 5]
-  beta_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevrozism" & nevro.ini$PE$rhs == "Anxietate" & nevro.ini$PE$op == "=~"), 11]
-  r_high <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Anxietate" & nevro.ini$PE$op == "r2"), 5]
-  
-  # Analiza parametrilor - Factorul cel mai slab incarcat
-  b_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevrozism" & nevro.ini$PE$rhs == "Exagerare" & nevro.ini$PE$op == "=~"), 5]
-  beta_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Nevrozism" & nevro.ini$PE$rhs == "Exagerare" & nevro.ini$PE$op == "=~"), 11]
-  r_low <- nevro.ini$PE[which(nevro.ini$PE$lhs == "Exagerare" & nevro.ini$PE$op == "r2"), 5]
-  
-    # Analiza itemilor problematici
-   I109.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 3]
-  I109.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I109" & nevro.ini$PE$op == "r2"), 5]
-  I109.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 5]
-  I109.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I109" & nevro.ini$PE$op == "=~"), 11]
-  
-  I110.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I110" & nevro.ini$PE$op == "r2"), 3]
-  I110.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I110" & nevro.ini$PE$op == "r2"), 5]
-  I110.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I110" & nevro.ini$PE$op == "=~"), 5]
-  I110.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I110" & nevro.ini$PE$op == "=~"), 11]
-  
-  I111.N <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I111" & nevro.ini$PE$op == "r2"), 3]
-  I111.R <- nevro.ini$PE[which(nevro.ini$PE$lhs == "I111" & nevro.ini$PE$op == "r2"), 5]
-  I111.B <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 5]
-  I111.Beta <- nevro.ini$PE[which(nevro.ini$PE$rhs == "I111" & nevro.ini$PE$op == "=~"), 11]
-
-```
-În cazul dimensiunii Nevrozism, analiza a generat o soluție stabilă în 48 de iterații. Au fost estimați un număr de `r nr.param` parametri liberi. Pentru o estimare validă, ar fi necesar un număr minim de `r nr.param * 10` cazuri și ideal un număr de `r nr.param * 20` cazuri, astfel că putem considera îndeplinită această condiție. 
-Ca și în cazul dimensiunii Extraversiune, modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*. Cu toate acestea, erorile de aproximare sunt acceptabile *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, iar indicele Tucker-Lewis de comparare cu modelul de bază *Robust TLI=`r tli`* arată că modelul se îmbunătățește cu `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare acceptabilă, SRMR = `r srmr`.
-
-Factorul latent cel mai puternic încărcat de Nevrozism este **Anxietatea** (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`), în timp ce factorul cel mai slab încărcat este **Exagerarea** (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`), analizele indicând că aceasta nu reprezintă o fațetă reprezentativă a Nevrozismului.
-
-În privința itemilor problematici, remarcăm itemul **`r I109.N`** încărcat  slab de factorul **Timiditate** (B=`r I109.B`, \(\beta\)=`r I109.Beta`, R^2^=`r I109.R`), itemul **`r I110.N`** încărcat slab de factorul **Exagerare** (B=`r I110.B`, \(\beta\)=`r I110.Beta`, R^2^=`r I110.R`), precum și itemul **`r I111.N`** încărcat  slab de factorul **Vulnerabilitate** (B=`r I111.B`, \(\beta\)=`r I111.Beta`, R^2^=`r I111.R`)
-
-### Agreabilitate
-```{r echo=F, include=F}
-  source("06 - CFA - Agreabilitate.R")
-  df <- as.numeric(Agreab.ini$FIT["df.scaled"])
-  chi.sq <- as.numeric(Agreab.ini$FIT["chisq.scaled"])
-  p.val <- as.numeric(Agreab.ini$FIT["pvalue.scaled"])
-  rmsea <- as.numeric(Agreab.ini$FIT["rmsea"])
-  rmsea.p <- as.numeric(Agreab.ini$FIT["rmsea.pvalue"])
-  rmsea.ci.lo <- as.numeric(Agreab.ini$FIT["rmsea.ci.lower"])
-  rmsea.ci.hi <- as.numeric(Agreab.ini$FIT["rmsea.ci.upper"])
-  tli <- as.numeric(Agreab.ini$FIT["tli.scaled"])
-  srmr <- as.numeric(Agreab.ini$FIT["srmr"])
-  
-  # Analiza parametrilor - Factorul cel mai puternic incarcat
-  b_high <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Agreabilitate" & Agreab.ini$PE$rhs == "Altruism" & Agreab.ini$PE$op == "=~"), 5]
-  beta_high <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Agreabilitate" & Agreab.ini$PE$rhs == "Altruism" & Agreab.ini$PE$op == "=~"), 11]
-  r_high <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Altruism" & Agreab.ini$PE$op == "r2"), 5]
-  
-  # Analiza parametrilor - Factorul cel mai slab incarcat
-  b_low <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Agreabilitate" & Agreab.ini$PE$rhs == "Modestie" & Agreab.ini$PE$op == "=~"), 5]
-  beta_low <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Agreabilitate" & Agreab.ini$PE$rhs == "Modestie" & Agreab.ini$PE$op == "=~"), 11]
-  r_low <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "Modestie" & Agreab.ini$PE$op == "r2"), 5]
-  
-    # Analiza itemilor problematici
-   I89.N <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I89" & Agreab.ini$PE$op == "r2"), 3]
-  I89.R <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I89" & Agreab.ini$PE$op == "r2"), 5]
-  I89.B <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I89" & Agreab.ini$PE$op == "=~"), 5]
-  I89.Beta <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I89" & Agreab.ini$PE$op == "=~"), 11]
-  
-  I79.N <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I79" & Agreab.ini$PE$op == "r2"), 3]
-  I79.R <- Agreab.ini$PE[which(Agreab.ini$PE$lhs == "I79" & Agreab.ini$PE$op == "r2"), 5]
-  I79.B <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I79" & Agreab.ini$PE$op == "=~"), 5]
-  I79.Beta <- Agreab.ini$PE[which(Agreab.ini$PE$rhs == "I79" & Agreab.ini$PE$op == "=~"), 11]
-```
-
-
-Pentru meta-factorul Agreabilitate, analiza a generat o soluție stabilă în 29 de iterații. 
-
-Rezultatele arată că modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*, *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, *Robust TLI=`r tli`*. Modelul se îmbunătățește cu doar `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare pest pragul acceptabil, SRMR = `r srmr`.
-
-Factorul latent cel mai puternic încărcat de Agreabilitate este **Altruismul** (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`), în timp ce factorul cel mai slab încărcat este **Modestia** (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`).
-
-În privința itemilor problematici, observăm faptul că itemul **`r I89.N`** este încărcat  slab de factorul **Moralitate** (B=`r I89.B`, \(\beta\)=`r I89.Beta`, R^2^=`r I89.R`), iar itemul **`r I79.N`**  este încărcat slab de factorul **Modestie** (B=`r I79.B`, \(\beta\)=`r I79.Beta`, R^2^=`r I79.R`).
-
-### Constiinciozitate
-```{r echo=F, include=F}
-  source("07 - CFA - Constiinciozitate.R")
-  df <- as.numeric(Const.ini$FIT["df.scaled"])
-  chi.sq <- as.numeric(Const.ini$FIT["chisq.scaled"])
-  p.val <- as.numeric(Const.ini$FIT["pvalue.scaled"])
-  rmsea <- as.numeric(Const.ini$FIT["rmsea"])
-  rmsea.p <- as.numeric(Const.ini$FIT["rmsea.pvalue"])
-  rmsea.ci.lo <- as.numeric(Const.ini$FIT["rmsea.ci.lower"])
-  rmsea.ci.hi <- as.numeric(Const.ini$FIT["rmsea.ci.upper"])
-  tli <- as.numeric(Const.ini$FIT["tli.scaled"])
-  srmr <- as.numeric(Const.ini$FIT["srmr"])
-  
-  # Analiza parametrilor - Factorul cel mai puternic incarcat
-  b_high <- Const.ini$PE[which(Const.ini$PE$lhs == "Constiinciozitate" & Const.ini$PE$rhs == "Perseverenta" & Const.ini$PE$op == "=~"), 5]
-  beta_high <- Const.ini$PE[which(Const.ini$PE$lhs == "Constiinciozitate" & Const.ini$PE$rhs == "Perseverenta" & Const.ini$PE$op == "=~"), 11]
-  r_high <- Const.ini$PE[which(Const.ini$PE$lhs == "Perseverenta" & Const.ini$PE$op == "r2"), 5]
-  
-  # Analiza parametrilor - Factorul cel mai slab incarcat
-  b_low <- Const.ini$PE[which(Const.ini$PE$lhs == "Constiinciozitate" & Const.ini$PE$rhs == "Prudenta" & Const.ini$PE$op == "=~"), 5]
-  beta_low <- Const.ini$PE[which(Const.ini$PE$lhs == "Constiinciozitate" & Const.ini$PE$rhs == "Prudenta" & Const.ini$PE$op == "=~"), 11]
-  r_low <- Const.ini$PE[which(Agreab.ini$PE$lhs == "Prudenta" & Const.ini$PE$op == "r2"), 5]
-  
-    # Analiza itemilor problematici
-   I147.N <- Const.ini$PE[which(Const.ini$PE$lhs == "I147" & Const.ini$PE$op == "r2"), 3]
-  I147.R <- Const.ini$PE[which(Const.ini$PE$lhs == "I147" & Const.ini$PE$op == "r2"), 5]
-  I147.B <- Const.ini$PE[which(Const.ini$PE$rhs == "I147" & Const.ini$PE$op == "=~"), 5]
-  I147.Beta <- Const.ini$PE[which(Const.ini$PE$rhs == "I147" & Const.ini$PE$op == "=~"), 11]
-  
-  I172.N <- Const.ini$PE[which(Const.ini$PE$lhs == "I172" & Const.ini$PE$op == "r2"), 3]
-  I172.R <- Const.ini$PE[which(Const.ini$PE$lhs == "I172" & Const.ini$PE$op == "r2"), 5]
-  I172.B <- Const.ini$PE[which(Const.ini$PE$rhs == "I172" & Const.ini$PE$op == "=~"), 5]
-  I172.Beta <- Const.ini$PE[which(Const.ini$PE$rhs == "I172" & Const.ini$PE$op == "=~"), 11]
-
-  I174.N <- Const.ini$PE[which(Const.ini$PE$lhs == "I174" & Const.ini$PE$op == "r2"), 3]
-  I174.R <- Const.ini$PE[which(Const.ini$PE$lhs == "I174" & Const.ini$PE$op == "r2"), 5]
-  I174.B <- Const.ini$PE[which(Const.ini$PE$rhs == "I174" & Const.ini$PE$op == "=~"), 5]
-  I174.Beta <- Const.ini$PE[which(Const.ini$PE$rhs == "I174" & Const.ini$PE$op == "=~"), 11]
-```
-
-Pentru meta-factorul Conștiinciozitate, analiza a generat o soluție stabilă în 29 de iterații. 
-
-Rezultatele arată că modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*, *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, *Robust TLI=`r tli`*. Modelul se îmbunătățește cu  `r tli * 100`% în comparație cu modelul nul. Indicatorul standardizat al reziduurilor are o valoare pest pragul acceptabil, SRMR = `r srmr`.
-
-Factorul latent cel mai puternic încărcat de Conștiinciozitate este **Perseverența** (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`), în timp ce factorul cel mai slab încărcat este **Prudența** (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`).
-
-În privința itemilor problematici, observăm faptul că itemul **`r I147.N`** este încărcat  slab de factorul **Datorie** (B=`r I147.B`, \(\beta\)=`r I147.Beta`, R^2^=`r I147.R`), itemul **`r I172.N`**  este încărcat slab de factorul **Ambiție** (B=`r I79.B`, \(\beta\)=`r I79.Beta`, R^2^=`r I79.R`), iar itemul **`r I174.N`** încărcat  slab de factorul **Prudență** (B=`r I174.B`, \(\beta\)=`r I174.Beta`, R^2^=`r I174.R`).
-
-### Deschidere
-```{r echo=F, include=F}
-  source("08 - CFA - Deschidere.R")
-  df <- as.numeric(Deschidere.ini$FIT["df.scaled"])
-  chi.sq <- as.numeric(Deschidere.ini$FIT["chisq.scaled"])
-  p.val <- as.numeric(Deschidere.ini$FIT["pvalue.scaled"])
-  rmsea <- as.numeric(Deschidere.ini$FIT["rmsea"])
-  rmsea.p <- as.numeric(Deschidere.ini$FIT["rmsea.pvalue"])
-  rmsea.ci.lo <- as.numeric(Deschidere.ini$FIT["rmsea.ci.lower"])
-  rmsea.ci.hi <- as.numeric(Deschidere.ini$FIT["rmsea.ci.upper"])
-  tli <- as.numeric(Deschidere.ini$FIT["tli.scaled"])
-  srmr <- as.numeric(Deschidere.ini$FIT["srmr"])
-  
-  # Analiza parametrilor - Factorul cel mai puternic incarcat
-  b_high <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Deschidere" & Deschidere.ini$PE$rhs == "Imaginatie" & Deschidere.ini$PE$op == "=~"), 5]
-  beta_high <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Deschidere" & Deschidere.ini$PE$rhs == "Imaginatie" & Deschidere.ini$PE$op == "=~"), 11]
-  r_high <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Imaginatie" & Deschidere.ini$PE$op == "r2"), 5]
-  
-  # Analiza parametrilor - Factorul cel mai slab incarcat
-  b_low <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Deschidere" & Deschidere.ini$PE$rhs == "Emotionalitate" & Deschidere.ini$PE$op == "=~"), 5]
-  beta_low <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "Deschidere" & Deschidere.ini$PE$rhs == "Emotionalitate" & Deschidere.ini$PE$op == "=~"), 11]
-  r_low <- Deschidere.ini$PE[which(Agreab.ini$PE$lhs == "Emotionalitate" & Deschidere.ini$PE$op == "r2"), 5]
-  
-    # Analiza itemilor problematici
-   I195.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I195" & Deschidere.ini$PE$op == "r2"), 3]
-  I195.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I195" & Deschidere.ini$PE$op == "r2"), 5]
-  I195.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I195" & Deschidere.ini$PE$op == "=~"), 5]
-  I195.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I195" & Deschidere.ini$PE$op == "=~"), 11]
-  
-  I221.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I221" & Deschidere.ini$PE$op == "r2"), 3]
-  I221.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I221" & Deschidere.ini$PE$op == "r2"), 5]
-  I221.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I221" & Deschidere.ini$PE$op == "=~"), 5]
-  I221.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I221" & Deschidere.ini$PE$op == "=~"), 11]
-
-  I230.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I230" & Deschidere.ini$PE$op == "r2"), 3]
-  I230.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I230" & Deschidere.ini$PE$op == "r2"), 5]
-  I230.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I230" & Deschidere.ini$PE$op == "=~"), 5]
-  I230.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I230" & Deschidere.ini$PE$op == "=~"), 11]
-
-  I207.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I207" & Deschidere.ini$PE$op == "r2"), 3]
-  I207.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I207" & Deschidere.ini$PE$op == "r2"), 5]
-  I207.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I207" & Deschidere.ini$PE$op == "=~"), 5]
-  I207.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I207" & Deschidere.ini$PE$op == "=~"), 11]
-
-  I216.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I216" & Deschidere.ini$PE$op == "r2"), 3]
-  I216.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I216" & Deschidere.ini$PE$op == "r2"), 5]
-  I216.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I216" & Deschidere.ini$PE$op == "=~"), 5]
-  I216.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I216" & Deschidere.ini$PE$op == "=~"), 11]
-
-  I238.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I238" & Deschidere.ini$PE$op == "r2"), 3]
-  I238.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I238" & Deschidere.ini$PE$op == "r2"), 5]
-  I238.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I238" & Deschidere.ini$PE$op == "=~"), 5]
-  I238.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I238" & Deschidere.ini$PE$op == "=~"), 11]
-
-  I240.N <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I240" & Deschidere.ini$PE$op == "r2"), 3]
-  I240.R <- Deschidere.ini$PE[which(Deschidere.ini$PE$lhs == "I240" & Deschidere.ini$PE$op == "r2"), 5]
-  I240.B <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I240" & Deschidere.ini$PE$op == "=~"), 5]
-  I240.Beta <- Deschidere.ini$PE[which(Deschidere.ini$PE$rhs == "I240" & Deschidere.ini$PE$op == "=~"), 11]
-```
-
-În ceea ce privește meta-factorul Deschidere, analiza a ajuns la o soluție validă în 29 de iterații. 
-
-Din nou, rezultatele arată că modelul nu este susținut în mod corespunzător de date,*Robust \(\chi\)^2^~(`r df`)~=`r chi.sq`, p=`r p.val`*, *RMSEA=`r rmsea`, p=`r rmsea.p`, CI~90%~=`r rmsea.ci.lo` - `r rmsea.ci.hi`*, *Robust TLI=`r tli`*, *SRMR = `r srmr`*.
-
-Factorul latent cel mai puternic încărcat de Deschidere este **Imaginația** (B=`r b_high`, \(\beta\)=`r beta_high`, R^2^=`r r_high`), în timp ce factorul cel mai slab încărcat este **Emoționalitatea** (B=`r b_low`, \(\beta\)=`r beta_low`, R^2^=`r r_low`).
-
-În privința itemilor problematici, observăm faptul că itemul **`r I195.N`** este încărcat  slab de factorul **Emoționalitate** (B=`r I147.B`, \(\beta\)=`r I147.Beta`, R^2^=`r I147.R`). În cazul factorului **Liberalism**, mai mulți itemi sunt problematici: itemul **`r I207.N`** (B=`r I207.B`, \(\beta\)=`r I207.Beta`, R^2^=`r I207.R`),itemul **`r I216.N`** (B=`r I216.B`, \(\beta\)=`r I216.Beta`, R^2^=`r I216.R`), itemul **`r I238.N`**  (B=`r I238.B`, \(\beta\)=`r I238.Beta`, R^2^=`r I238.R`), precum și itemul **`r I240.N`** (B=`r I240.B`, \(\beta\)=`r I240.Beta`, R^2^=`r I240.R`). Itemul **`r I221.N`** (B=`r I221.B`, \(\beta\)=`r I221.Beta`, R^2^=`r I221.R`), precum și itemul **`r I230.N`** (B=`r I230.B`, \(\beta\)=`r I230.Beta`, R^2^=`r I240.R`) sunt încărcați slab de factorul Intelect.
 
 # Discussion
-
-
 
 
 \newpage
