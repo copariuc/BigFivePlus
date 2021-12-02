@@ -37,7 +37,7 @@ authornote: |
 abstract: |
   TO BE DONE AT THE END
 keywords          : "BigFive, Confirmatory Factor Analysis, Reliability analysis"
-wordcount         : "X"
+wordcount         : "5138 words in text body, 624 words in reference section"
 bibliography      : ["r-references.bib", "Big Five Plus.bib"]
 link-citations    : TRUE
 biblio-style      : "apalike"
@@ -72,7 +72,7 @@ header-includes:
 
 ```{r setup, include = FALSE}
   # Including necessary libraries
-  library(papaja); library(stargazer); library(kableExtra)
+  library(papaja); library(knitr)
   # Including references file for R libraries
   r_refs("r-references.bib")
 ```
@@ -81,29 +81,27 @@ header-includes:
   # Seed for random number generation
   set.seed(4482)
   knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
-  # Import and prepare dataset
-  load("Date.Rdata")
 ```
 
 # Methods
 \justify
-In this paper we aimed to conduct an exploratory study on the **analysis of how the theoretical Big Five model is supported by data**. The volume of data collected, even is it is very large and gives power to the study, does not constitute a representative sample because no sampling technique was used, but represents the results of tests performed with the Big Five Plus Personality Inventory [@BigFive-plus] during 2015-2020 on the population of Romania. The answers resulted either from an online administration using the [PsihoProfile site](http://www.psihoprofile.ro/), or from the classic administration, pencil-paper, followed by the introduction of the answers in the platform in order to automatically rate and generate assessment's protocols. 
+In this paper we aimed to conduct an exploratory study on the **analysis of how the theoretical Big Five model is supported by data**. The volume of the data collected, even is it is very large and gives power to the study, does not constitute a representative sample because no sampling technique was used, but represents the results of tests performed with the Big Five Plus Personality Inventory [@BigFive-plus] during 2015-2020 on the population of Romania. The answers resulted either from an online administration using the [PsihoProfile site](http://www.psihoprofile.ro/), or from the classic administration, pencil-paper, followed by the introduction of the answers in the platform in order to automatically rate and generate assessment's protocols. 
 
-La nivel de bază, variabilele manifeste reprezintă cei 244 de itemi dihotomici ai Inventarului de Personalitate Big Five Plus, analiza intrând în domeniul analizelor factoriale confirmatorii folosindu-se indicatori categoriali, mai precis dihotomici, iar acest lucru implică o abordare specifică.
+Basically, the manifest variables represent the 240 dichotomous items of the **BigFive Plus Personality Inventory**, the analysis falling into the domain of confirmatory factor analysis using categorical indicators, more precisely dichotomous, and implies a specific approach.
 
-Modelul nu prevede existența unor indicatori încărcați de mai mult de un singur factor latent, fiecare factor latent încărcând 8 indicatori, prin urmare și aceștia vor reprezenta variabile latente categoriale, deoarece o amplitudine de 8 puncte nu-i poate califica drept variabile continui.
+The model does not provide for the existence of indicators loaded in more than one latent trait, each latent factor loading 8 indicators, therefore they will also represent categorical latent variables, because an amplitude of 8 points cannot qualify them as continuous variables.
 
-Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărcați de una dintre cele 5 dimensiuni Big Five, rezultând un model de analiză factorială de ordin secund [@Byrne-2010] cu factori de ordin secund necorelați, aceștia fiind reprezentați după cum urmează:
+The latent factors that load the 8 indicators are, in turn, loaded by one of the five Big Five dimensions, resulting in a *second-order factor analysis model* [@Byrne-2010] with uncorrelated second-order factors, which are represented as follows:
 
-+ **Extraversion**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Friendliness*, *Gregariousness*, *Assertiveness*, *Activity level*, *Excitement seeking* și *Cheerfulness*.
++ **Extraversion**, exogenous latent variable that loads a number of 6 endogenous latent variables: *Friendliness*, *Gregariousness*, *Assertiveness*, *Activity level*, *Excitement seeking* and *Cheerfulness*.
 
-+ **Agreeableness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Trust*, *Morality*, *Altruism*, *Cooperation*, *Modesty* și *Sympathy*.
++ **Agreeableness**, exogenous latent variable that loads a number of 6 endogenous latent variables: *Trust*, *Morality*, *Altruism*, *Cooperation*, *Modesty* and *Sympathy*.
 
-+ **Neuroticism**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Anxiety*, *Anger*, *Depression*, *Timidity*, *Immoderation* și *Vulnerability*.
++ **Neuroticism**, exogenous latent variable that loads a number of 6 endogenous latent variables: *Anxiety*, *Anger*, *Depression*, *Timidity*, *Immoderation* and *Vulnerability*.
 
-+ **Conscientiousness**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Self-efficacy*, *Orderliness*, *Dutifulness*, *Achievement-striving*, *Self-discipline* și *Cautiousness*.
++ **Conscientiousness**, exogenous latent variable that loads a number of 6 endogenous latent variables: *Self-efficacy*, *Orderliness*, *Dutifulness*, *Achievement-striving*, *Self-discipline* și *Cautiousness*.
 
-+ **Openness to experience**, variabilă latentă exogenă care încarcă un număr de 6 variabile latente endogene: *Imagination*, *Artistic interests*, *Emotionality*, *Adventurousness*, *Intellect* și *Liberalism*.
++ **Openness to experience**, exogenous latent variable that loads a number of 6 endogenous latent variables: *Imagination*, *Artistic interests*, *Emotionality*, *Adventurousness*, *Intellect* and *Liberalism*.
 
 ## Participants
 ```{r participants, echo = F, include = F}
@@ -135,28 +133,35 @@ Factorii latenți care încarcă cei 8 indicatori sunt la rândul lor încărca�
   n.online <- online$output.table[2]
   n.online.prc <- online$output.table[5]
 ```
-A total of `r n` protocols were collected **(n=`r n`)**, administered to a number of `r n.male` *males* (`r n.male.prc `%) and `r n.female` *females* (`r n.female.prc`%, see Table \@ref(tab:gender)), most of them being *university graduates* (`r n.st.lic`, representing `r n.st.lic.prc`%), followed by *high school graduated* (`r n.st.hsc`, representing `r n.st.hsc.prc`%) and the persons with *master's degrees* (`r n.st.mst`, representing `r n.st.mst.prc`%). The research group also contains graduates of *post-secondary schools* (`r n.st.phs`, representing `r n.st.phs.prc`%) and graduates of *arts and crafts schools* (`r n.st.art`, representing `r n.st.art.prc`%), the other categories being much less represented.
+A total of *`r n`* protocols were collected, administered to a number of *`r n.male` males (`r n.male.prc `%)* and *`r n.female` females (`r n.female.prc`%)* (see Table \@ref(tab:gender)), most of them being *university graduates (n=`r n.st.lic`, representing `r n.st.lic.prc`%)*, followed by *high school graduated (n=`r n.st.hsc`, representing `r n.st.hsc.prc`%)* and the persons with *master's degrees (n=`r n.st.mst`, representing `r n.st.mst.prc`%)*. The research group also contains graduates of *post-secondary schools (n=`r n.st.phs`, representing `r n.st.phs.prc`%)* and graduates of *arts and crafts schools (n=`r n.st.art`, representing `r n.st.art.prc`%)*, the other categories being much less represented. (see Table \@ref(tab:education))
 
 ```{r gender, echo=FALSE}
-  knitr::kable(gender$output.table, format = "latex", digits = 2, booktabs = T,
-                       caption = "Participants's gender", escape = F)
+  kable(gender$output.table, format = "latex", digits = 2, booktabs = T,
+        caption = "Participants' gender")
 ```
 ```{r education, echo=FALSE}
-   knitr::kable(studies$output.table, format = "latex", digits = 2, booktabs = T,
-                       caption = "Participants's educational level", escape = F)
+   kable(studies$output.table, format = "latex", digits = 2, booktabs = T,
+         caption = "Participants' educational level")
 ```
-Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r n.nost`, reprezentând `r n.nost.prc`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile (see Table \@ref(tab:education)).
 
-În privința modalității de administrate, un număr de `r n.paper` protocoale au fost administrate în *formă creion-hârtie (`r n.paper.prc`%)*, `r n.online` protocoale fiind colectate direct *online (`r n.online.prc`%)* (see Table \@ref(tab:gather))
+We note, however, that a large number of people did not specify the level of education *(n=`r n.nost`, reprezentând `r n.nost.prc`%)*, which will be removed from the analysis that involves the use of this variabile (see Table \@ref(tab:education)).
+
+Regarding the data gathering method, a number of *`r n.paper` protocols* were administered in *paper-pencil form (`r n.paper.prc`%), `r n.online` protocols* being collected directly *online (`r n.online.prc`%)* (see Table \@ref(tab:gather))
+
 ```{r gather, echo=FALSE}
-   knitr::kable(online$output.table, format = "latex", digits = 2, booktabs = T,
-                       caption = "Type of data gathering", escape = F)
+   kable(online$output.table, format = "latex", digits = 2, booktabs = T,
+         caption = "Type of data gathering")
 ```
 
+Respondents ranged in age from *min=`r age[2]`* and *max=`r age[6]`* years, with a *median age of `r age[4]`* years *(m=`r age[2]`, sd=`r age[3]`)* (see Table \@ref(tab:age))
 
-
+```{r age, echo=FALSE}
+   kable(age, format = "latex", digits = 2, booktabs = T, row.names = F,
+         col.names = c("n", "mean", "sd", "median", "min", "max", "range", "skewness", "kurtosis"),
+         caption = "Participants' age")
+```
 ## Material
-Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`). Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
+
 
 ## Procedure
 Analiza va presupune studiul inițial al consistenței interne, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~). 
@@ -173,11 +178,10 @@ Vom testa apoi modelul în care factorul latent încarcă cei 8 indicatori, pent
 Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` și următoarele pachete: `r cite_r("r-references.bib")`. 
 
 # Results
-## Data screening and descriptive statistics
-
-
-
 ## Scales' reliability
+
+
+## Data screening and descriptive statistics
 
 
 ## Confirmatory Factor Analisys

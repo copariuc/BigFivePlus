@@ -1,0 +1,157 @@
+---
+title             : "Factorial structure of the indicators in Big Five Plus Inventory"
+shorttitle        : "Factorial structure of the indicators in Big Five Plus Inventory"
+author: 
+  - name          : "Cristian Opariuc-Dan"
+    affiliation   : "1,2,3"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Ovidius University Campus, Aleea Universității, No. 2, Constanța, Romania"
+    email         : "copariuc@gmail.com"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - Conceptualization
+      - Writing - Original Draft Preparation
+      - Writing - Data analysis
+  - name          : "Gabriela Nicuță"
+    affiliation   : "3"
+    role:
+      - Writing - Systematic review
+      - Writing - Data analysis
+      - Proofreading
+  - name          : "Ticu Constantin"
+    affiliation   : "3"
+    role:
+      - Data provider
+      - Writing - Review & Editing
+affiliation:
+  - id            : "1"
+    institution   : "Ovidius University, Constanta, Romania"
+  - id            : "2"
+    institution   : "Bucharest University, Bucharest, Romania"
+  - id            : "3"
+    institution   : "Al. I. Cuza University, Iassy, Romania"
+authornote: |
+  
+  The authors thanks Prof. Dr. Constantin Ticu and the PsihoProfile team for making available over 14000 data used in this analysis.
+  
+  The data in this paper comes form the Romanian version of BigFive Plus inventory[@BigFive-plus], being collected online through the [PsihoProfile site](http://www.psihoprofile.ro/)
+abstract: |
+  TO BE DONE AT THE END
+keywords          : "BigFive, Confirmatory Factor Analysis, Reliability analysis"
+wordcount         : "502 words in text body, 49 words in reference section"
+bibliography      : ["r-references.bib", "Big Five Plus.bib"]
+link-citations    : TRUE
+biblio-style      : "apalike"
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : yes
+documentclass     : "apa7"
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+header-includes:
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+  - \usepackage[document]{ragged2e}
+---
+
+```{r setup, include = FALSE}
+  # Including necessary libraries
+  library(papaja); library(knitr)
+  # Including references file for R libraries
+  r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+  # Seed for random number generation
+  set.seed(4482)
+  knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+
+
+
+## Material
+The test used is Big Five Plus Personality Inventory [@BigFive-plus], being developed and validated on Romanian population (**NEEDS CITATION**) and allows the assessment of five meta-factors of personality (**Extraversion, Agreeableness, Neuroticism, Conscientiousness** and **Openness to experience**), but also 30 facets subordinated to them.
+
+The inventory contains a number of 240 dichotomous items, 48 for the assessment of each of the five dimensions (meta-factors) and eight for each of the 30 facets. The examinee is instructed to choose between two assertions the one that best describes him/her. (e.g. **When I am at a party:** *(a) I am in the middle of the action, surrounded by others; (b) I prefer to stand aside and observe.*). 
+
+The two answer options represents extremes of the target psychological dimension and are indented to be similar in terms of social desirability. The average time to complete the questionnaire is 35 minutes.
+
+A research conducted by the authors of the inventory on a number of **1340 Romanian people** [@BigFive-plus] led to acceptable internal consistencies, both on the entire national normative sample and by the gender (see Table \@ref(tab:authorCronbach1) & \@ref(tab:authorCronbach2)) 
+
+```{r authorCronbach, echo=FALSE}
+  # Building Table
+  cron.tab.auth <- data.frame('EXTRAVERSION', .920, .914, .917)
+  colnames(cron.tab.auth) <- c("Dimension/Facet", "Male", "Female", "Normative sample")
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Friendliness', .742, .748, .744))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Gregariousness', .781, .767, .775))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Assertiveness', .712, .692, .702))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Activity level', .727, .669, .696))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Excitement seeking', .802, .762, .786))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cheerfulness', .716, .750, .735))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('AGREEABLENESS', .844, .826, .838))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Trust', .647, .672, .660))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Morality', .711, .703, .708))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Altruism', .655, .650, .653))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cooperation', .645, .635, .641))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Modesty', .650, .666, .660))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Sympathy', .717, .653, .705))
+    
+  cron.tab.auth <- rbind(cron.tab.auth, c('NEUROTICISM', .875, .877, .879))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Anxiety', .700, .700, .708))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Anger', .834, .839, .839))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Depression', .737, .717, .730))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Timidity', .623, .665, .649))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Immoderation', .779, .738, .761))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Vulnerability', .741, .742, .746))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('CONSCIENTIOUSNESS', .857, .820, .840))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Self-efficacy', .670, .675, .679))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Orderliness', .653, .647, .650))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Dutifulness', .674, .608, .648))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Achievement-striving', .655, .639, .646))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Self-discipline', .699, .596, .655))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cautiousness', .748, .704, .729))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('OPENNESS TO EXPERIENCE', .820, .809, .813))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Imagination', .653, .665, .658))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Artistic interests', .744, .702, .732))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Emotionality', .421, .510, .671))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Adventurousness', .753, .744, .750))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Intellect', .564, .579, .572))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Liberalism', .628, .587, .607))
+  
+  kable(cron.tab.auth[1:21, ], format = "latex", digits = 2, booktabs = T, row.names = F,
+        caption = "Alpha Cronbach - Authors' research on normative sample (n=1340)",
+        align = c("l", "r", "r", "r"), label = "authorCronbach1")
+  kable(cron.tab.auth[22:35, ], format = "latex", digits = 2, booktabs = T, row.names = F,
+        caption = "Alpha Cronbach - Authors' research on normative sample (n=1340)",
+        align = c("l", "r", "r", "r"), label = "authorCronbach2")
+```
+
+
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
