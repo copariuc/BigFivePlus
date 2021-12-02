@@ -49,12 +49,24 @@ linenumbers       : yes
 mask              : no
 draft             : yes
 documentclass     : "apa7"
-csl               : "apa.csl"
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
 classoption       : "man"
 output            : papaja::apa6_pdf
 editor_options: 
   chunk_output_type: console
 header-includes:
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
   - \usepackage[document]{ragged2e}
 ---
 
@@ -132,11 +144,8 @@ A total of `r n` protocols were collected **(n=`r n`)**, administered to a numbe
                        header = F, float = T,  title = "Participants's educational level")
 ```
 
-<<<<<<< HEAD
 Remarcăm, totuși, numărul mare al persoanelor care nu au precizat nivelul de studii (`r n.nost`, reprezentând `r n.nost.prc`%), acestea urmând a fi eliminate din analizele ce presupun utilizarea acestei variabile.
 
-=======
->>>>>>> c93997bdb5aa6c6f4495472ebc605d1ed6fb9eb6
 ## Material
 Instrumentul folosit este Inventarul de Personalitate Big Five Plus [@BigFive-plus], datele fiind colectate în perioada 2015-2020 (n=`r gender$output.table[3]`).  Instrumentul,construit și validat pe populația românească,   permite evaluarea celor cinci meta-factori ai personalității (Extraversiune, Agreabilitate, Nevrozism, Conștiinciozitate și Deschidere), dar și a 30 de fațete subordonate acestora. Invetarul conține 240 de itemi dihotomici, câte 48 pentru evaluarea fiecăruia dintre cei cinci factori principali și câte opt pentru evaluarea celor 30 de fațete. Persoana este instruită să aleagă dintre două aserțiuni pe aceea care o descrie cel mai bine (e.g. *Atunci când sunt la o petrecere: (a) sunt în mijlocul acţiunii, înconjurat de ceilalți ; (b) prefer să stau de o parte şi să observ.*). Cele două variante de răspuns reprezintă extreme ale dimensiunii psihologice vizate și se doresc a fi similare din perspectiva dezirabilității sociale. Timpul mediu de completare a chestionarului este de 35 de minute. 
 
