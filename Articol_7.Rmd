@@ -37,7 +37,7 @@ authornote: |
 abstract: |
   TO BE DONE AT THE END
 keywords          : "BigFive, Confirmatory Factor Analysis, Reliability analysis"
-wordcount         : "5138 words in text body, 624 words in reference section"
+wordcount         : "2348 words in text body, 332 words in reference section"
 bibliography      : ["r-references.bib", "Big Five Plus.bib"]
 link-citations    : TRUE
 biblio-style      : "apalike"
@@ -85,7 +85,7 @@ header-includes:
 
 # Methods
 \justify
-In this paper we aimed to conduct an exploratory study on the **analysis of how the theoretical Big Five model is supported by data**. The volume of the data collected, even is it is very large and gives power to the study, does not constitute a representative sample because no sampling technique was used, but represents the results of tests performed with the Big Five Plus Personality Inventory [@BigFive-plus] during 2015-2020 on the population of Romania. The answers resulted either from an online administration using the [PsihoProfile site](http://www.psihoprofile.ro/), or from the classic administration, pencil-paper, followed by the introduction of the answers in the platform in order to automatically rate and generate assessment's protocols. 
+In this paper we aimed to conduct an exploratory study on the **analysis of how the theoretical Big Five model is supported by data**. The volume of the data collected, even if it is very large and gives power to the study, does not constitute a representative sample because no sampling technique was used, but represents the results of tests performed with the Big Five Plus Personality Inventory [@BigFive-plus] during 2015-2020 on the population of Romania. The answers resulted either from an online administration using the [PsihoProfile site](http://www.psihoprofile.ro/), or from the classic administration, pencil-paper, followed by the introduction of the answers in the platform in order to automatically rate and generate assessment's protocols. 
 
 Basically, the manifest variables represent the 240 dichotomous items of the **BigFive Plus Personality Inventory**, the analysis falling into the domain of confirmatory factor analysis using categorical indicators, more precisely dichotomous, and implies a specific approach.
 
@@ -160,22 +160,88 @@ Respondents ranged in age from *min=`r age[2]`* and *max=`r age[6]`* years, with
          col.names = c("n", "mean", "sd", "median", "min", "max", "range", "skewness", "kurtosis"),
          caption = "Participants' age")
 ```
-## Material
 
+## Material
+The test used is Big Five Plus Personality Inventory [@BigFive-plus], being developed and validated on Romanian population (**NEEDS CITATION**) and allows the assessment of five meta-factors of personality (**Extraversion, Agreeableness, Neuroticism, Conscientiousness** and **Openness to experience**), but also 30 facets subordinated to them.
+
+The inventory contains a number of 240 dichotomous items, 48 for the assessment of each of the five dimensions (meta-factors) and eight for each of the 30 facets. The examinee is instructed to choose between two assertions the one that best describes him/her. (e.g. **When I am at a party:** *(a) I am in the middle of the action, surrounded by others; (b) I prefer to stand aside and observe.*). 
+
+The two answer options represents extremes of the target psychological dimension and are indented to be similar in terms of social desirability. The average time to complete the questionnaire is 35 minutes.
+
+A research conducted by the authors of the inventory on a number of **1340 Romanian people** [@BigFive-plus] led to acceptable internal consistencies, both on the entire national normative sample and by the gender (see Table \@ref(tab:authorCronbach1) & \@ref(tab:authorCronbach2)) 
+
+```{r authorCronbach, echo=FALSE}
+  # Building Table
+  cron.tab.auth <- data.frame('EXTRAVERSION', .920, .914, .917)
+  colnames(cron.tab.auth) <- c("Dimension/Facet", "Male", "Female", "Normative sample")
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Friendliness', .742, .748, .744))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Gregariousness', .781, .767, .775))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Assertiveness', .712, .692, .702))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Activity level', .727, .669, .696))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Excitement seeking', .802, .762, .786))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cheerfulness', .716, .750, .735))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('AGREEABLENESS', .844, .826, .838))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Trust', .647, .672, .660))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Morality', .711, .703, .708))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Altruism', .655, .650, .653))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cooperation', .645, .635, .641))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Modesty', .650, .666, .660))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Sympathy', .717, .653, .705))
+    
+  cron.tab.auth <- rbind(cron.tab.auth, c('NEUROTICISM', .875, .877, .879))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Anxiety', .700, .700, .708))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Anger', .834, .839, .839))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Depression', .737, .717, .730))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Timidity', .623, .665, .649))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Immoderation', .779, .738, .761))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Vulnerability', .741, .742, .746))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('CONSCIENTIOUSNESS', .857, .820, .840))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Self-efficacy', .670, .675, .679))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Orderliness', .653, .647, .650))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Dutifulness', .674, .608, .648))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Achievement-striving', .655, .639, .646))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Self-discipline', .699, .596, .655))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Cautiousness', .748, .704, .729))
+  
+  cron.tab.auth <- rbind(cron.tab.auth, c('OPENNESS TO EXPERIENCE', .820, .809, .813))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Imagination', .653, .665, .658))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Artistic interests', .744, .702, .732))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Emotionality', .421, .510, .671))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Adventurousness', .753, .744, .750))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Intellect', .564, .579, .572))
+  cron.tab.auth <- rbind(cron.tab.auth, c('- Liberalism', .628, .587, .607))
+  
+  # Returning extreme values
+  min.norm <- min(cron.tab.auth$`Normative sample`)
+  max.norm <- max(cron.tab.auth$`Normative sample`)
+  
+  min.factors <- paste(cron.tab.auth[which(cron.tab.auth$`Normative sample` < .65), 1])
+  min.factors <- sub("..", "", min.factors)
+  min.values <- paste(cron.tab.auth[which(cron.tab.auth$`Normative sample` < .65), 4])
+  min.factors <- paste(min.factors, " (", min.values, "), ", sep = "", collapse = "")
+  
+  kable(cron.tab.auth[1:21, ], format = "latex", digits = 2, booktabs = T, row.names = F,
+        caption = "Alpha Cronbach - Authors' research on normative sample (n=1340)",
+        align = c("l", "r", "r", "r"), label = "authorCronbach1")
+  kable(cron.tab.auth[22:35, ], format = "latex", digits = 2, booktabs = T, row.names = F,
+        caption = "Alpha Cronbach - Authors' research on normative sample (n=1340)",
+        align = c("l", "r", "r", "r"), label = "authorCronbach2")
+```
+It can be noted that, from the authors' research, the minimum value of the Cronbach \(\alpha\) coefficient was `r min.norm`, and the maximum value was `r max.norm`, both values being obtained on the normative sample.The factors with low values of internal consistency and which pose problems regarding the reliability of the measurement are: *`r min.factors`*.
 
 ## Procedure
-Analiza va presupune studiul inițial al consistenței interne, pentru fiecare scală folosindu-se metoda \(\alpha\) Cronbach [@Cronbach-1951] în vederea calculului coeficientului de consistență internă \(\alpha\) (Guttman \(\lambda\)~3~). 
+The analysis will involve the initial study of the internal consistency, for each scale, using the \(\alpha\) Cronbach [@Cronbach-1951] in order to calculate the internal consistency coefficient \(\alpha\) (Guttman \(\lambda\)~3~), then comparing the coefficients with the values reported by authors [@BigFive-plus].
 
-Vom testa apoi modelul în care factorul latent încarcă cei 8 indicatori, pentru fiecare dintre cele 6 fațete ale unei dimensiuni, și existența dimensiunii comune pentru toți cei 6 factori latenți.
+We will then test the model in which the latent trait loads the 8 indicators, for each of the 6 facets of a dimension, and the existence of the common dimension for all 6 latent factors. After interpreting the parameters and diagnosing the models, they will be re-specified, identifying, if necessary, better explanatory models.
 
-În urma interpretării parametrilor și a diagnosticului modelelor acestea vor fi respecificate, identificându-se, dacă este cazul, modele explicative mai bune.
+**In the first phase** we will present the comparative analysis of the authors regarding the internal consistency using the **alpha Cronbach method of \(\tau\)-equivalent reliability** [@Cronbach-1951], including both global indicators and those broken down by *gender* and *method of data gathering (pencil-paper or online)*. The analysis eas performed using the **psych** package [@R-psych], starting from the condition of the cumulative items, the total score resulting from summing the score of the 8 items (8 point of theoretical range), with identifying the items' negative variance and automatically recording. A non-parametric re-sampling was also used, simulating 100 samples in order to verify the stability of the parameters.
 
-**În prima fază** vom prezenta comparativ analizele autorilor privind consistența internă utilizându-se **metoda alpha Cronbach a fidelității tau-echivalente** [@Cronbach-1951], incluzând atât indicatorii globali, cât și cei defalcați în funcție de *genul biologic* și de *modalitatea de administrare. Analiza s-a realizat utilizându-se pachetul **„psych”** [@R-psych], plecându-se de la condiția itemilor cumulativi, scorul total rezultând în urma adunării celor 8 itemi (amplitudinea teoretică de 8 puncte) cu identificarea varianțelor negative ale itemilor și recodare automată și utilizând o reeșantionare neparametrică folosind 100 de eșantioane în vederea verificării stabilității parametrilor.
-
-**În cea de-a doua fază**, analiza  Inventarul BigFive Plus va fi realizată după un model clasic de analiză factorială confirmatorie cu factori de ordin secund necorelați, ce va fi analizat folosindu-se pachetul **lavaan** [@R-lavaan]. Deoarece indicatorii sunt dihotomici, vom folosi *metoda estimării pragurilor categoriilor de răspuns* în care fiecare indicator devine încărcat în factor latent și determină un răspuns activ (1-Da) dacă depășește valoarea prag a sa, determinată de poziția itemului pe continuumul factorului latent. Drept estimator vom folosi unul din categoria metodelor bazate pe cele mai mici pătrate, mai precis **„WLSM”**, ce utilizează doar diagonala matricii ponderate „W” (**„DWLS”**) și folosind, la testele statistice, mediile ajustate. În vederea testării potrivirii globale s-a folosit versiunea „Satorra Bentler” a testului \(\chi\)^2^, ajustându-se mediile [@Skrondal-2005]. 
+**In the second phase**, the Big Five Plus Inventory analysis will be performed according to a classical model of confirmatory factor analysis with uncorrelated second order factors, which will be analyzed using the **lavaan** package.[@R-lavaan]. Since the indicators are dichotomous, we will use the *method of estimating the thresholds of the response categories* in which each indicator becomes loaded in the latent trait and determines an active response (1-Yes) if it exceeds its threshold value, established by the item's position on the latent continuum. As an estimator, we will compute one from the categories of methods based on the least squares, namely **WLSM"**, which uses only the diagonal of the weighted matrix "W" (**DWLS**) and, for statistical tests, adjusted means. The "Satorra Bentler" version of the \(\chi\)^2^ test was used to test the overall fit, adjusting the means. [@Skrondal-2005].
 
 ## Data analysis
-Toate analizele s-au realizat folosind limbajul R versiunea `r getRversion()` și următoarele pachete: `r cite_r("r-references.bib")`. 
+All analyzes were performed using: `r cite_r("r-references.bib")`
 
 # Results
 ## Scales' reliability
