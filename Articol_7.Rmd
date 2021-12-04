@@ -245,6 +245,124 @@ All analyzes were performed using: `r cite_r("r-references.bib")`
 
 # Results
 ## Scales' reliability
+`
+```{r reliability, echo=FALSE, include=FALSE}
+  source("03 - Consistente.R")
+  
+```
+### Extraversion
+```{r extraversion, echo=FALSE}
+  # Generating table
+  con.df <- as.data.frame(EXTRAVER$total)
+  con.df <- rbind(con.df, EXT.Frien$total, EXT.Grega$total, EXT.Asser$total, 
+                  EXT.Activ$total, EXT.Excit$total, EXT.Cheer$total)
+  con.df <- select(con.df, c(-5, -9))
+  con.df <- cbind(con.df, as.numeric(cron.tab.auth[1:7, 4]))  # Authors' Alpha
+  con.df <- round(con.df, 2)
+  # Adding Confidence Intervals
+  ci <- c(paste(round(CI.EXTRAVER$lower.ci, 3), "-", round(CI.EXTRAVER$upper.ci, 3)),
+          paste(round(CI.EXT.Frien$lower.ci, 3), "-", round(CI.EXT.Frien$upper.ci, 3)),
+          paste(round(CI.EXT.Grega$lower.ci, 3), "-", round(CI.EXT.Grega$upper.ci, 3)),
+          paste(round(CI.EXT.Asser$lower.ci, 3), "-", round(CI.EXT.Asser$upper.ci, 3)),
+          paste(round(CI.EXT.Activ$lower.ci, 3), "-", round(CI.EXT.Activ$upper.ci, 3)),
+          paste(round(CI.EXT.Excit$lower.ci, 3), "-", round(CI.EXT.Excit$upper.ci, 3)),
+          paste(round(CI.EXT.Cheer$lower.ci, 3), "-", round(CI.EXT.Cheer$upper.ci, 3))
+          )
+  con.df <- cbind(con.df[, 1], ci, con.df[, 2:8])
+  # Setting up variables' name
+  Var.names <- c( "EXTRAVERSION", 
+                  "Friendliness", "Gregariousness", "Assertiveness",
+                  "Activity", "Excitement", "Cheerfulness")
+  con.df <- cbind(Var.names, con.df)    # Name of the variables
+  # Changing the names of the columns
+  names(con.df) <- c("Variable", "Alpha", "CI 95%", "Std", "G6", "Avg r", "Avg SE", 
+                     "Mean", "SD", "Initial")
+  
+  kable(con.df, format = "latex", digits = 3, booktabs = T, row.names = F,
+        caption = "Extraversion - Global alpha Cronbach",
+        align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
+```
+```{r extraversion-boot, echo=FALSE}
+
+  # Adding value after resampling
+  alpha.boot <- c(paste(round(min(EXTRAVER$boot[, 1]), 3), "-", round(max(EXTRAVER$boot[, 1]), 3)),
+                  paste(round(min(EXT.Frien$boot[, 1]), 3), "-", round(max(EXT.Frien$boot[, 1]), 3)),
+                  paste(round(min(EXT.Grega$boot[, 1]), 3), "-", round(max(EXT.Grega$boot[, 1]), 3)),
+                  paste(round(min(EXT.Asser$boot[, 1]), 3), "-", round(max(EXT.Asser$boot[, 1]), 3)),
+                  paste(round(min(EXT.Activ$boot[, 1]), 3), "-", round(max(EXT.Activ$boot[, 1]), 3)),
+                  paste(round(min(EXT.Excit$boot[, 1]), 3), "-", round(max(EXT.Excit$boot[, 1]), 3)),
+                  paste(round(min(EXT.Cheer$boot[, 1]), 3), "-", round(max(EXT.Cheer$boot[, 1]), 3))
+                  )
+  unidim.boot <- c(paste(round(min(EXTRAVER$boot[, 7]), 3), "-", round(max(EXTRAVER$boot[, 7]), 3)),
+                   paste(round(min(EXT.Frien$boot[, 7]), 3), "-", round(max(EXT.Frien$boot[, 7]), 3)),
+                   paste(round(min(EXT.Grega$boot[, 7]), 3), "-", round(max(EXT.Grega$boot[, 7]), 3)),
+                   paste(round(min(EXT.Asser$boot[, 7]), 3), "-", round(max(EXT.Asser$boot[, 7]), 3)),
+                   paste(round(min(EXT.Activ$boot[, 7]), 3), "-", round(max(EXT.Activ$boot[, 7]), 3)),
+                   paste(round(min(EXT.Excit$boot[, 7]), 3), "-", round(max(EXT.Excit$boot[, 7]), 3)),
+                   paste(round(min(EXT.Cheer$boot[, 7]), 3), "-", round(max(EXT.Cheer$boot[, 7]), 3))
+                   )
+  gfi.boot <- c(paste(round(min(EXTRAVER$boot[, 8]), 3), "-", round(max(EXTRAVER$boot[, 8]), 3)),
+                paste(round(min(EXT.Frien$boot[, 8]), 3), "-", round(max(EXT.Frien$boot[, 8]), 3)),
+                paste(round(min(EXT.Grega$boot[, 8]), 3), "-", round(max(EXT.Grega$boot[, 8]), 3)),
+                paste(round(min(EXT.Asser$boot[, 8]), 3), "-", round(max(EXT.Asser$boot[, 8]), 3)),
+                paste(round(min(EXT.Activ$boot[, 8]), 3), "-", round(max(EXT.Activ$boot[, 8]), 3)),
+                paste(round(min(EXT.Excit$boot[, 8]), 3), "-", round(max(EXT.Excit$boot[, 8]), 3)),
+                paste(round(min(EXT.Cheer$boot[, 8]), 3), "-", round(max(EXT.Cheer$boot[, 8]), 3))
+                )
+  con.boot <- cbind.data.frame(con.df[, 2], alpha.boot, unidim.boot, gfi.boot)
+  con.boot <- cbind(Var.names, con.boot)    # Name of the variables
+   # Changing the names of the columns
+  names(con.boot) <- c("Variable", "Base alpha", "Alpha boot", "Unidim", "GFI")
+  
+  kable(con.boot, format = "latex", digits = 3, booktabs = T, row.names = F,
+        caption = "Extraversion - Global alpha Cronbach after bootstrapping",
+        align = c("l", "r", "r", "r"))
+```
+```{r extraversion-items, echo=FALSE}
+  # Generating table
+  con.items <- rbind.data.frame(round(EXT.Frien$alpha.drop, 3),
+                                round(EXT.Grega$alpha.drop, 3),
+                                round(EXT.Asser$alpha.drop, 3),
+                                round(EXT.Activ$alpha.drop, 3),
+                                round(EXT.Excit$alpha.drop, 3),
+                                round(EXT.Cheer$alpha.drop, 3)
+                                )
+  con.items <- select(con.items, c(-5, -7, -8))
+  fac.alpha <- c(rep(round(EXT.Frien$total[1, 1], 3), 8),
+                 rep(round(EXT.Grega$total[1, 1], 3), 8),
+                 rep(round(EXT.Asser$total[1, 1], 3), 8),
+                 rep(round(EXT.Activ$total[1, 1], 3), 8),
+                 rep(round(EXT.Excit$total[1, 1], 3), 8),
+                 rep(round(EXT.Cheer$total[1, 1], 3), 8)
+                 )
+  fac.names <-c(rep("Friendliness", 8),
+                rep("Gregariousness", 8),
+                rep("Assertiveness", 8),
+                rep("Activity", 8),
+                rep("Excitement", 8),
+                rep("Cheerfulness", 8)
+                )
+  con.items <- cbind(fac.names, fac.alpha, con.items)
+   # Changing the names of the columns
+  names(con.items) <- c("Facet name", "Facet" ,"Deleted", "Std", "G6", "Avg r", "SE")
+  
+  kable(con.items[1:24,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
+        caption = "Alpha if item is deleted (Friendliness, Gregariousness, Assertiveness)",label = "EXT-items-1")
+  kable(con.items[25:48,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
+        caption = "Alpha Cronbach if item is deleted (Activity level, Excitement seeking,
+        Cheerfulness)", label = "EXT-items-2")
+```
+The results obtained for the **Extraversion dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:extraversion)).
+
+After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Extraversion:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:extraversion-boot)).
+
+Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:EXT-items-1) & \@ref(tab:EXT-items-2)), therefore, both the **extraversion dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+
+### Agreeableness
+
+
+
+
 
 
 ## Data screening and descriptive statistics
