@@ -72,95 +72,117 @@ date.tot <- as.data.frame(scores$scores); save(date.tot, file = "Date.total.Rdat
 n <- nrow(date)
 
 # Extraversion - Computing internal consistency ####
-# EXT.Frien <- psych::alpha(dplyr::select(date, key$EXT.Frien), title = "Friendliness - Facet", 
-#                cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Frien <- alpha.ci(EXT.Frien$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXT.Grega <- psych::alpha(dplyr::select(date, key$EXT.Grega), title = "Gregariousness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Grega <- alpha.ci(EXT.Grega$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXT.Asser <- psych::alpha(dplyr::select(date, key$EXT.Asser), title = "Assertiveness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Asser <- alpha.ci(EXT.Asser$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXT.Activ <- psych::alpha(dplyr::select(date, key$EXT.Activ), title = "Activity level - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Activ <- alpha.ci(EXT.Activ$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXT.Excit <- psych::alpha(dplyr::select(date, key$EXT.Excit), title = "Excitement seeking - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Excit <- alpha.ci(EXT.Excit$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXT.Cheer <- psych::alpha(dplyr::select(date, key$EXT.Cheer), title = "Cheerfulness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXT.Cheer <- alpha.ci(EXT.Cheer$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-# EXTRAVER <- psych::alpha(dplyr::select(date, key$EXTRAVER), title = "Extraversion - Dimension", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CI.EXTRAVER <- alpha.ci(EXTRAVER$total$raw_alpha, n.obs = n, n.var = 48, p.val = .05, digits = 3)
+EXT.Frien <- psych::alpha(dplyr::select(date, key$EXT.Frien), title = "Friendliness - Facet",
+               cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Frien <- alpha.ci(EXT.Frien$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXT.Grega <- psych::alpha(dplyr::select(date, key$EXT.Grega), title = "Gregariousness - Facet",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Grega <- alpha.ci(EXT.Grega$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXT.Asser <- psych::alpha(dplyr::select(date, key$EXT.Asser), title = "Assertiveness - Facet",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Asser <- alpha.ci(EXT.Asser$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXT.Activ <- psych::alpha(dplyr::select(date, key$EXT.Activ), title = "Activity level - Facet",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Activ <- alpha.ci(EXT.Activ$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXT.Excit <- psych::alpha(dplyr::select(date, key$EXT.Excit), title = "Excitement seeking - Facet",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Excit <- alpha.ci(EXT.Excit$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXT.Cheer <- psych::alpha(dplyr::select(date, key$EXT.Cheer), title = "Cheerfulness - Facet",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXT.Cheer <- alpha.ci(EXT.Cheer$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+EXTRAVER <- psych::alpha(dplyr::select(date, key$EXTRAVER), title = "Extraversion - Dimension",
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+CI.EXTRAVER <- alpha.ci(EXTRAVER$total$raw_alpha, n.obs = n, n.var = 48, p.val = .05, digits = 3)
 
 # Agreeableness - Computing internal consistency ####
-AGR.Trust <- psych::alpha(dplyr::select(date, key$AGR.Trust), title = "Trust - Facet",
+ AGR.Trust <- psych::alpha(dplyr::select(date, key$AGR.Trust), title = "Trust - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Trust <- alpha.ci(AGR.Trust$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGR.Moral <- psych::alpha(dplyr::select(date, key$AGR.Moral), title = "Morality - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Moral <- alpha.ci(AGR.Moral$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGR.Altru <- psych::alpha(dplyr::select(date, key$AGR.Altru), title = "Altruism - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Altru <- alpha.ci(AGR.Altru$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGR.Coope <- psych::alpha(dplyr::select(date, key$AGR.Coope), title = "Cooperation - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Coope <- alpha.ci(AGR.Coope$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGR.Modes <- psych::alpha(dplyr::select(date, key$AGR.Modes), title = "Modesty - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Modes <- alpha.ci(AGR.Modes$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGR.Sympa <- psych::alpha(dplyr::select(date, key$AGR.Sympa), title = "Sympathy - Facet",
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.AGR.Sympa <- alpha.ci(AGR.Sympa$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ AGREEABL <- psych::alpha(dplyr::select(date, key$AGREEABL), title = "Agreeableness - Dimension",
                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Trust <- alpha.ci(AGR.Trust$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGR.Moral <- psych::alpha(dplyr::select(date, key$AGR.Moral), title = "Morality - Facet",
-                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Moral <- alpha.ci(AGR.Moral$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGR.Altru <- psych::alpha(dplyr::select(date, key$AGR.Altru), title = "Altruism - Facet",
-                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Altru <- alpha.ci(AGR.Altru$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGR.Coope <- psych::alpha(dplyr::select(date, key$AGR.Coope), title = "Cooperation - Facet",
-                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Coope <- alpha.ci(AGR.Coope$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGR.Modes <- psych::alpha(dplyr::select(date, key$AGR.Modes), title = "Modesty - Facet",
-                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Modes <- alpha.ci(AGR.Modes$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGR.Sympa <- psych::alpha(dplyr::select(date, key$AGR.Sympa), title = "Sympathy - Facet",
-                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGR.Sympa <- alpha.ci(AGR.Sympa$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
-AGREEABL <- psych::alpha(dplyr::select(date, key$AGREEABL), title = "Agreeableness - Dimension",
-                         cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-CI.AGREEABL <- alpha.ci(AGREEABL$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CI.AGREEABL <- alpha.ci(AGREEABL$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
 
-# # Neuroticism - Computing internal consistency ####
-# NEU.Anxie <- psych::alpha(dplyr::select(date, key$NEU.Anxie), title = "Anxiety - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Anger <- psych::alpha(dplyr::select(date, key$NEU.Anger), title = "Anger - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Depre <- psych::alpha(dplyr::select(date, key$NEU.Depre), title = "Depression - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Timid <- psych::alpha(dplyr::select(date, key$NEU.Timid), title = "Timidity - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Immod <- psych::alpha(dplyr::select(date, key$NEU.Immod), title = "Immoderation - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Vulne <- psych::alpha(dplyr::select(date, key$NEU.Vulne), title = "Vulnerability - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEUROTIC <- psych::alpha(dplyr::select(date, key$NEUROTIC), title = "Neuroticism - Dimension", 
-#                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# 
-# # Conscientiousness - Computing internal consistency ####
-# CON.SelfE <- psych::alpha(dplyr::select(date, key$CON.SelfE), title = "Self-efficacy - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CON.Order <- psych::alpha(dplyr::select(date, key$CON.Order), title = "Orderliness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CON.Dutif <- psych::alpha(dplyr::select(date, key$CON.Dutif), title = "Dutifulness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CON.Achie <- psych::alpha(dplyr::select(date, key$CON.Achie), title = "Achievement-striving - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CON.SelfD <- psych::alpha(dplyr::select(date, key$CON.SelfD), title = "Self-discipline - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# NEU.Vulne <- psych::alpha(dplyr::select(date, key$NEU.Vulne), title = "Cautiousness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# CON.Cauti <- psych::alpha(dplyr::select(date, key$CON.Cauti), title = "Conscientiousness - Dimension", 
-#                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# 
-# # Openness to experience - Computing internal consistency ####
-# OPE.Imagi <- psych::alpha(dplyr::select(date, key$OPE.Imagi), title = "Imagination - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPE.Artis <- psych::alpha(dplyr::select(date, key$OPE.Artis), title = "Artistic interests - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPE.Emoti <- psych::alpha(dplyr::select(date, key$OPE.Emoti), title = "Emotionality - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPE.Adven <- psych::alpha(dplyr::select(date, key$OPE.Adven), title = "Adventurousness - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPE.Intel <- psych::alpha(dplyr::select(date, key$OPE.Intel), title = "Intellect - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPE.Liber <- psych::alpha(dplyr::select(date, key$OPE.Liber), title = "Liberalism - Facet", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
-# OPENNESS <- psych::alpha(dplyr::select(date, key$OPENNESS), title = "Openness to experience - Dimension", 
-#                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+# Neuroticism - Computing internal consistency ####
+ NEU.Anxie <- psych::alpha(dplyr::select(date, key$NEU.Anxie), title = "Anxiety - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Anxie <- alpha.ci(NEU.Anxie$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEU.Anger <- psych::alpha(dplyr::select(date, key$NEU.Anger), title = "Anger - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Anger <- alpha.ci(NEU.Anger$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEU.Depre <- psych::alpha(dplyr::select(date, key$NEU.Depre), title = "Depression - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Depre <- alpha.ci(NEU.Depre$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEU.Timid <- psych::alpha(dplyr::select(date, key$NEU.Timid), title = "Timidity - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Timid <- alpha.ci(NEU.Timid$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEU.Immod <- psych::alpha(dplyr::select(date, key$NEU.Immod), title = "Immoderation - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Immod <- alpha.ci(NEU.Immod$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEU.Vulne <- psych::alpha(dplyr::select(date, key$NEU.Vulne), title = "Vulnerability - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEU.Vulne <- alpha.ci(NEU.Vulne$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ NEUROTIC <- psych::alpha(dplyr::select(date, key$NEUROTIC), title = "Neuroticism - Dimension", 
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.NEUROTIC <- alpha.ci(NEUROTIC$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ 
+# Conscientiousness - Computing internal consistency ####
+ CON.SelfE <- psych::alpha(dplyr::select(date, key$CON.SelfE), title = "Self-efficacy - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.SelfE <- alpha.ci(CON.SelfE$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CON.Order <- psych::alpha(dplyr::select(date, key$CON.Order), title = "Orderliness - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.Order <- alpha.ci(CON.Order$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CON.Dutif <- psych::alpha(dplyr::select(date, key$CON.Dutif), title = "Dutifulness - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.Dutif <- alpha.ci(CON.Dutif$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CON.Achie <- psych::alpha(dplyr::select(date, key$CON.Achie), title = "Achievement-striving - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.Achie <- alpha.ci(CON.Achie$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CON.SelfD <- psych::alpha(dplyr::select(date, key$CON.SelfD), title = "Self-discipline - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.SelfD <- alpha.ci(CON.SelfD$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CON.Cauti <- psych::alpha(dplyr::select(date, key$CON.Cauti), title = "Cautiousness - Facet", 
+                          cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CON.Cauti <- alpha.ci(CON.Cauti$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ CONSCIEN <- psych::alpha(dplyr::select(date, key$CONSCIEN), title = "Conscientiousness - Dimension", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.CONSCIEN <- alpha.ci(CONSCIEN$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ 
+# Openness to experience - Computing internal consistency ####
+ OPE.Imagi <- psych::alpha(dplyr::select(date, key$OPE.Imagi), title = "Imagination - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Imagi <- alpha.ci(OPE.Imagi$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPE.Artis <- psych::alpha(dplyr::select(date, key$OPE.Artis), title = "Artistic interests - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Artis <- alpha.ci(OPE.Artis$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPE.Emoti <- psych::alpha(dplyr::select(date, key$OPE.Emoti), title = "Emotionality - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Emoti <- alpha.ci(OPE.Emoti$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPE.Adven <- psych::alpha(dplyr::select(date, key$OPE.Adven), title = "Adventurousness - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Adven <- alpha.ci(OPE.Adven$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPE.Intel <- psych::alpha(dplyr::select(date, key$OPE.Intel), title = "Intellect - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Intel <- alpha.ci(OPE.Intel$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPE.Liber <- psych::alpha(dplyr::select(date, key$OPE.Liber), title = "Liberalism - Facet", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPE.Liber <- alpha.ci(OPE.Liber$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ OPENNESS <- psych::alpha(dplyr::select(date, key$OPENNESS), title = "Openness to experience - Dimension", 
+                           cumulative = T, na.rm = T, check.keys = T, n.iter = 100)
+ CI.OPENNESS <- alpha.ci(OPENNESS$total$raw_alpha, n.obs = n, n.var = 8, p.val = .05, digits = 3)
+ 
