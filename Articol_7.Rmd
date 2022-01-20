@@ -61,13 +61,9 @@ header-includes:
       {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
       {-1em}%
       {\normalfont\normalsize\bfseries\typesectitle}}
-    
-    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
       {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
       {-\z@\relax}%
       {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-    \makeatother
-  - \usepackage[document]{ragged2e}
 ---
 
 ```{r setup, include = FALSE}
@@ -458,14 +454,9 @@ Analyzing the items, we found that their removal does not cause a significant in
         caption = "Alpha Cronbach if item is deleted (Morality, Sympathy,
         Trust)", label = "AGR-items-2")
 ```
-The results obtained for the **Agreeableness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:agreeableness)).
+The results obtained for the **Agreeableness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) differ from those reported by the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`)  (see Table \@ref(tab:agreeableness) for full results). The most problematic facets are Altruism (\(\alpha\) = `r con.df[2,2]`) and Cooperation (\(\alpha\) = `r con.df[3,2]`). Moreover, the Modesty and Morality facets also have internal cosistency coefficients below the conventional threshold - 0.70 (\(\alpha\) = `r con.df[5,2]`). Eliminating items from these two scales would not result in an increase of the internal consistency (see Table \@ref(tab:AGR-items-1) & \@ref(tab:AGR-items-2)).
 
 After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Agreeableness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:agreeableness-boot)).
-
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:AGR-items-1) & \@ref(tab:AGR-items-2)), therefore, both the **agreeableness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
-
-
-
 
 
 ### Neuroticism
@@ -570,11 +561,11 @@ Analyzing the items, we found that their removal does not cause a significant in
         caption = "Alpha Cronbach if item is deleted (Immoderation, Timidity,
         Vulnerability)", label = "NEU-items-2")
 ```
-The results obtained for the **Neuroticism dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:neuroticism)).
+The results obtained for the **Neuroticism dimension** and its subordinated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are similar to  those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`). Adequate consistency coefficients, with small estimation errors, were found for the facet levels. A high alpha coeffiecient was obtained at the domain level (\(\alpha\) = `r con.df[1,10]`), suggesting that some items may be redundant (see Table \@ref(tab:neuroticism)).
 
-After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Neuroticism:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:neuroticism-boot)).
+After bootstrapping, internal consistency coefficients proved to be stable both at the general construct (**Neuroticism:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:neuroticism-boot)).
 
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:NEU-items-1) & \@ref(tab:NEU-items-2)), therefore, both the **neuroticism dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+Similarly to the analyses for Extraversion and Agreeableness, we found that removing items would not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:NEU-items-1) & \@ref(tab:NEU-items-2)). We conclude that both the **neuroticism dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
 
 ### Conscientiousness
 ```{r conscientiousness, echo=FALSE}
@@ -677,11 +668,10 @@ Analyzing the items, we found that their removal does not cause a significant in
   kable(con.items[25:48,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
         caption = "Alpha Cronbach if item is deleted (Achievement striving, Self Discipline, Cautiousness)", label = "CON-items-2")
 ```
-The results obtained for the **Conscientiousness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:conscientiousness)).
+The results obtained for the **Conscientiousness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are close to those of the authors (although slightly smaller) (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), with the exception of Dutifulness ((\(\alpha\) = `r con.df[4,2]`). Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:CON-items-1) & \@ref(tab:CON-items-2)).
 
-After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Conscientiousness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:conscientiousness-boot)).
+The values of the consistency coefficients proved to be stable after bootstrapping, both for the general domain (**Conscientiousness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and for the facets (see Table \@ref(tab:conscientiousness-boot)).
 
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:CON-items-1) & \@ref(tab:CON-items-2)), therefore, both the **conscientiousness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
 
 ### Openness
 ```{r openness, echo=FALSE}
@@ -784,11 +774,11 @@ Analyzing the items, we found that their removal does not cause a significant in
   kable(con.items[25:48,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
         caption = "Alpha Cronbach if item is deleted (Adventure spirit, Intellect, Liberalism)", label = "OPE-items-2")
 ```
-The results obtained for the **Openness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:openness)).
+The results obtained for the **Openness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are smaller when compared to  those reported by the authors of the instrument(\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`) (see Table \@ref(tab:openness)).The most problematic facets are Intellect (\(\alpha\) = `r con.df[6,2]`) and Liberalism (\(\alpha\) = `r con.df[7,2]`).
 
 After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Openness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:openness-boot)).
 
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:OPE-items-1) & \@ref(tab:OPE-items-2)), therefore, both the **openness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+Analyzing the items, we found the removal of item 230 from the Intellect scale would result in a small increase in the internal consistency of the Intellect facet. No other items could be deleted in order to improve the internal consistency coefficients for this domain\. (see Tables \@ref(tab:OPE-items-1) & \@ref(tab:OPE-items-2)).
 
 ## Data screening and descriptive statistics
 
