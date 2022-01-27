@@ -39,40 +39,25 @@ abstract: |
 keywords          : "BigFive, Confirmatory Factor Analysis, Reliability analysis"
 wordcount         : "2348 words in text body, 332 words in reference section"
 bibliography      : ["r-references.bib", "Big Five Plus.bib"]
-link-citations    : TRUE
-biblio-style      : "apalike"
 floatsintext      : no
-figurelist        : no
+figurelist        : yes
 tablelist         : no
 footnotelist      : no
 linenumbers       : yes
 mask              : no
 draft             : no
 documentclass     : "apa7"
-csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
 classoption       : "man"
-output            : papaja::apa6_pdf
-editor_options: 
-  chunk_output_type: console
+output            :
+  pdf_document    : papaja::apa6_pdf
+  word_document   : papaja::apa6_doc
 header-includes:
-  - |
-    \makeatletter
-    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
-      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-      {-1em}%
-      {\normalfont\normalsize\bfseries\typesectitle}}
-    
-    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
-      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-      {-\z@\relax}%
-      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-    \makeatother
   - \usepackage[document]{ragged2e}
 ---
 
 ```{r setup, include = FALSE}
   # Including necessary libraries
-  library(papaja); library(knitr)
+  library(papaja); library(knitr); library(kableExtra)
   # Including references file for R libraries
   r_refs("r-references.bib")
 ```
@@ -84,7 +69,7 @@ header-includes:
 ```
 
 # Methods
-\justify
+
 In this paper we aimed to conduct an exploratory study on the **analysis of how the theoretical Big Five model is supported by data**. The volume of the data collected, even if it is very large and gives power to the study, does not constitute a representative sample because no sampling technique was used, but represents the results of tests performed with the Big Five Plus Personality Inventory [@BigFive-plus] during 2015-2020 on the population of Romania. The answers resulted either from an online administration using the [PsihoProfile site](http://www.psihoprofile.ro/), or from the classic administration, pencil-paper, followed by the introduction of the answers in the platform in order to automatically rate and generate assessment's protocols. 
 
 Basically, the manifest variables represent the 240 dichotomous items of the **BigFive Plus Personality Inventory**, the analysis falling into the domain of confirmatory factor analysis using categorical indicators, more precisely dichotomous, and implies a specific approach.
@@ -143,7 +128,6 @@ A total of *`r n`* protocols were collected, administered to a number of *`r n.m
    kable(studies$output.table, format = "latex", digits = 2, booktabs = T,
          caption = "Participants' educational level")
 ```
-
 We note, however, that a large number of people did not specify the level of education *(n=`r n.nost`, reprezentând `r n.nost.prc`%)*, which will be removed from the analysis that involves the use of this variabile (see Table \@ref(tab:education)).
 
 Regarding the data gathering method, a number of *`r n.paper` protocols* were administered in *paper-pencil form (`r n.paper.prc`%), `r n.online` protocols* being collected directly *online (`r n.online.prc`%)* (see Table \@ref(tab:gather))
@@ -152,7 +136,6 @@ Regarding the data gathering method, a number of *`r n.paper` protocols* were ad
    kable(online$output.table, format = "latex", digits = 2, booktabs = T,
          caption = "Type of data gathering")
 ```
-
 Respondents ranged in age from *min=`r age[2]`* and *max=`r age[6]`* years, with a *median age of `r age[4]`* years *(m=`r age[2]`, sd=`r age[3]`)* (see Table \@ref(tab:age))
 
 ```{r age, echo=FALSE}
@@ -160,7 +143,6 @@ Respondents ranged in age from *min=`r age[2]`* and *max=`r age[6]`* years, with
          col.names = c("n", "mean", "sd", "median", "min", "max", "range", "skewness", "kurtosis"),
          caption = "Participants' age")
 ```
-
 ## Material
 The test used is Big Five Plus Personality Inventory [@BigFive-plus], being developed and validated on Romanian population (**NEEDS CITATION**) and allows the assessment of five meta-factors of personality (**Extraversion, Agreeableness, Neuroticism, Conscientiousness** and **Openness to experience**), but also 30 facets subordinated to them.
 
@@ -281,7 +263,6 @@ All analyzes were performed using: `r cite_r("r-references.bib")`
         align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
 ```
 ```{r extraversion-boot, echo=FALSE}
-
   # Adding value after resampling
   alpha.boot <- c(paste(round(min(EXTRAVER$boot[, 1]), 3), "-", round(max(EXTRAVER$boot[, 1]), 3)),
                   paste(round(min(EXT.Frien$boot[, 1]), 3), "-", round(max(EXT.Frien$boot[, 1]), 3)),
@@ -389,7 +370,6 @@ Analyzing the items, we found that their removal does not cause a significant in
         align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
 ```
 ```{r agreeableness-boot, echo=FALSE}
-
   # Adding value after resampling
   alpha.boot <- c(paste(round(min(AGREEABL$boot[, 1]), 3), "-", round(max(AGREEABL$boot[, 1]), 3)),
                   paste(round(min(AGR.Altru$boot[, 1]), 3), "-", round(max(AGR.Altru$boot[, 1]), 3)),
@@ -458,15 +438,9 @@ Analyzing the items, we found that their removal does not cause a significant in
         caption = "Alpha Cronbach if item is deleted (Morality, Sympathy,
         Trust)", label = "AGR-items-2")
 ```
-The results obtained for the **Agreeableness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:agreeableness)).
+The results obtained for the **Agreeableness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) differ from those reported by the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`)  (see Table \@ref(tab:agreeableness) for full results). The most problematic facets are Altruism (\(\alpha\) = `r con.df[2,2]`) and Cooperation (\(\alpha\) = `r con.df[3,2]`). Moreover, the Modesty and Morality facets also have internal cosistency coefficients below the conventional threshold - 0.70 (\(\alpha\) = `r con.df[5,2]`). Eliminating items from these two scales would not result in an increase of the internal consistency (see Table \@ref(tab:AGR-items-1) & \@ref(tab:AGR-items-2)).
 
 After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Agreeableness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:agreeableness-boot)).
-
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:AGR-items-1) & \@ref(tab:AGR-items-2)), therefore, both the **agreeableness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
-
-
-
-
 
 ### Neuroticism
 ```{r neuroticism, echo=FALSE}
@@ -501,7 +475,6 @@ Analyzing the items, we found that their removal does not cause a significant in
         align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
 ```
 ```{r neuroticism-boot, echo=FALSE}
-
   # Adding value after resampling
   alpha.boot <- c(paste(round(min(NEUROTIC$boot[, 1]), 3), "-", round(max(NEUROTIC$boot[, 1]), 3)),
                   paste(round(min(NEU.Anxie$boot[, 1]), 3), "-", round(max(NEU.Anxie$boot[, 1]), 3)),
@@ -570,11 +543,11 @@ Analyzing the items, we found that their removal does not cause a significant in
         caption = "Alpha Cronbach if item is deleted (Immoderation, Timidity,
         Vulnerability)", label = "NEU-items-2")
 ```
-The results obtained for the **Neuroticism dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:neuroticism)).
+The results obtained for the **Neuroticism dimension** and its subordinated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are similar to  those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`). Adequate consistency coefficients, with small estimation errors, were found for the facet levels. A high alpha coeffiecient was obtained at the domain level (\(\alpha\) = `r con.df[1,10]`), suggesting that some items may be redundant (see Table \@ref(tab:neuroticism)).
 
-After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Neuroticism:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:neuroticism-boot)).
+After bootstrapping, internal consistency coefficients proved to be stable both at the general construct (**Neuroticism:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:neuroticism-boot)).
 
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:NEU-items-1) & \@ref(tab:NEU-items-2)), therefore, both the **neuroticism dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+Similarly to the analyses for Extraversion and Agreeableness, we found that removing items would not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:NEU-items-1) & \@ref(tab:NEU-items-2)). We conclude that both the **neuroticism dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
 
 ### Conscientiousness
 ```{r conscientiousness, echo=FALSE}
@@ -609,7 +582,6 @@ Analyzing the items, we found that their removal does not cause a significant in
         align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
 ```
 ```{r conscientiousness-boot, echo=FALSE}
-
   # Adding value after resampling
   alpha.boot <- c(paste(round(min(CONSCIEN$boot[, 1]), 3), "-", round(max(CONSCIEN$boot[, 1]), 3)),
                   paste(round(min(CON.SelfE$boot[, 1]), 3), "-", round(max(CON.SelfE$boot[, 1]), 3)),
@@ -677,11 +649,9 @@ Analyzing the items, we found that their removal does not cause a significant in
   kable(con.items[25:48,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
         caption = "Alpha Cronbach if item is deleted (Achievement striving, Self Discipline, Cautiousness)", label = "CON-items-2")
 ```
-The results obtained for the **Conscientiousness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:conscientiousness)).
+The results obtained for the **Conscientiousness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are close to those of the authors (although slightly smaller) (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), with the exception of Dutifulness ((\(\alpha\) = `r con.df[4,2]`). Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:CON-items-1) & \@ref(tab:CON-items-2)).
 
-After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Conscientiousness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:conscientiousness-boot)).
-
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:CON-items-1) & \@ref(tab:CON-items-2)), therefore, both the **conscientiousness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+The values of the consistency coefficients proved to be stable after bootstrapping, both for the general domain (**Conscientiousness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and for the facets (see Table \@ref(tab:conscientiousness-boot)).
 
 ### Openness
 ```{r openness, echo=FALSE}
@@ -716,7 +686,6 @@ Analyzing the items, we found that their removal does not cause a significant in
         align = c("l", "r", "r", "r", "r", "r", "r", "r", "r", "r"))
 ```
 ```{r openness-boot, echo=FALSE}
-
   # Adding value after resampling
   alpha.boot <- c(paste(round(min(OPENNESS$boot[, 1]), 3), "-", round(max(OPENNESS$boot[, 1]), 3)),
                   paste(round(min(OPE.Imagi$boot[, 1]), 3), "-", round(max(OPE.Imagi$boot[, 1]), 3)),
@@ -784,16 +753,62 @@ Analyzing the items, we found that their removal does not cause a significant in
   kable(con.items[25:48,], format = "latex", digits = 3, booktabs = T, row.names = T, align = "r",
         caption = "Alpha Cronbach if item is deleted (Adventure spirit, Intellect, Liberalism)", label = "OPE-items-2")
 ```
-The results obtained for the **Openness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) do not differ much from those of the authors (\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`), resulting in good consistency coefficients, with small estimation errors (see Table \@ref(tab:openness)).
+The results obtained for the **Openness dimension** and the associated facets (\(\alpha\) between `r min(con.df[2])` and `r max(con.df[2])` in our sample (n=`r n`)) are smaller when compared to  those reported by the authors of the instrument(\(\alpha\) between `r min(con.df[10])` and `r max(con.df[10])`) (see Table \@ref(tab:openness)).The most problematic facets are Intellect (\(\alpha\) = `r con.df[6,2]`) and Liberalism (\(\alpha\) = `r con.df[7,2]`).
 
 After re-sampling using a number of 100 simulated samples, the values of the consistency coefficients proved to be stable both at the general construct (**Openness:** Base \(\alpha\)=`r con.boot[1, 2]`, Boot \(\alpha\)=`r con.boot[1, 3]`, Uniqueness=`r con.boot[1, 3]`, GFI=`r con.boot[1, 5]`) and at the level of the facets (see Table \@ref(tab:openness-boot)).
 
-Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:OPE-items-1) & \@ref(tab:OPE-items-2)), therefore, both the **openness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
+Analyzing the items, we found the removal of item 230 from the Intellect scale would result in a small increase in the internal consistency of the Intellect facet. No other items could be deleted in order to improve the internal consistency coefficients for this domain\. (see Tables \@ref(tab:OPE-items-1) & \@ref(tab:OPE-items-2)).
 
 ## Data screening and descriptive statistics
 ```{r screening, echo=FALSE, include=FALSE}
   source("03 - Data screening.R")
+  # Extraversion results
+  min.mean.EXT <- round(min(AGR.de[1:6, 2]), 2); max.mean.AGR <- round(max(AGR.de[1:6, 2]), 2)
+  min.sd.EXT <- round(min(AGR.de[1:6, 3]), 2); max.sd.AGR <- round(max(AGR.de[1:6, 3]), 2)
+  mean.EXT <- round(AGR.de[7, 2], 2); sd.EXT <- round(AGR.de[7, 3], 2)
+  min.AD.EXT <- round(min(AGR.de[1:6, 12]), 2); max.AD.AGR <- round(max(AGR.de[1:6, 12]), 2)
+  min.p.EXT <- round(min(AGR.de[1:6, 13]), 2); max.p.AGR <- round(max(AGR.de[1:6, 13]), 2)
+  AD.EXT <- round(AGR.de[7, 12], 2); p.EXT <- round(AGR.de[7, 13], 2)
+  min.K.EXT <- round(min(AGR.de[, 9]), 2); max.K.AGR <- round(max(AGR.de[, 9]), 2)
+  min.S.EXT <- round(min(AGR.de[, 8]), 2); max.S.AGR <- round(max(AGR.de[, 8]), 2)
+  se.K.EXT <- round(min(AGR.de[1, 11]), 2); se.S.AGR <- round(min(AGR.de[1, 10]), 2)
+  # Agreeableness results
+  min.mean.AGR <- round(min(AGR.de[1:6, 2]), 2); max.mean.EXT <- round(max(AGR.de[1:6, 2]), 2)
+  min.sd.AGR <- round(min(AGR.de[1:6, 3]), 2); max.sd.EXT <- round(max(AGR.de[1:6, 3]), 2)
+  mean.AGR <- round(AGR.de[7, 2], 2); sd.EXT <- round(AGR.de[7, 3], 2)
+  min.AD.AGR <- round(min(AGR.de[1:6, 12]), 2); max.AD.EXT <- round(max(AGR.de[1:6, 12]), 2)
+  min.p.AGR <- round(min(AGR.de[1:6, 13]), 2); max.p.EXT <- round(max(AGR.de[1:6, 13]), 2)
+  AD.AGR <- round(AGR.de[7, 12], 2); p.EXT <- round(AGR.de[7, 13], 2)
+  min.K.AGR <- round(min(AGR.de[, 9]), 2); max.K.EXT <- round(max(AGR.de[, 9]), 2)
+  min.S.AGR <- round(min(AGR.de[, 8]), 2); max.S.EXT <- round(max(AGR.de[, 8]), 2)
+  se.K.AGR <- round(min(AGR.de[1, 11]), 2); se.S.EXT <- round(min(AGR.de[1, 10]), 2)
 ```
+### Extraversion
+```{r extraversion-desc}
+  kable(EXT.de, format = "latex", digits = 2, booktabs = T,
+        caption = "Descriptive statistics for Extraversion") %>% 
+  kable_styling(latex_options="scale_down")
+```
+The **"Extraversion"** dimension have facets averages between `r min.mean.EXT` (sd=`r min.sd.EXT`) and `r max.mean.EXT` (sd=`r max.sd.EXT`), while the dimension's mean are `r mean.EXT` (sd=`r sd.EXT`). Unfortunately, the assumption of univariate normality is **not fulfilled** for any facet (Anderson-Darling test between `r min.AD.EXT`, p=`r min.p.EXT` and `r max.AD.EXT`, p=`r max.p.EXT`) nor for the global dimension (Anderson-Darling test=`r AD.EXT`, p=`r p.EXT`) (see Table \@ref(tab:extraversion-desc)).
+
+All variables are platykurtic (Kurtosis between `r min.K.EXT` and `r max.K.EXT`, SE=`r se.K.EXT `) and except **Assertiveness**, left skewed (Skewness between `r min.S.EXT` and `r max.S.EXT`, SE=`r se.S.EXT`), so an assessment of extreme values will be required, but no extreme values were identified.
+### Agreeableness
+```{r agreeableness-desc}
+  kable(AGR.de, format = "latex", digits = 2, booktabs = T,
+        caption = "Descriptive statistics for Agreeableness") %>% 
+  kable_styling(latex_options="scale_down")
+```
+The **"Agreeableness"** dimension have facets averages between `r min.mean.AGR` (sd=`r min.sd.AGR`) and `r max.mean.AGR` (sd=`r max.sd.AGR`), while the dimension's mean are `r mean.AGR` (sd=`r sd.AGR`). Unfortunately, the assumption of univariate normality is **not fulfilled** for any facet (Anderson-Darling test between `r min.AD.AGR`, p=`r min.p.AGR` and `r max.AD.AGR`, p=`r max.p.AGR`) nor for the global dimension (Anderson-Darling test=`r AD.AGR`, p=`r p.AGR`) (see Table \@ref(tab:agreeableness-desc)).
+
+All variables except **Morality** are platykurtic (Kurtosis between `r min.K.AGR` and `r max.K.AGR`, SE=`r se.K.AGR`) the last being leptokurtic. Regarding symmetry, all variables are left skewed (Skewness between `r min.S.AGR` and `r max.S.AGR`, SE=`r se.S.AHR`), however **Modesty** seems to be symmetric, so an assessment of extreme values will be required.
+
+
+
+### Neuroticism
+
+### Conscientiousness
+
+### Openness
 
 ## Confirmatory Factor Analisys
 
