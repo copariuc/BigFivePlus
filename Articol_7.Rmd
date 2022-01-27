@@ -246,7 +246,7 @@ All analyzes were performed using: `r cite_r("r-references.bib")`
 # Results
 ## Scales' reliability
 ```{r reliability, echo=FALSE, include=FALSE}
-  source("03 - Consistente.R")
+  source("02 - Consistente.R")
 ```
 ### Extraversion
 ```{r extraversion, echo=FALSE}
@@ -791,7 +791,9 @@ After re-sampling using a number of 100 simulated samples, the values of the con
 Analyzing the items, we found that their removal does not cause a significant increase in the internal consistency of any facet (see Tables \@ref(tab:OPE-items-1) & \@ref(tab:OPE-items-2)), therefore, both the **openness dimension** and its 6 facets have a good reliability and good indicators of uniqueness.
 
 ## Data screening and descriptive statistics
-
+```{r screening, echo=FALSE, include=FALSE}
+  source("03 - Data screening.R")
+```
 
 ## Confirmatory Factor Analisys
 
