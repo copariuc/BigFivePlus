@@ -763,25 +763,55 @@ Analyzing the items, we found the removal of item 230 from the Intellect scale w
 ```{r screening, echo=FALSE, include=FALSE}
   source("03 - Data screening.R")
   # Extraversion results
-  min.mean.EXT <- round(min(AGR.de[1:6, 2]), 2); max.mean.AGR <- round(max(AGR.de[1:6, 2]), 2)
-  min.sd.EXT <- round(min(AGR.de[1:6, 3]), 2); max.sd.AGR <- round(max(AGR.de[1:6, 3]), 2)
-  mean.EXT <- round(AGR.de[7, 2], 2); sd.EXT <- round(AGR.de[7, 3], 2)
-  min.AD.EXT <- round(min(AGR.de[1:6, 12]), 2); max.AD.AGR <- round(max(AGR.de[1:6, 12]), 2)
-  min.p.EXT <- round(min(AGR.de[1:6, 13]), 2); max.p.AGR <- round(max(AGR.de[1:6, 13]), 2)
-  AD.EXT <- round(AGR.de[7, 12], 2); p.EXT <- round(AGR.de[7, 13], 2)
-  min.K.EXT <- round(min(AGR.de[, 9]), 2); max.K.AGR <- round(max(AGR.de[, 9]), 2)
-  min.S.EXT <- round(min(AGR.de[, 8]), 2); max.S.AGR <- round(max(AGR.de[, 8]), 2)
-  se.K.EXT <- round(min(AGR.de[1, 11]), 2); se.S.AGR <- round(min(AGR.de[1, 10]), 2)
+  min.mean.EXT <- round(min(EXT.de[1:6, 2]), 2); max.mean.EXT <- round(max(EXT.de[1:6, 2]), 2)
+  min.sd.EXT <- round(min(EXT.de[1:6, 3]), 2); max.sd.EXT <- round(max(EXT.de[1:6, 3]), 2)
+  mean.EXT <- round(EXT.de[7, 2], 2); sd.EXT <- round(EXT.de[7, 3], 2)
+  min.AD.EXT <- round(min(EXT.de[1:6, 12]), 2); max.AD.EXT <- round(max(EXT.de[1:6, 12]), 2)
+  min.p.EXT <- round(min(EXT.de[1:6, 13]), 2); max.p.EXT <- round(max(EXT.de[1:6, 13]), 2)
+  AD.EXT <- round(EXT.de[7, 12], 2); p.EXT <- round(EXT.de[7, 13], 2)
+  min.K.EXT <- round(min(EXT.de[, 9]), 2); max.K.EXT <- round(max(EXT.de[, 9]), 2)
+  min.S.EXT <- round(min(AGR.de[, 8]), 2); max.S.EXT <- round(max(EXT.de[, 8]), 2)
+  se.K.EXT <- round(min(EXT.de[1, 11]), 2); se.S.EXT <- round(min(EXT.de[1, 10]), 2)
   # Agreeableness results
-  min.mean.AGR <- round(min(AGR.de[1:6, 2]), 2); max.mean.EXT <- round(max(AGR.de[1:6, 2]), 2)
-  min.sd.AGR <- round(min(AGR.de[1:6, 3]), 2); max.sd.EXT <- round(max(AGR.de[1:6, 3]), 2)
-  mean.AGR <- round(AGR.de[7, 2], 2); sd.EXT <- round(AGR.de[7, 3], 2)
-  min.AD.AGR <- round(min(AGR.de[1:6, 12]), 2); max.AD.EXT <- round(max(AGR.de[1:6, 12]), 2)
-  min.p.AGR <- round(min(AGR.de[1:6, 13]), 2); max.p.EXT <- round(max(AGR.de[1:6, 13]), 2)
-  AD.AGR <- round(AGR.de[7, 12], 2); p.EXT <- round(AGR.de[7, 13], 2)
-  min.K.AGR <- round(min(AGR.de[, 9]), 2); max.K.EXT <- round(max(AGR.de[, 9]), 2)
-  min.S.AGR <- round(min(AGR.de[, 8]), 2); max.S.EXT <- round(max(AGR.de[, 8]), 2)
-  se.K.AGR <- round(min(AGR.de[1, 11]), 2); se.S.EXT <- round(min(AGR.de[1, 10]), 2)
+   min.mean.AGR <- round(min(AGR.de[1:6, 2]), 2); max.mean.AGR <- round(max(AGR.de[1:6, 2]), 2)
+  min.sd.AGR <- round(min(AGR.de[1:6, 3]), 2); max.sd.AGR <- round(max(AGR.de[1:6, 3]), 2)
+  mean.AGR <- round(AGR.de[7, 2], 2); sd.AGR <- round(AGR.de[7, 3], 2)
+  min.AD.AGR <- round(min(AGR.de[1:6, 12]), 2); max.AD.AGR <- round(max(AGR.de[1:6, 12]), 2)
+  min.p.AGR <- round(min(AGR.de[1:6, 13]), 2); max.p.AGR <- round(max(AGR.de[1:6, 13]), 2)
+  AD.AGR <- round(AGR.de[7, 12], 2); p.AGR <- round(AGR.de[7, 13], 2)
+  min.K.AGR <- round(min(AGR.de[, 9]), 2); max.K.AGR <- round(max(AGR.de[, 9]), 2)
+  min.S.AGR <- round(min(AGR.de[, 8]), 2); max.S.AGR <- round(max(AGR.de[, 8]), 2)
+  se.K.AGR <- round(min(AGR.de[1, 11]), 2); se.S.AGR <- round(min(AGR.de[1, 10]), 2)
+  # Neuroticism results
+    min.mean.NEU <- round(min(NEU.de[1:6, 2]), 2); max.mean.NEU <- round(max(NEU.de[1:6, 2]), 2)
+  min.sd.NEU <- round(min(NEU.de[1:6, 3]), 2); max.sd.NEU <- round(max(NEU.de[1:6, 3]), 2)
+  mean.NEU <- round(NEU.de[7, 2], 2); sd.NEU <- round(NEU.de[7, 3], 2)
+  min.AD.NEU <- round(min(NEU.de[1:6, 12]), 2); max.AD.NEU <- round(max(NEU.de[1:6, 12]), 2)
+  min.p.NEU <- round(min(NEU.de[1:6, 13]), 2); max.p.NEU <- round(max(NEU.de[1:6, 13]), 2)
+  AD.NEU <- round(NEU.de[7, 12], 2); p.NEU <- round(NEU.de[7, 13], 2)
+  min.K.NEU <- round(min(NEU.de[, 9]), 2); max.K.NEU <- round(max(NEU.de[, 9]), 2)
+  min.S.NEU <- round(min(NEU.de[, 8]), 2); max.S.NEU <- round(max(NEU.de[, 8]), 2)
+  se.K.NEU <- round(min(NEU.de[1, 11]), 2); se.S.NEU <- round(min(NEU.de[1, 10]), 2)
+  # Conscientiousness results
+    min.mean.CONS <- round(min(CONS.de[1:6, 2]), 2); max.mean.CONS <- round(max(CONS.de[1:6, 2]), 2)
+  min.sd.CONS <- round(min(CONS.de[1:6, 3]), 2); max.sd.CONS <- round(max(CONS.de[1:6, 3]), 2)
+  mean.CONS <- round(CONS.de[7, 2], 2); sd.CONS <- round(CONS.de[7, 3], 2)
+  min.AD.CONS <- round(min(CONS.de[1:6, 12]), 2); max.AD.CONS <- round(max(CONS.de[1:6, 12]), 2)
+  min.p.CONS <- round(min(CONS.de[1:6, 13]), 2); max.p.CONS <- round(max(CONS.de[1:6, 13]), 2)
+  AD.CONS <- round(CONS.de[7, 12], 2); p.CONS <- round(CONS.de[7, 13], 2)
+  min.K.CONS <- round(min(CONS.de[, 9]), 2); max.K.CONS <- round(max(CONS.de[, 9]), 2)
+  min.S.CONS <- round(min(CONS.de[, 8]), 2); max.S.CONS <- round(max(CONS.de[, 8]), 2)
+  se.K.CONS <- round(min(CONS.de[1, 11]), 2); se.S.CONS <- round(min(CONS.de[1, 10]), 2)
+  # Openness results
+    min.mean.OPE <- round(min(OPE.de[1:6, 2]), 2); max.mean.OPE <- round(max(OPE.de[1:6, 2]), 2)
+  min.sd.OPE <- round(min(OPE.de[1:6, 3]), 2); max.sd.OPE <- round(max(OPE.de[1:6, 3]), 2)
+  mean.OPE <- round(OPE.de[7, 2], 2); sd.OPE <- round(OPE.de[7, 3], 2)
+  min.AD.OPE <- round(min(OPE.de[1:6, 12]), 2); max.AD.OPE <- round(max(OPE.de[1:6, 12]), 2)
+  min.p.OPE <- round(min(OPE.de[1:6, 13]), 2); max.p.OPE <- round(max(OPE.de[1:6, 13]), 2)
+  AD.OPE <- round(OPE.de[7, 12], 2); p.OPE <- round(OPE.de[7, 13], 2)
+  min.K.OPE <- round(min(OPE.de[, 9]), 2); max.K.OPE <- round(max(OPE.de[, 9]), 2)
+  min.S.OPE <- round(min(OPE.de[, 8]), 2); max.S.OPE <- round(max(OPE.de[, 8]), 2)
+  se.K.OPE <- round(min(OPE.de[1, 11]), 2); se.S.OPE <- round(min(OPE.de[1, 10]), 2)
 ```
 ### Extraversion
 ```{r extraversion-desc}
@@ -802,13 +832,35 @@ The **"Agreeableness"** dimension have facets averages between `r min.mean.AGR` 
 
 All variables except **Morality** are platykurtic (Kurtosis between `r min.K.AGR` and `r max.K.AGR`, SE=`r se.K.AGR`) the last being leptokurtic. Regarding symmetry, all variables are left skewed (Skewness between `r min.S.AGR` and `r max.S.AGR`, SE=`r se.S.AHR`), however **Modesty** seems to be symmetric, so an assessment of extreme values will be required.
 
-
-
 ### Neuroticism
+```{r neuroticism-desc}
+  kable(NEU.de, format = "latex", digits = 2, booktabs = T,
+        caption = "Descriptive statistics for Neuroticism") %>% 
+  kable_styling(latex_options="scale_down")
+```
+The **"Neuroticism"** dimension has facets averages between `r min.mean.NEU` (sd=`r min.sd.NEU`) and `r max.mean.NEU` (sd=`r max.sd.NEU`), while the dimension's mean is `r mean.NEU` (sd=`r sd.NEU`). The assumption of univariate normality is **not fulfilled** for any facet (Anderson-Darling test between `r min.AD.NEU`, p=`r min.p.NEU` and `r max.AD.NEU`, p=`r max.p.NEU`) as well as for the entire domain (Anderson-Darling test=`r AD.NEU`, p=`r p.NEU`) (see Table \@ref(tab: neuroticism-desc)).
+All variables have platykurtic distributions, except for depression, which is mezokurtic (Kurtosis between `r min.K.NEU` and `r max.K.NEU`, SE=`r se.K.NEU `). Moreover, all variables are right skewed (Skewness between `r min.S.NEU` and `r max.S.NEU`, SE=`r se.S.NEU`). An assessment of extreme values was conducted.  The analysis showed that, for the Depression facet, 8 was an outlier, however the values was not extreme.
 
 ### Conscientiousness
+```{r conscientiousness-desc}
+  kable(CONS.de, format = "latex", digits = 2, booktabs = T,
+        caption = "Descriptive statistics for Conscientiousness") %>% 
+  kable_styling(latex_options="scale_down")
+```
+The **"Conscientiousness"** dimension has facets averages between `r min.mean.CONS` (sd=`r min.sd.CONS`) and `r max.mean.CONS` (sd=`r max.sd.CONS`), while the dimension's mean is `r mean.CONS` (sd=`r sd.CONS`). Yet again, the assumption of univariate normality is **not fulfilled** at the facet level (Anderson-Darling test between `r min.AD.CONS`, p=`r min.p.CONS` and `r max.AD.CONS`, p=`r max.p.CONS`) as well as for the Conscientiousness domain (Anderson-Darling test=`r AD.CONS`, p=`r p.CONS`) (see Table \@ref(tab: conscientiousness-desc)).
+
+All variables have platykurtic distributions, except for Dutifulness, which is mezokurtic (Kurtosis between `r min.K.CONS` and `r max.K.CONS`, SE=`r se.K.CONS `). All variables are left skewed (Skewness between `r min.S.CONS` and `r max.S.CONS`, SE=`r se.S.CONS`). An assessment of extreme values was conducted.  The analysis showed that, for the Dutifulness facets, 0 and 1 were outliers, however the values were not extreme. For the entire domain, values equal to or less than 7 were outliers.
+
 
 ### Openness
+```{r openness-desc}
+  kable(OPE.de, format = "latex", digits = 2, booktabs = T,
+        caption = "Descriptive statistics for Openness") %>% 
+  kable_styling(latex_options="scale_down")
+```
+The **"Openness"** dimension has facet means between `r min.mean.OPE` (sd=`r min.sd.OPE`) and `r max.mean.OPE` (sd=`r max.sd.OPE`), while the dimension's mean is `r mean.OPE` (sd=`r sd.OPE`). The assumption of univariate normality is **not fulfilled** for any facet (Anderson-Darling test between `r min.AD.OPE`, p=`r min.p.OPE` and `r max.AD.OPE`, p=`r max.p.OPE`) as well as for the entire domain (Anderson-Darling test=`r AD.OPE`, p=`r p.OPE`) (see Table \@ref(tab: openness-desc)).
+All facets have platykurtic distributions, however the Openness domain is leptokurtic (Kurtosis between `r min.K.OPE` and `r max.K.OPE`, SE=`r se.K.OPE `). All variables are right skewed, except for Emotionality, which is left skewed (Skewness between `r min.S.OPE` and `r max.S.OPE`, SE=`r se.S.OPE`). An assessment of extreme values was conducted.  The analysis showed that, for the Imagination facet, 7, 8 were outliers. For the Emotionality, 0 is an outlier, whereas for the Intelect facet, 8 is an outlier. No extreme values were identified. For the entire domain, values equal to or less than 3, as well as values equal to or more than 37 were outliers.
+
 
 ## Confirmatory Factor Analisys
 
